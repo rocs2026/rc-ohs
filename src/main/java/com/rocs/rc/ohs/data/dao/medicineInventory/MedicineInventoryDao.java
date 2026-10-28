@@ -1,4 +1,4 @@
-package com.rocs.clinic.data.dao.item;
+package com.rocs.rc.ohs.data.dao.medicineInventory;
 
 import com.rocs.clinic.app.model.item.MedicineInventory;
 
