@@ -1,15 +1,16 @@
-Drop database if exists rcis;
-Create database if not exists rcis;
+drop user if exists 'rcis'@'localhost';
+drop database if exists rcis;
 
-USE rcis;
+-- create database
+create database rcis;
 
-create user if not exists 'rcis'@'localhost' identified by '1234';
+-- create user
+create user 'rcis'@'localhost' identified by 'Changeme0';
 
-Grant create on rcis.* to 'rcis'@'localhost';
+-- grant basic permissions
+grant all privileges on rcis.* to 'rcis'@'localhost';
 
-Grant select, insert, update, delete on rcis.* to 'rcis'@'localhost';
-
-Flush privileges;
+flush privileges;
 
 Drop table if exists prescription;
 Drop table if exists consultation;
