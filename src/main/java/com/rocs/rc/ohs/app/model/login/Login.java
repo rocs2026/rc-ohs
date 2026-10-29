@@ -34,10 +34,10 @@ public class Login {
     /**
      * Sets the ID of the login user.
      *
-     * @param id The ID of the login user.
+     * @param newId The ID of the login user.
      */
-    public void setId(Long id) {
-        this.id = id;
+    public void setId(Long newId) {
+        this.id = newId;
     }
 
     /**
@@ -52,10 +52,10 @@ public class Login {
     /**
      * Sets the username of the login user.
      *
-     * @param username The username of the login user.
+     * @param newUsername The username of the login user.
      */
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUsername(String newUsername) {
+        this.username = newUsername;
     }
 
     /**
@@ -70,10 +70,10 @@ public class Login {
     /**
      * Sets the password of the login user.
      *
-     * @param password The password of the login user.
+     * @param newPassword The password of the login user.
      */
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPassword(String newPassword) {
+        this.password = newPassword;
     }
 
     /**
@@ -88,10 +88,10 @@ public class Login {
     /**
      * Sets the date of the user's last login.
      *
-     * @param lastLoginDate The date of the last login.
+     * @param newLastLoginDate The date of the last login.
      */
-    public void setLastLoginDate(Date lastLoginDate) {
-        this.lastLoginDate = lastLoginDate;
+    public void setLastLoginDate(Date newLastLoginDate) {
+        this.lastLoginDate = newLastLoginDate;
     }
 
     /**
@@ -106,9 +106,9 @@ public class Login {
     /**
      * Sets the role of the login user.
      *
-     * @param role The role of the login user.
+     * @param newRole The role of the login user.
      */
-    public void setRole(String role) {
-        this.role = role;
+    public void setRole(String newRole) {
+        this.role = newRole;
     }
 }
