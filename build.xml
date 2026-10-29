@@ -14,6 +14,7 @@
     <property name="test.src.dir" location="src/test/java"/>
     <property name="test.classes.dir" location="${build.dir}/test-classes"/>
     <property name="test.reports.dir"  location="${build.dir}/test-reports"/>
+    <property name="lib.dir" location="${build.dir}/lib"/>
 
     <target name="clean" >
         <echo>Cleaning temporary directories...</echo>
@@ -47,6 +48,14 @@
                 <pathelement path="${classes.dir}"/>
             </classpath>
         </javac>
+    </target>
+
+    <target name="copy-dependencies" depends="init"
+            description="Copies all dependency jars to build/lib">
+        <echo>Copying dependencies...</echo>
+        <mkdir dir="${lib.dir}"/>
+        <ivy:retrieve pattern="${lib.dir}/[artifact]-[revision](-[m:classifier]).[ext]"
+                      conf="compile,runtime,test"/>
     </target>
 
     <path id="junit.libs">
