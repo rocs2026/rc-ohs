@@ -26,10 +26,6 @@ jobs:
       - name: Run Checkstyle
         run: java -Dorg.checkstyle.sun.suppressionfilter.config=src/main/resources/checkstyle-suppressions.xml -jar checkstyle-10.17.0-all.jar -c /sun_checks.xml -f xml -o checkstyle-result.xml src/ || true
 
-      - name: Downgrade severity to warning
-        if: always()
-        run: sed -i 's/severity="error"/severity="warning"/g' checkstyle-result.xml
-
       - name: Push Checkstyle results to GitHub
         if: always()
         uses: jwgmeligmeyling/checkstyle-github-action@v1.2
