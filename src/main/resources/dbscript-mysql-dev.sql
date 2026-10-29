@@ -38,6 +38,26 @@ create table person (
     foreign key (login_id) references login (id)
 );
 
+
+
+create table medicine (
+    medicine_id int auto_increment primary key,
+    medicine_name varchar(150) not null,
+    category varchar(100),
+    unit varchar(50)
+);
+
+create table inventory (
+     inventory_id int auto_increment primary key,
+     medicine_id int not null,
+     batch_number varchar(100),
+     stock_quantity int not null default 0,
+     expiration_date date,
+     constraint fk_clinic_inventory_medicine
+     foreign key (medicine_id)
+     references medicine(medicine_id)
+);
+
 -- create test data
 insert into role (id, role, description)
 values (1, 'Clinic Staff', 'The account for a clinic staff');
@@ -47,3 +67,17 @@ values (1, 'staff', '1234', 1, null);
 
 insert into person (id, first_name, last_name, login_id)
 values (3, 'John', 'Doe', 1);
+
+insert into medicine (medicine_name, category, unit)
+values
+    ('Paracetamol', 'Analgesic', 'tablet'),
+    ('Amoxicillin', 'Antibiotic', 'capsule'),
+    ('Cetirizine', 'Antihistamine', 'tablet');
+
+
+insert into inventory
+(medicine_id, batch_number, stock_quantity, expiration_date)
+values
+    (1, 'BATCH-001', 100, '2027-06-30'),
+    (2, 'BATCH-002', 50, '2027-08-31'),
+    (3, 'BATCH-003', 75, '2027-12-31');
