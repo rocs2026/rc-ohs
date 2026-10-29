@@ -24,7 +24,7 @@ jobs:
         run: curl -sSLO https://github.com/checkstyle/checkstyle/releases/download/checkstyle-10.17.0/checkstyle-10.17.0-all.jar
 
       - name: Run Checkstyle
-        run: java -Dcheckstyle.suppressions.file=src/main/resources/checkstyle-suppressions.xml -jar checkstyle-10.17.0-all.jar -c /sun_checks.xml -f xml -o checkstyle-result.xml src/
+        run: java -Dorg.checkstyle.sun.suppressionfilter.config=src/main/resources/checkstyle-suppressions.xml -jar checkstyle-10.17.0-all.jar -c /sun_checks.xml -f xml -o checkstyle-result.xml src/
 
       - name: Push Checkstyle results to GitHub
         if: always()
