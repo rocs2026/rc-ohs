@@ -7,4 +7,5 @@
     <suppress checks="DesignForExtension" files=".*\.java"/>
     <suppress checks="MagicNumber" files=".*\.java"/>
     <suppress checks="ParameterNumber" files=".*\.java"/>
+    <suppress files="package-info\.java" checks="[a-zA-Z0-9]*"/>
 </suppressions>
