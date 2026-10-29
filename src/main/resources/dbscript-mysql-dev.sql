@@ -15,6 +15,41 @@ flush privileges;
 use rcis;
 
 -- create tables
+
+CREATE TABLE student (
+    student_id INT AUTO_INCREMENT PRIMARY KEY,
+    person_id INT NOT NULL UNIQUE,
+    student_number VARCHAR(30) NOT NULL UNIQUE,
+    academic_level VARCHAR(50),
+    year_level VARCHAR(30),
+    section_id INT,
+    CONSTRAINT fk_student_person
+        FOREIGN KEY (person_id)
+        REFERENCES person(person_id)
+);
+
+CREATE TABLE staff (
+    staff_id INT AUTO_INCREMENT PRIMARY KEY,
+    person_id INT NOT NULL UNIQUE,
+    staff_number VARCHAR(30) NOT NULL UNIQUE,
+    position VARCHAR(50) NOT NULL,
+    department VARCHAR(100),
+    CONSTRAINT fk_staff_person
+        FOREIGN KEY (person_id)
+        REFERENCES person(person_id)
+);
+
+CREATE TABLE medical_record (
+    medical_record_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL UNIQUE,
+    medical_conditions TEXT,
+    CONSTRAINT fk_medical_record_student
+        FOREIGN KEY (student_id)
+        REFERENCES student(student_id)
+);
+
+
+
 create table role (
     id            int primary key auto_increment,
     role          varchar(128),
@@ -39,6 +74,30 @@ create table person (
 );
 
 -- create test data
+
+INSERT INTO student
+    (person_id, student_number, academic_level,
+     year_level, section_id)
+VALUES
+    (1, 'CT22-0199', 'College', '3rd Year', 1),
+    (2, 'CT33-0777', 'College', '3rd Year', 1),
+    (3, 'CT27-0987', 'College', '2nd Year', 2);
+
+INSERT INTO staff
+    (person_id, staff_number, position, department)
+VALUES
+    (4, 'STF-001', 'Nurse', 'Clinic'),
+    (5, 'STF-002', 'Doctor', 'Clinic'),
+    (6, 'STF-003', 'Nurse', 'Clinic');
+
+INSERT INTO medical_record
+    (student_id, medical_conditions)
+VALUES
+    (1, 'Asthma'),
+    (2, 'None'),
+    (3, 'Peanut allergy');
+
+
 insert into role (id, role, description)
 values (1, 'Clinic Staff', 'The account for a clinic staff');
 
