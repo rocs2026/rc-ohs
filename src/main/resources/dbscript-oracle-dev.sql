@@ -22,24 +22,30 @@ drop table person;
 
 -- create tables
 create table role (
-                      id              number(19,0)
-    ,role           varchar2(128)
-    ,description    varchar2(64)
+     id              number(19,0)
+    ,role            varchar2(128)
+    ,description     varchar2(64)
 );
 
 create table login (
-                       id              number(19,0)
-    ,username       varchar2(16)
-    ,password       varchar2(64)
-    ,role_id        number(19,0)
-    ,last_login_date timestamp
+     id               number(19,0)
+    ,username         varchar2(16)
+    ,password         varchar2(64)
+    ,role_id          number(19,0)
+    ,last_login_date  timestamp
 );
 
 create table person (
-                        id               number(19,0)
-    ,first_name      varchar2(16)
-    ,last_name       varchar2(64)
-    ,login_id        number(19,0)
+     id               number(19,0)
+    ,first_name       varchar2(16)
+    ,middle_name      varchar2(16)
+    ,last_name        varchar2(64)
+    ,email            varchar2(128)
+    ,date_of_birth    date
+    ,gender           varchar2(16)
+    ,address          varchar2(255)
+    ,contact_number   varchar2(16)
+    ,login_id         number(19,0)
 );
 
 -- create table constraints
@@ -72,7 +78,7 @@ values (1, 'Clinic Staff', 'The account for a clinic staff');
 insert into login (id, username, password, role_id, last_login_date)
 values (1, 'staff', '1234', 1, null);
 
-insert into person (id, first_name, last_name, login_id)
-values (3, 'John', 'Doe', 1);
+insert into person (id, first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number, login_id)
+values (3, 'John', 'Michael', 'Doe', 'john.doe@example.com', date '2015-05-15', 'Male', '123 Rizal Street, San Pedro, Laguna', '09191223222', 1);
 
 commit;
