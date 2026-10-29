@@ -8,10 +8,3 @@
     <suppress checks="MagicNumber" files=".*\.java"/>
     <suppress checks="ParameterNumber" files=".*\.java"/>
 </suppressions>
-
-<suppressions>
-    <suppress checks="JavadocPackage" files=".*\.java"/>
-    <suppress checks="JavadocVariable" files=".*\.java"/>
-    <suppress checks="MissingJavadocMethod" files=".*\.java"/>
-    <suppress checks="HiddenField" files=".*\.java"/>
-</suppressions>
