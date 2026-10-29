@@ -45,11 +45,11 @@ create table person (
 );
 
 -- create test data
-insert into role (id, role, description)
-values (1, 'Clinic Staff', 'The account for a clinic staff');
+insert into role (role, description)
+values ('Clinic Staff', 'The account for a clinic staff');
 
-insert into login (id, username, password, role_id, last_login_date)
-values (1, 'staff', '1234', 1, null);
+insert into login (username, password, role_id, last_login_date)
+values ('staff', '1234', 1, null);
 
-insert into person (id, first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number, login_id)
-values (3, 'John', 'Michael', 'Doe', 'john.doe@example.com', '2015-05-15', 'Male', '123 Rizal Street, San Pedro, Laguna', '09191223222', 1);
+insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number, login_id)
+values ('John', 'Michael', 'Doe', 'john.doe@example.com', '2015-05-15', 'Male', '123 Rizal Street, San Pedro, Laguna', '09191223222', 1);
