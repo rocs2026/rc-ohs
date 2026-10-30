@@ -95,10 +95,12 @@ create table medicine (
 create table inventory (
     item_id int primary key auto_increment,
     medicine_id int not null,
+    staff_id int not null,
     batch_number varchar(50),
     stock_quantity int not null default 0,
     expiration_date date,
     foreign key (medicine_id) references medicine (medicine_id),
+    foreign key (staff_id) references staff(staff_id),
     check (stock_quantity >= 0)
 );
 
