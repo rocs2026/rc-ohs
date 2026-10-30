@@ -44,6 +44,23 @@ create table person (
     foreign key (login_id) references login (id)
 );
 
+create table student (
+    id              int primary key auto_increment,
+    person_id       int,
+    student_number  varchar(20) unique,
+    academic_level  enum('Junior High School', 'Senior High School', 'College'),
+    year_level      varchar(20),
+    section_id      int,
+    foreign key (person_id) references person (id)
+);
+
+create table medical_record (
+    id                       int primary key auto_increment,
+    student_id               int,
+    medical_conditions       text,
+    foreign key (student_id) references student (id)
+);
+
 -- create test data
 insert into role (role, description)
 values ('Clinic Staff', 'The account for a clinic staff');
@@ -52,8 +69,24 @@ insert into login (username, password, role_id, last_login_date)
 values ('staff', '1234', 1, null);
 
 
+
+
 insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number, login_id)
 values ('John', 'Michael', 'Doe', 'john.doe@example.com', '2015-05-15', 'Male', '123 Rizal Street, San Pedro, Laguna', '09191223222', 1);
+
+
+insert into person (first_name, last_name)
+values ('Will', 'Luo');
+
+
+insert into student (person_id, student_number, academic_level, year_level)
+    values ((select id from person where first_name = 'Will' and last_name = 'Luo'),
+'CT24-2026', 'College', '1st Year');
+
+
+insert into medical_record (student_id, medical_conditions)
+    values ((select id from student where student_number = 'CT24-2026'),
+'No known conditions');
 
 
 
