@@ -53,7 +53,7 @@ insert into user_session (staff_id) values (1);
 select 'You have been logged out.' as message, 'LoginPage' as redirect_to
 from user_session
 where session_id = 1 and status = 'ENDED';
--- expected: 1 row with the message
+
 
 -- final check
 select * from user_session;
