@@ -11,7 +11,6 @@ grant connect, resource, unlimited tablespace to rcis;
 
 alter session set current_schema = rcis;
 
--- create tables
 create table clinic_staff (
     staff_id      number generated always as identity primary key,
     person_id     number not null,
