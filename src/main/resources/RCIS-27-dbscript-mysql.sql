@@ -54,6 +54,5 @@ select 'You have been logged out.' as message, 'LoginPage' as redirect_to
 from user_session
 where session_id = 1 and status = 'ENDED';
 
-
 -- final check
 select * from user_session;
