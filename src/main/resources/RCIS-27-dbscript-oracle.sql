@@ -5,7 +5,6 @@ exception
 end;
 /
 
--- create user
 create user rcis identified by Changeme0;
 grant connect, resource, unlimited tablespace to rcis;
 
