@@ -24,15 +24,6 @@ create table role (
     description varchar(64)
 );
 
-create table login (
-    id int primary key auto_increment,
-    username varchar(16),
-    password varchar(64),
-    role_id int,
-    last_login_date timestamp null,
-    foreign key (role_id) references role (id)
-);
-
 create table person (
     id int primary key auto_increment,
     first_name varchar(16),
@@ -42,9 +33,18 @@ create table person (
     date_of_birth date,
     gender enum('Male', 'Female'),
     address varchar(255),
-    contact_number varchar(16),
-    login_id int,
-    foreign key (login_id) references login (id)
+    contact_number varchar(16)
+);
+
+create table login (
+    id int primary key auto_increment,
+    username varchar(16),
+    password varchar(64),
+    role_id int,
+    last_login_date timestamp null,
+    person_id int not null,
+    foreign key (role_id) references role (id),
+    foreign key (person_id) references person (id)
 );
 
 create table department (
@@ -177,21 +177,21 @@ create table prescription (
 insert into role (role, description) values
 ('Clinic Staff', 'The account for a clinic staff');
 
-insert into login (username, password, role_id, last_login_date) values
-('staff', '1234', 1, null);
+insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number) values
+('John', 'Michael', 'Doe', 'john.doe@example.com', '2015-05-15', 'Male', '123 Rizal Street, San Pedro, Laguna', '09191223222');
 
-insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number, login_id) values
-('John', 'Michael', 'Doe', 'john.doe@example.com', '2015-05-15', 'Male', '123 Rizal Street, San Pedro, Laguna', '09191223222', 1);
+insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number) values
+('Jowan', 'Carl', 'Quirona', 'jowan123@rocs.edu.ph', '2005-03-14', 'Male', 'Langkaan', '09171234501'),
+('Allison', null, 'Reyes', 'allison23@rocs.edu.ph', '2004-08-22', 'Female', 'Silang', '09171234502'),
+('Ana', 'Ramos', 'Corpuz', 'anaramos@rocs.edu.ph', '1990-05-17', 'Female', 'Tagaytay', '09171234504'),
+('Carlos', 'Diaz', 'Gona', 'carlosyolo@rocs.edu.ph', '1985-11-02', 'Male', 'General Trias', '09171234505'),
+('Elena', null, 'Bautista', 'elenabautista@rocs.edu.ph', '1980-02-11', 'Female', 'Lalaan Dos', '09171234507'),
+('Roberto', null, 'Aquino', 'robertoaquino@rocs.edu.ph', '1978-09-25', 'Male', 'Manila', '09171234508'),
+('Grace', 'Mae', 'Villar', 'villarmae@rocs.edu.ph', '1988-04-03', 'Female', 'Alfonso, Tagaytay', '09171234509'),
+('Antonio', null, 'Ferrer', 'ferrerantonio@rocs.edu.ph', '1975-06-12', 'Male', 'Silang', '09171234510');
 
-insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number, login_id) values
-('Jowan', 'Carl', 'Quirona', 'jowan123@rocs.edu.ph', '2005-03-14', 'Male', 'Langkaan', '09171234501', null),
-('Allison', null, 'Reyes', 'allison23@rocs.edu.ph', '2004-08-22', 'Female', 'Silang', '09171234502', null),
-('Ana', 'Ramos', 'Corpuz', 'anaramos@rocs.edu.ph', '1990-05-17', 'Female', 'Tagaytay', '09171234504', null),
-('Carlos', 'Diaz', 'Gona', 'carlosyolo@rocs.edu.ph', '1985-11-02', 'Male', 'General Trias', '09171234505', null),
-('Elena', null, 'Bautista', 'elenabautista@rocs.edu.ph', '1980-02-11', 'Female', 'Lalaan Dos', '09171234507', null),
-('Roberto', null, 'Aquino', 'robertoaquino@rocs.edu.ph', '1978-09-25', 'Male', 'Manila', '09171234508', null),
-('Grace', 'Mae', 'Villar', 'villarmae@rocs.edu.ph', '1988-04-03', 'Female', 'Alfonso, Tagaytay', '09171234509', null),
-('Antonio', null, 'Ferrer', 'ferrerantonio@rocs.edu.ph', '1975-06-12', 'Male', 'Silang', '09171234510', null);
+insert into login (username, password, role_id, last_login_date, person_id) values
+('staff', '1234', 1, null, 1);
 
 insert into department (department_name) values
 ('Junior High School'),

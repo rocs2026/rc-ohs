@@ -1,87 +1,219 @@
 package com.rocs.rc.ohs.app.model.consultation;
 
 import java.sql.Timestamp;
+
+/**
+ * Represents a consultation of a patient in the clinic.
+ */
 public class Consultation {
 
-    private int consultationId;
-    private int medicalRecordId;
+    /** The unique ID of the consultation. */
+    private int id;
+
+    /** The ID of the patient (person) consulted. */
+    private int patientId;
+
+    /** The ID of the personnel who recorded it. */
     private int staffId;
+
+    /** The record type, Check-up or Follow-up. */
     private String recordType;
+
+    /** The date and time of the consultation. */
     private Timestamp consultationDate;
+
+    /** The complaint of the patient. */
     private String complaint;
+
+    /** The diagnosis of the consultation. */
+    private String diagnosis;
+
+    /** The treatment given to the patient. */
     private String treatment;
+
+    /** The action taken during the consultation. */
     private String actionTaken;
+
+    /** The additional remarks about the consultation. */
     private String remarks;
 
-    public int getConsultationId() {
-        return consultationId;
+    /**
+     * Retrieves the unique ID of the consultation.
+     *
+     * @return the unique ID of the consultation.
+     */
+    public int getId() {
+        return id;
     }
 
-    public void setConsultationId(int consultationId) {
-        this.consultationId = consultationId;
+    /**
+     * Sets the unique ID of the consultation.
+     *
+     * @param newId the unique ID of the consultation.
+     */
+    public void setId(int newId) {
+        this.id = newId;
     }
 
-    public int getMedicalRecordId() {
-        return medicalRecordId;
+    /**
+     * Retrieves the ID of the patient (person) consulted.
+     *
+     * @return the ID of the patient (person) consulted.
+     */
+    public int getPatientId() {
+        return patientId;
     }
 
-    public void setMedicalRecordId(int medicalRecordId) {
-        this.medicalRecordId = medicalRecordId;
+    /**
+     * Sets the ID of the patient (person) consulted.
+     *
+     * @param newPatientId the ID of the patient (person) consulted.
+     */
+    public void setPatientId(int newPatientId) {
+        this.patientId = newPatientId;
     }
 
+    /**
+     * Retrieves the ID of the personnel who recorded it.
+     *
+     * @return the ID of the personnel who recorded it.
+     */
     public int getStaffId() {
         return staffId;
     }
 
-    public void setStaffId(int staffId) {
-        this.staffId = staffId;
+    /**
+     * Sets the ID of the personnel who recorded it.
+     *
+     * @param newStaffId the ID of the personnel who recorded it.
+     */
+    public void setStaffId(int newStaffId) {
+        this.staffId = newStaffId;
     }
 
+    /**
+     * Retrieves the record type, Check-up or Follow-up.
+     *
+     * @return the record type, Check-up or Follow-up.
+     */
     public String getRecordType() {
         return recordType;
     }
 
-    public void setRecordType(String recordType) {
-        this.recordType = recordType;
+    /**
+     * Sets the record type, Check-up or Follow-up.
+     *
+     * @param newRecordType the record type, Check-up or Follow-up.
+     */
+    public void setRecordType(String newRecordType) {
+        this.recordType = newRecordType;
     }
 
+    /**
+     * Retrieves the date and time of the consultation.
+     *
+     * @return the date and time of the consultation.
+     */
     public Timestamp getConsultationDate() {
         return consultationDate;
     }
 
-    public void setConsultationDate(Timestamp consultationDate) {
-        this.consultationDate = consultationDate;
+    /**
+     * Sets the date and time of the consultation.
+     *
+     * @param newConsultationDate the date and time of the consultation.
+     */
+    public void setConsultationDate(Timestamp newConsultationDate) {
+        this.consultationDate = newConsultationDate;
     }
 
+    /**
+     * Retrieves the complaint of the patient.
+     *
+     * @return the complaint of the patient.
+     */
     public String getComplaint() {
         return complaint;
     }
 
-    public void setComplaint(String complaint) {
-        this.complaint = complaint;
+    /**
+     * Sets the complaint of the patient.
+     *
+     * @param newComplaint the complaint of the patient.
+     */
+    public void setComplaint(String newComplaint) {
+        this.complaint = newComplaint;
     }
 
+    /**
+     * Retrieves the diagnosis of the consultation.
+     *
+     * @return the diagnosis of the consultation.
+     */
+    public String getDiagnosis() {
+        return diagnosis;
+    }
+
+    /**
+     * Sets the diagnosis of the consultation.
+     *
+     * @param newDiagnosis the diagnosis of the consultation.
+     */
+    public void setDiagnosis(String newDiagnosis) {
+        this.diagnosis = newDiagnosis;
+    }
+
+    /**
+     * Retrieves the treatment given to the patient.
+     *
+     * @return the treatment given to the patient.
+     */
     public String getTreatment() {
         return treatment;
     }
 
-    public void setTreatment(String treatment) {
-        this.treatment = treatment;
+    /**
+     * Sets the treatment given to the patient.
+     *
+     * @param newTreatment the treatment given to the patient.
+     */
+    public void setTreatment(String newTreatment) {
+        this.treatment = newTreatment;
     }
 
+    /**
+     * Retrieves the action taken during the consultation.
+     *
+     * @return the action taken during the consultation.
+     */
     public String getActionTaken() {
         return actionTaken;
     }
 
-    public void setActionTaken(String actionTaken) {
-        this.actionTaken = actionTaken;
+    /**
+     * Sets the action taken during the consultation.
+     *
+     * @param newActionTaken the action taken during the consultation.
+     */
+    public void setActionTaken(String newActionTaken) {
+        this.actionTaken = newActionTaken;
     }
 
+    /**
+     * Retrieves the additional remarks about the consultation.
+     *
+     * @return the additional remarks about the consultation.
+     */
     public String getRemarks() {
         return remarks;
     }
 
-    public void setRemarks(String remarks) {
-        this.remarks = remarks;
+    /**
+     * Sets the additional remarks about the consultation.
+     *
+     * @param newRemarks the additional remarks about the consultation.
+     */
+    public void setRemarks(String newRemarks) {
+        this.remarks = newRemarks;
     }
 }
