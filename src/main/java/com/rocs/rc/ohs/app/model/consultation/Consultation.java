@@ -1,6 +1,5 @@
 package com.rocs.rc.ohs.app.model.consultation;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
