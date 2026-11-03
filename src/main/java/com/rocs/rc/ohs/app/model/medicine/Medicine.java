@@ -12,7 +12,7 @@ public class Medicine {
     private String medicineName;
 
     /** The ID of the category of the medicine. */
-    private Integer categoryId;
+    private int categoryId;
 
     /** The unit of the medicine. */
     private String unit;
@@ -58,7 +58,7 @@ public class Medicine {
      *
      * @return the ID of the category of the medicine.
      */
-    public Integer getCategoryId() {
+    public int getCategoryId() {
         return categoryId;
     }
 
@@ -67,7 +67,7 @@ public class Medicine {
      *
      * @param newCategoryId the ID of the category of the medicine.
      */
-    public void setCategoryId(Integer newCategoryId) {
+    public void setCategoryId(int newCategoryId) {
         this.categoryId = newCategoryId;
     }
 

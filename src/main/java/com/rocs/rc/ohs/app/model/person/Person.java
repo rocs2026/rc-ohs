@@ -1,6 +1,6 @@
 package com.rocs.rc.ohs.app.model.person;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Represents a person in the system.
@@ -23,7 +23,7 @@ public class Person {
     private String email;
 
     /** The date of birth of the person. */
-    private LocalDate dateOfBirth;
+    private LocalDateTime dateOfBirth;
 
     /** The gender of the person. */
     private String gender;
@@ -129,7 +129,7 @@ public class Person {
      *
      * @return the date of birth of the person.
      */
-    public LocalDate getDateOfBirth() {
+    public LocalDateTime getDateOfBirth() {
         return dateOfBirth;
     }
 
@@ -138,7 +138,7 @@ public class Person {
      *
      * @param newDateOfBirth the date of birth of the person.
      */
-    public void setDateOfBirth(LocalDate newDateOfBirth) {
+    public void setDateOfBirth(LocalDateTime newDateOfBirth) {
         this.dateOfBirth = newDateOfBirth;
     }
 

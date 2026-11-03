@@ -1,6 +1,6 @@
 package com.rocs.rc.ohs.app.model.medicine;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Represents a stock of a medicine in the clinic.
@@ -23,7 +23,7 @@ public class MedicineStock {
     private int quantityReceived;
 
     /** The expiration date of the stock. */
-    private LocalDate expirationDate;
+    private LocalDateTime expirationDate;
 
     /** The status of the stock. */
     private String status;
@@ -123,7 +123,7 @@ public class MedicineStock {
      *
      * @return the expiration date of the stock.
      */
-    public LocalDate getExpirationDate() {
+    public LocalDateTime getExpirationDate() {
         return expirationDate;
     }
 
@@ -132,7 +132,7 @@ public class MedicineStock {
      *
      * @param newExpirationDate the expiration date of the stock.
      */
-    public void setExpirationDate(LocalDate newExpirationDate) {
+    public void setExpirationDate(LocalDateTime newExpirationDate) {
         this.expirationDate = newExpirationDate;
     }
 

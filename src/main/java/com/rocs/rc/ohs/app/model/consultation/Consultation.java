@@ -1,6 +1,7 @@
 package com.rocs.rc.ohs.app.model.consultation;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Represents a consultation of a patient in the clinic.
@@ -20,7 +21,7 @@ public class Consultation {
     private String recordType;
 
     /** The date and time of the consultation. */
-    private Timestamp consultationDate;
+    private LocalDateTime consultationDate;
 
     /** The complaint of the patient. */
     private String complaint;
@@ -114,7 +115,7 @@ public class Consultation {
      *
      * @return the date and time of the consultation.
      */
-    public Timestamp getConsultationDate() {
+    public LocalDateTime getConsultationDate() {
         return consultationDate;
     }
 
@@ -123,7 +124,7 @@ public class Consultation {
      *
      * @param newConsultationDate the date and time of the consultation.
      */
-    public void setConsultationDate(Timestamp newConsultationDate) {
+    public void setConsultationDate(LocalDateTime newConsultationDate) {
         this.consultationDate = newConsultationDate;
     }
 
