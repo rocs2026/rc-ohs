@@ -6,16 +6,16 @@ package com.rocs.rc.ohs.app.model.prescription;
 public class Prescription {
 
     /** The unique ID of the prescription. */
-    private int id;
+    private Long id;
 
     /** The ID of the consultation. */
-    private int consultationId;
+    private Long consultationId;
 
     /** The ID of the medicine stock prescribed. */
-    private int medicineStockId;
+    private Long medicineStockId;
 
     /** The ID of the personnel who prescribed it. */
-    private int personnelId;
+    private Long personnelId;
 
     /** The quantity of the medicine to dispense. */
     private int quantityToDispense;
@@ -34,7 +34,7 @@ public class Prescription {
      *
      * @return the unique ID of the prescription.
      */
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
@@ -43,7 +43,7 @@ public class Prescription {
      *
      * @param newId the unique ID of the prescription.
      */
-    public void setId(int newId) {
+    public void setId(Long newId) {
         this.id = newId;
     }
 
@@ -52,7 +52,7 @@ public class Prescription {
      *
      * @return the ID of the consultation.
      */
-    public int getConsultationId() {
+    public Long getConsultationId() {
         return consultationId;
     }
 
@@ -61,7 +61,7 @@ public class Prescription {
      *
      * @param newConsultationId the ID of the consultation.
      */
-    public void setConsultationId(int newConsultationId) {
+    public void setConsultationId(Long newConsultationId) {
         this.consultationId = newConsultationId;
     }
 
@@ -70,7 +70,7 @@ public class Prescription {
      *
      * @return the ID of the medicine stock prescribed.
      */
-    public int getMedicineStockId() {
+    public Long getMedicineStockId() {
         return medicineStockId;
     }
 
@@ -79,7 +79,7 @@ public class Prescription {
      *
      * @param newMedicineStockId the ID of the medicine stock prescribed.
      */
-    public void setMedicineStockId(int newMedicineStockId) {
+    public void setMedicineStockId(Long newMedicineStockId) {
         this.medicineStockId = newMedicineStockId;
     }
 
@@ -88,7 +88,7 @@ public class Prescription {
      *
      * @return the ID of the personnel who prescribed it.
      */
-    public int getPersonnelId() {
+    public Long getPersonnelId() {
         return personnelId;
     }
 
@@ -97,7 +97,7 @@ public class Prescription {
      *
      * @param newPersonnelId the ID of the personnel who prescribed it.
      */
-    public void setPersonnelId(int newPersonnelId) {
+    public void setPersonnelId(Long newPersonnelId) {
         this.personnelId = newPersonnelId;
     }
 

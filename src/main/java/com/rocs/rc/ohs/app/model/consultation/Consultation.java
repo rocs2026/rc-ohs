@@ -8,13 +8,13 @@ import java.time.LocalDateTime;
 public class Consultation {
 
     /** The unique ID of the consultation. */
-    private int id;
+    private Long id;
 
     /** The ID of the patient (person) consulted. */
-    private int patientId;
+    private Long patientId;
 
     /** The ID of the personnel who recorded it. */
-    private int staffId;
+    private Long staffId;
 
     /** The record type, Check-up or Follow-up. */
     private String recordType;
@@ -42,7 +42,7 @@ public class Consultation {
      *
      * @return the unique ID of the consultation.
      */
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
@@ -51,7 +51,7 @@ public class Consultation {
      *
      * @param newId the unique ID of the consultation.
      */
-    public void setId(int newId) {
+    public void setId(Long newId) {
         this.id = newId;
     }
 
@@ -60,7 +60,7 @@ public class Consultation {
      *
      * @return the ID of the patient (person) consulted.
      */
-    public int getPatientId() {
+    public Long getPatientId() {
         return patientId;
     }
 
@@ -69,7 +69,7 @@ public class Consultation {
      *
      * @param newPatientId the ID of the patient (person) consulted.
      */
-    public void setPatientId(int newPatientId) {
+    public void setPatientId(Long newPatientId) {
         this.patientId = newPatientId;
     }
 
@@ -78,7 +78,7 @@ public class Consultation {
      *
      * @return the ID of the personnel who recorded it.
      */
-    public int getStaffId() {
+    public Long getStaffId() {
         return staffId;
     }
 
@@ -87,7 +87,7 @@ public class Consultation {
      *
      * @param newStaffId the ID of the personnel who recorded it.
      */
-    public void setStaffId(int newStaffId) {
+    public void setStaffId(Long newStaffId) {
         this.staffId = newStaffId;
     }
 

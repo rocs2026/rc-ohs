@@ -6,13 +6,13 @@ package com.rocs.rc.ohs.app.model.medicalrecord;
 public class MedicalRecord {
 
     /** The unique ID of the medical record. */
-    private int id;
+    private Long id;
 
     /** The ID of the patient (person). */
-    private int patientId;
+    private Long patientId;
 
     /** The ID of the consultation. */
-    private int consultationId;
+    private Long consultationId;
 
     /** The medical conditions of the patient. */
     private String medicalConditions;
@@ -25,7 +25,7 @@ public class MedicalRecord {
      *
      * @return the unique ID of the medical record.
      */
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
@@ -34,7 +34,7 @@ public class MedicalRecord {
      *
      * @param newId the unique ID of the medical record.
      */
-    public void setId(int newId) {
+    public void setId(Long newId) {
         this.id = newId;
     }
 
@@ -43,7 +43,7 @@ public class MedicalRecord {
      *
      * @return the ID of the patient (person).
      */
-    public int getPatientId() {
+    public Long getPatientId() {
         return patientId;
     }
 
@@ -52,7 +52,7 @@ public class MedicalRecord {
      *
      * @param newPatientId the ID of the patient (person).
      */
-    public void setPatientId(int newPatientId) {
+    public void setPatientId(Long newPatientId) {
         this.patientId = newPatientId;
     }
 
@@ -61,7 +61,7 @@ public class MedicalRecord {
      *
      * @return the ID of the consultation.
      */
-    public int getConsultationId() {
+    public Long getConsultationId() {
         return consultationId;
     }
 
@@ -70,7 +70,7 @@ public class MedicalRecord {
      *
      * @param newConsultationId the ID of the consultation.
      */
-    public void setConsultationId(int newConsultationId) {
+    public void setConsultationId(Long newConsultationId) {
         this.consultationId = newConsultationId;
     }
 

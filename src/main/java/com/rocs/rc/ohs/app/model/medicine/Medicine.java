@@ -6,13 +6,13 @@ package com.rocs.rc.ohs.app.model.medicine;
 public class Medicine {
 
     /** The unique ID of the medicine. */
-    private int id;
+    private Long id;
 
     /** The name of the medicine. */
     private String medicineName;
 
     /** The ID of the category of the medicine. */
-    private int categoryId;
+    private Long categoryId;
 
     /** The unit of the medicine. */
     private String unit;
@@ -22,7 +22,7 @@ public class Medicine {
      *
      * @return the unique ID of the medicine.
      */
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
@@ -31,7 +31,7 @@ public class Medicine {
      *
      * @param newId the unique ID of the medicine.
      */
-    public void setId(int newId) {
+    public void setId(Long newId) {
         this.id = newId;
     }
 
@@ -58,7 +58,7 @@ public class Medicine {
      *
      * @return the ID of the category of the medicine.
      */
-    public int getCategoryId() {
+    public Long getCategoryId() {
         return categoryId;
     }
 
@@ -67,7 +67,7 @@ public class Medicine {
      *
      * @param newCategoryId the ID of the category of the medicine.
      */
-    public void setCategoryId(int newCategoryId) {
+    public void setCategoryId(Long newCategoryId) {
         this.categoryId = newCategoryId;
     }
 

@@ -8,13 +8,13 @@ import java.time.LocalDateTime;
 public class MedicineStock {
 
     /** The unique ID of the medicine stock. */
-    private int id;
+    private Long id;
 
     /** The ID of the medicine. */
-    private int medicineId;
+    private Long medicineId;
 
     /** The ID of the personnel who received it. */
-    private int personnelId;
+    private Long personnelId;
 
     /** The batch number of the stock. */
     private String batchNumber;
@@ -33,7 +33,7 @@ public class MedicineStock {
      *
      * @return the unique ID of the medicine stock.
      */
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
@@ -42,7 +42,7 @@ public class MedicineStock {
      *
      * @param newId the unique ID of the medicine stock.
      */
-    public void setId(int newId) {
+    public void setId(Long newId) {
         this.id = newId;
     }
 
@@ -51,7 +51,7 @@ public class MedicineStock {
      *
      * @return the ID of the medicine.
      */
-    public int getMedicineId() {
+    public Long getMedicineId() {
         return medicineId;
     }
 
@@ -60,7 +60,7 @@ public class MedicineStock {
      *
      * @param newMedicineId the ID of the medicine.
      */
-    public void setMedicineId(int newMedicineId) {
+    public void setMedicineId(Long newMedicineId) {
         this.medicineId = newMedicineId;
     }
 
@@ -69,7 +69,7 @@ public class MedicineStock {
      *
      * @return the ID of the personnel who received it.
      */
-    public int getPersonnelId() {
+    public Long getPersonnelId() {
         return personnelId;
     }
 
@@ -78,7 +78,7 @@ public class MedicineStock {
      *
      * @param newPersonnelId the ID of the personnel who received it.
      */
-    public void setPersonnelId(int newPersonnelId) {
+    public void setPersonnelId(Long newPersonnelId) {
         this.personnelId = newPersonnelId;
     }
 

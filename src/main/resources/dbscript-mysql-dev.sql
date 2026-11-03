@@ -19,13 +19,13 @@ use rcis;
 
 -- create tables
 create table role (
-    id int primary key auto_increment,
+    id bigint primary key auto_increment,
     role varchar(128),
     description varchar(64)
 );
 
 create table person (
-    id int primary key auto_increment,
+    id bigint primary key auto_increment,
     first_name varchar(16),
     middle_name varchar(16),
     last_name varchar(64),
@@ -37,40 +37,40 @@ create table person (
 );
 
 create table login (
-    id int primary key auto_increment,
+    id bigint primary key auto_increment,
     username varchar(16),
     password varchar(64),
-    role_id int,
+    role_id bigint,
     last_login_date timestamp null,
-    person_id int not null,
+    person_id bigint not null,
     foreign key (role_id) references role (id),
     foreign key (person_id) references person (id)
 );
 
 create table department (
-    department_id int primary key auto_increment,
+    department_id bigint primary key auto_increment,
     department_name varchar(30) not null unique
 );
 
 create table position (
-    id int primary key auto_increment,
+    id bigint primary key auto_increment,
     position_name varchar(100) not null,
     category varchar(20) not null,
-    department_id int,
+    department_id bigint,
     foreign key (department_id) references department (department_id)
 );
 
 create table personnel (
-    id int primary key auto_increment,
-    person_id int not null unique,
+    id bigint primary key auto_increment,
+    person_id bigint not null unique,
     employee_id varchar(30) unique,
     foreign key (person_id) references person (id)
 );
 
 create table personnel_position (
-    personnel_id int not null,
-    position_id int not null,
-    department_id int,
+    personnel_id bigint not null,
+    position_id bigint not null,
+    department_id bigint,
     primary key (personnel_id, position_id),
     foreign key (personnel_id) references personnel (id),
     foreign key (position_id) references position (id),
@@ -78,38 +78,38 @@ create table personnel_position (
 );
 
 create table section (
-    id int primary key auto_increment,
+    id bigint primary key auto_increment,
     code varchar(30) not null,
     name varchar(100) not null,
-    department_id int not null,
+    department_id bigint not null,
     year_level varchar(30) not null,
     semester varchar(30),
     academic_year varchar(20) not null,
-    adviser_id int,
+    adviser_id bigint,
     foreign key (department_id) references department (department_id),
     foreign key (adviser_id) references personnel (id)
 );
 
 create table student (
-    id int primary key auto_increment,
-    person_id int not null unique,
+    id bigint primary key auto_increment,
+    person_id bigint not null unique,
     student_number varchar(30) not null unique,
     foreign key (person_id) references person (id)
 );
 
 create table student_section (
-    id int primary key auto_increment,
-    student_id int not null,
-    section_id int not null,
+    id bigint primary key auto_increment,
+    student_id bigint not null,
+    section_id bigint not null,
     enrolled_date timestamp not null default current_timestamp,
     foreign key (student_id) references student (id),
     foreign key (section_id) references section (id)
 );
 
 create table consultation (
-    id int primary key auto_increment,
-    patient_id int not null,
-    staff_id int not null,
+    id bigint primary key auto_increment,
+    patient_id bigint not null,
+    staff_id bigint not null,
     record_type varchar(50) not null,
     consultation_date datetime not null,
     complaint text,
@@ -123,9 +123,9 @@ create table consultation (
 );
 
 create table medical_record (
-    id int primary key auto_increment,
-    patient_id int not null,
-    consultation_id int not null,
+    id bigint primary key auto_increment,
+    patient_id bigint not null,
+    consultation_id bigint not null,
     medical_conditions text,
     allergies text,
     foreign key (patient_id) references person (id),
@@ -133,22 +133,22 @@ create table medical_record (
 );
 
 create table medicine_category (
-    id int primary key auto_increment,
+    id bigint primary key auto_increment,
     category_name varchar(100) not null unique
 );
 
 create table medicine (
-    id int primary key auto_increment,
+    id bigint primary key auto_increment,
     medicine_name varchar(100) not null,
-    category_id int,
+    category_id bigint,
     unit varchar(30) not null,
     foreign key (category_id) references medicine_category (id)
 );
 
 create table medicine_stock (
-    id int primary key auto_increment,
-    medicine_id int not null,
-    personnel_id int not null,
+    id bigint primary key auto_increment,
+    medicine_id bigint not null,
+    personnel_id bigint not null,
     batch_number varchar(50),
     quantity_received int not null,
     expiration_date date,
@@ -159,10 +159,10 @@ create table medicine_stock (
 );
 
 create table prescription (
-    id int primary key auto_increment,
-    consultation_id int not null,
-    medicine_stock_id int not null,
-    personnel_id int not null,
+    id bigint primary key auto_increment,
+    consultation_id bigint not null,
+    medicine_stock_id bigint not null,
+    personnel_id bigint not null,
     quantity_to_dispense int not null,
     dose varchar(100) not null,
     frequency varchar(100) not null,
@@ -262,7 +262,7 @@ insert into prescription (consultation_id, medicine_stock_id, personnel_id, quan
 
 -- create join, function, view, procedure
 delimiter $$
-create function fn_remaining_stock (p_medicine_stock_id int)
+create function fn_remaining_stock (p_medicine_stock_id bigint)
 returns int
 reads sql data
 begin
