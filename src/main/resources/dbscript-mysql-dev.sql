@@ -29,7 +29,7 @@ create table person (
     first_name varchar(16),
     middle_name varchar(16),
     last_name varchar(64),
-    email varchar(128),
+    email varchar(128) unique,
     date_of_birth date,
     gender enum('Male', 'Female'),
     address varchar(255),
@@ -38,7 +38,7 @@ create table person (
 
 create table login (
     id bigint primary key auto_increment,
-    username varchar(16),
+    username varchar(16) unique,
     password varchar(64),
     role_id bigint,
     last_login_date timestamp null,
@@ -173,6 +173,25 @@ create table prescription (
     check (quantity_to_dispense > 0)
 );
 
+create table password_recovery (
+    recovery_id bigint primary key auto_increment,
+    personnel_id bigint not null,
+    recovery_status varchar(20) not null,
+    constraint fk_password_recovery_personnel
+    foreign key (personnel_id) references personnel (id)
+);
+
+create table identity_verification (
+    verification_id bigint primary key auto_increment,
+    recovery_id bigint not null,
+    verification_method varchar(20) not null,
+    verification_status varchar(20) not null,
+    constraint fk_identity_verification_recovery
+    foreign key (recovery_id) references password_recovery (recovery_id)
+    on update cascade
+    on delete cascade
+);
+
 -- create test data
 insert into role (role, description) values
 ('Clinic Staff', 'The account for a clinic staff');
@@ -191,7 +210,9 @@ insert into person (first_name, middle_name, last_name, email, date_of_birth, ge
 ('Antonio', null, 'Ferrer', 'ferrerantonio@rocs.edu.ph', '1975-06-12', 'Male', 'Silang', '09171234510');
 
 insert into login (username, password, role_id, last_login_date, person_id) values
-('staff', '1234', 1, null, 1);
+('staff', '1234', 1, null, 1),
+('ana.corpuz', '1234', 1, null, 4),
+('carlos.gona', '1234', 1, null, 5);
 
 insert into department (department_name) values
 ('Junior High School'),
@@ -259,6 +280,16 @@ insert into medicine_stock (medicine_id, personnel_id, batch_number, quantity_re
 insert into prescription (consultation_id, medicine_stock_id, personnel_id, quantity_to_dispense, dose, frequency, instructions) values
 (1, 1, 2, 1, '500mg', 'Every 6 hours', 'Take after meals'),
 (1, 2, 2, 2, '500mg', '3 times a day', 'Finish all capsules');
+
+insert into password_recovery (personnel_id, recovery_status) values
+(1, 'Pending'),
+(2, 'Verified'),
+(1, 'Completed');
+
+insert into identity_verification (recovery_id, verification_method, verification_status) values
+(1, 'Username', 'Pending'),
+(2, 'Username', 'Verified'),
+(3, 'Username', 'Verified');
 
 -- create join, function, view, procedure
 delimiter $$
