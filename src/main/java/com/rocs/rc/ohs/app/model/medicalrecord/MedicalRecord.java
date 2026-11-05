@@ -71,7 +71,8 @@ public class MedicalRecord {
     /**
      * Sets the consultation associated with the medical record.
      *
-     * @param newConsultation the consultation associated with the medical record.
+     * @param newConsultation the consultation associated with the
+     *                        medical record.
      */
     public void setConsultation(Consultation newConsultation) {
         this.consultation = newConsultation;

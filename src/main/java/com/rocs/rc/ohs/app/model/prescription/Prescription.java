@@ -81,7 +81,8 @@ public class Prescription {
     /**
      * Sets the medicine stock associated with the prescription.
      *
-     * @param newMedicineStock the medicine stock associated with the prescription.
+     * @param newMedicineStock the medicine stock associated with the
+     *                         prescription.
      */
     public void setMedicineStock(MedicineStock newMedicineStock) {
         this.medicineStock = newMedicineStock;
