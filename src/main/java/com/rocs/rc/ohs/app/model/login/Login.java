@@ -1,5 +1,8 @@
 package com.rocs.rc.ohs.app.model.login;
 
+import com.rocs.rc.ohs.app.model.person.Person;
+import com.rocs.rc.ohs.app.model.role.Role;
+
 import java.util.Date;
 
 /**
@@ -7,8 +10,11 @@ import java.util.Date;
  */
 public class Login {
 
-    /** The unique ID of the login user. */
-    private Long id;
+    /** The role assigned to the login user. */
+    private Role role;
+
+    /** The person who owns the login account. */
+    private Person person;
 
     /** The username used to log in. */
     private String username;
@@ -19,28 +25,40 @@ public class Login {
     /** The date and time of the user's last login. */
     private Date lastLoginDate;
 
-    /** The ID of the role of the login user. */
-    private Long roleId;
-
-    /** The ID of the person who owns the login account. */
-    private Long personId;
-
     /**
-     * Retrieves the ID of the login user.
+     * Retrieves the role assigned to the login user.
      *
-     * @return The ID of the login user.
+     * @return The role of the login user.
      */
-    public Long getId() {
-        return id;
+    public Role getRole() {
+        return role;
     }
 
     /**
-     * Sets the ID of the login user.
+     * Sets the role assigned to the login user.
      *
-     * @param newId The ID of the login user.
+     * @param newRole The role of the login user.
      */
-    public void setId(Long newId) {
-        this.id = newId;
+    public void setRole(Role newRole) {
+        this.role = newRole;
+    }
+
+    /**
+     * Retrieves the person who owns the login account.
+     *
+     * @return The person associated with the login account.
+     */
+    public Person getPerson() {
+        return person;
+    }
+
+    /**
+     * Sets the person who owns the login account.
+     *
+     * @param newPerson The person associated with the login account.
+     */
+    public void setPerson(Person newPerson) {
+        this.person = newPerson;
     }
 
     /**
@@ -95,41 +113,5 @@ public class Login {
      */
     public void setLastLoginDate(Date newLastLoginDate) {
         this.lastLoginDate = newLastLoginDate;
-    }
-
-    /**
-     * Retrieves the ID of the role of the login user.
-     *
-     * @return The ID of the role of the login user.
-     */
-    public Long getRoleId() {
-        return roleId;
-    }
-
-    /**
-     * Sets the ID of the role of the login user.
-     *
-     * @param newRoleId The ID of the role of the login user.
-     */
-    public void setRoleId(Long newRoleId) {
-        this.roleId = newRoleId;
-    }
-
-    /**
-     * Retrieves the ID of the person who owns the login account.
-     *
-     * @return The ID of the person who owns the login account.
-     */
-    public Long getPersonId() {
-        return personId;
-    }
-
-    /**
-     * Sets the ID of the person who owns the login account.
-     *
-     * @param newPersonId The ID of the person who owns the login account.
-     */
-    public void setPersonId(Long newPersonId) {
-        this.personId = newPersonId;
     }
 }
