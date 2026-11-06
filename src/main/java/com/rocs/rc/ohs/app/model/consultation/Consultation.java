@@ -1,5 +1,9 @@
 package com.rocs.rc.ohs.app.model.consultation;
 
+import com.rocs.rc.ohs.app.model.enums.recordtype.RecordType;
+import com.rocs.rc.ohs.app.model.person.Person;
+import com.rocs.rc.ohs.app.model.personnel.Personnel;
+
 import java.time.LocalDateTime;
 
 /**
@@ -10,14 +14,14 @@ public class Consultation {
     /** The unique ID of the consultation. */
     private Long id;
 
-    /** The ID of the patient (person) consulted. */
-    private Long patientId;
+    /** The patient associated with the consultation. */
+    private Person patient;
 
-    /** The ID of the personnel who recorded it. */
-    private Long staffId;
+    /** The personnel who recorded the consultation. */
+    private Personnel staff;
 
-    /** The record type, Check-up or Follow-up. */
-    private String recordType;
+    /** The record type of the consultation. */
+    private RecordType recordType;
 
     /** The date and time of the consultation. */
     private LocalDateTime consultationDate;
@@ -56,56 +60,56 @@ public class Consultation {
     }
 
     /**
-     * Retrieves the ID of the patient (person) consulted.
+     * Retrieves the patient associated with the consultation.
      *
-     * @return the ID of the patient (person) consulted.
+     * @return the patient associated with the consultation.
      */
-    public Long getPatientId() {
-        return patientId;
+    public Person getPatient() {
+        return patient;
     }
 
     /**
-     * Sets the ID of the patient (person) consulted.
+     * Sets the patient associated with the consultation.
      *
-     * @param newPatientId the ID of the patient (person) consulted.
+     * @param newPatient the patient associated with the consultation.
      */
-    public void setPatientId(Long newPatientId) {
-        this.patientId = newPatientId;
+    public void setPatient(Person newPatient) {
+        this.patient = newPatient;
     }
 
     /**
-     * Retrieves the ID of the personnel who recorded it.
+     * Retrieves the personnel who recorded the consultation.
      *
-     * @return the ID of the personnel who recorded it.
+     * @return the personnel who recorded the consultation.
      */
-    public Long getStaffId() {
-        return staffId;
+    public Personnel getStaff() {
+        return staff;
     }
 
     /**
-     * Sets the ID of the personnel who recorded it.
+     * Sets the personnel who recorded the consultation.
      *
-     * @param newStaffId the ID of the personnel who recorded it.
+     * @param newStaff the personnel who recorded the consultation.
      */
-    public void setStaffId(Long newStaffId) {
-        this.staffId = newStaffId;
+    public void setStaff(Personnel newStaff) {
+        this.staff = newStaff;
     }
 
     /**
-     * Retrieves the record type, Check-up or Follow-up.
+     * Retrieves the record type of the consultation.
      *
-     * @return the record type, Check-up or Follow-up.
+     * @return the record type of the consultation.
      */
-    public String getRecordType() {
+    public RecordType getRecordType() {
         return recordType;
     }
 
     /**
-     * Sets the record type, Check-up or Follow-up.
+     * Sets the record type of the consultation.
      *
-     * @param newRecordType the record type, Check-up or Follow-up.
+     * @param newRecordType the record type of the consultation.
      */
-    public void setRecordType(String newRecordType) {
+    public void setRecordType(RecordType newRecordType) {
         this.recordType = newRecordType;
     }
 
