@@ -19,7 +19,7 @@ use rcis;
 
 -- create tables
 create table role (
-    id int primary key auto_increment,
+    id bigint primary key auto_increment,
     role varchar(128),
     description varchar(64)
     id bigint primary key auto_increment,
@@ -39,6 +39,7 @@ create table login (
 );
 
 create table person (
+    id bigint primary key auto_increment,
     id bigint primary key auto_increment,
     first_name varchar(16),
     middle_name varchar(16),
@@ -251,35 +252,44 @@ create table inventory (
     date_of_birth date,
     gender enum('Male', 'Female'),
     address varchar(255),
-    contact_number varchar(16),
-    login_id int,
-    foreign key (login_id) references login (id)
+    contact_number varchar(16)
+);
+
+create table login (
+    id bigint primary key auto_increment,
+    username varchar(16),
+    password varchar(64),
+    role_id bigint,
+    last_login_date timestamp null,
+    person_id bigint not null,
+    foreign key (role_id) references role (id),
+    foreign key (person_id) references person (id)
 );
 
 create table department (
-    department_id int primary key auto_increment,
+    department_id bigint primary key auto_increment,
     department_name varchar(30) not null unique
 );
 
 create table position (
-    id int primary key auto_increment,
+    id bigint primary key auto_increment,
     position_name varchar(100) not null,
     category varchar(20) not null,
-    department_id int,
+    department_id bigint,
     foreign key (department_id) references department (department_id)
 );
 
 create table personnel (
-    id int primary key auto_increment,
-    person_id int not null unique,
+    id bigint primary key auto_increment,
+    person_id bigint not null unique,
     employee_id varchar(30) unique,
     foreign key (person_id) references person (id)
 );
 
 create table personnel_position (
-    personnel_id int not null,
-    position_id int not null,
-    department_id int,
+    personnel_id bigint not null,
+    position_id bigint not null,
+    department_id bigint,
     primary key (personnel_id, position_id),
     foreign key (personnel_id) references personnel (id),
     foreign key (position_id) references position (id),
@@ -287,38 +297,38 @@ create table personnel_position (
 );
 
 create table section (
-    id int primary key auto_increment,
+    id bigint primary key auto_increment,
     code varchar(30) not null,
     name varchar(100) not null,
-    department_id int not null,
+    department_id bigint not null,
     year_level varchar(30) not null,
     semester varchar(30),
     academic_year varchar(20) not null,
-    adviser_id int,
+    adviser_id bigint,
     foreign key (department_id) references department (department_id),
     foreign key (adviser_id) references personnel (id)
 );
 
 create table student (
-    id int primary key auto_increment,
-    person_id int not null unique,
+    id bigint primary key auto_increment,
+    person_id bigint not null unique,
     student_number varchar(30) not null unique,
     foreign key (person_id) references person (id)
 );
 
 create table student_section (
-    id int primary key auto_increment,
-    student_id int not null,
-    section_id int not null,
+    id bigint primary key auto_increment,
+    student_id bigint not null,
+    section_id bigint not null,
     enrolled_date timestamp not null default current_timestamp,
     foreign key (student_id) references student (id),
     foreign key (section_id) references section (id)
 );
 
 create table consultation (
-    id int primary key auto_increment,
-    patient_id int not null,
-    staff_id int not null,
+    id bigint primary key auto_increment,
+    patient_id bigint not null,
+    staff_id bigint not null,
     record_type varchar(50) not null,
     consultation_date datetime not null,
     complaint text,
@@ -332,9 +342,9 @@ create table consultation (
 );
 
 create table medical_record (
-    id int primary key auto_increment,
-    patient_id int not null,
-    consultation_id int not null,
+    id bigint primary key auto_increment,
+    patient_id bigint not null,
+    consultation_id bigint not null,
     medical_conditions text,
     allergies text,
     foreign key (patient_id) references person (id),
@@ -342,22 +352,22 @@ create table medical_record (
 );
 
 create table medicine_category (
-    id int primary key auto_increment,
+    id bigint primary key auto_increment,
     category_name varchar(100) not null unique
 );
 
 create table medicine (
-    id int primary key auto_increment,
+    id bigint primary key auto_increment,
     medicine_name varchar(100) not null,
-    category_id int,
+    category_id bigint,
     unit varchar(30) not null,
     foreign key (category_id) references medicine_category (id)
 );
 
 create table medicine_stock (
-    id int primary key auto_increment,
-    medicine_id int not null,
-    personnel_id int not null,
+    id bigint primary key auto_increment,
+    medicine_id bigint not null,
+    personnel_id bigint not null,
     batch_number varchar(50),
     quantity_received int not null,
     expiration_date date,
@@ -368,10 +378,10 @@ create table medicine_stock (
 );
 
 create table prescription (
-    id int primary key auto_increment,
-    consultation_id int not null,
-    medicine_stock_id int not null,
-    personnel_id int not null,
+    id bigint primary key auto_increment,
+    consultation_id bigint not null,
+    medicine_stock_id bigint not null,
+    personnel_id bigint not null,
     quantity_to_dispense int not null,
     dose varchar(100) not null,
     frequency varchar(100) not null,
@@ -467,21 +477,21 @@ insert into medicine_stock (medicine_id, personnel_id, batch_number, quantity_re
 insert into role (role, description) values
 ('Clinic Staff', 'The account for a clinic staff');
 
-insert into login (username, password, role_id, last_login_date) values
-('staff', '1234', 1, null);
+insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number) values
+('John', 'Michael', 'Doe', 'john.doe@example.com', '2015-05-15', 'Male', '123 Rizal Street, San Pedro, Laguna', '09191223222');
 
-insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number, login_id) values
-('John', 'Michael', 'Doe', 'john.doe@example.com', '2015-05-15', 'Male', '123 Rizal Street, San Pedro, Laguna', '09191223222', 1);
+insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number) values
+('Jowan', 'Carl', 'Quirona', 'jowan123@rocs.edu.ph', '2005-03-14', 'Male', 'Langkaan', '09171234501'),
+('Allison', null, 'Reyes', 'allison23@rocs.edu.ph', '2004-08-22', 'Female', 'Silang', '09171234502'),
+('Ana', 'Ramos', 'Corpuz', 'anaramos@rocs.edu.ph', '1990-05-17', 'Female', 'Tagaytay', '09171234504'),
+('Carlos', 'Diaz', 'Gona', 'carlosyolo@rocs.edu.ph', '1985-11-02', 'Male', 'General Trias', '09171234505'),
+('Elena', null, 'Bautista', 'elenabautista@rocs.edu.ph', '1980-02-11', 'Female', 'Lalaan Dos', '09171234507'),
+('Roberto', null, 'Aquino', 'robertoaquino@rocs.edu.ph', '1978-09-25', 'Male', 'Manila', '09171234508'),
+('Grace', 'Mae', 'Villar', 'villarmae@rocs.edu.ph', '1988-04-03', 'Female', 'Alfonso, Tagaytay', '09171234509'),
+('Antonio', null, 'Ferrer', 'ferrerantonio@rocs.edu.ph', '1975-06-12', 'Male', 'Silang', '09171234510');
 
-insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number, login_id) values
-('Jowan', 'Carl', 'Quirona', 'jowan123@rocs.edu.ph', '2005-03-14', 'Male', 'Langkaan', '09171234501', null),
-('Allison', null, 'Reyes', 'allison23@rocs.edu.ph', '2004-08-22', 'Female', 'Silang', '09171234502', null),
-('Ana', 'Ramos', 'Corpuz', 'anaramos@rocs.edu.ph', '1990-05-17', 'Female', 'Tagaytay', '09171234504', null),
-('Carlos', 'Diaz', 'Gona', 'carlosyolo@rocs.edu.ph', '1985-11-02', 'Male', 'General Trias', '09171234505', null),
-('Elena', null, 'Bautista', 'elenabautista@rocs.edu.ph', '1980-02-11', 'Female', 'Lalaan Dos', '09171234507', null),
-('Roberto', null, 'Aquino', 'robertoaquino@rocs.edu.ph', '1978-09-25', 'Male', 'Manila', '09171234508', null),
-('Grace', 'Mae', 'Villar', 'villarmae@rocs.edu.ph', '1988-04-03', 'Female', 'Alfonso, Tagaytay', '09171234509', null),
-('Antonio', null, 'Ferrer', 'ferrerantonio@rocs.edu.ph', '1975-06-12', 'Male', 'Silang', '09171234510', null);
+insert into login (username, password, role_id, last_login_date, person_id) values
+('staff', '1234', 1, null, 1);
 
 insert into department (department_name) values
 ('Junior High School'),
@@ -679,7 +689,7 @@ insert into prescription (consultation_id, medicine_stock_id, personnel_id, quan
 
 -- create join, function, view, procedure
 delimiter $$
-create function fn_remaining_stock (p_medicine_stock_id int)
+create function fn_remaining_stock (p_medicine_stock_id bigint)
 returns int
 reads sql data
 begin

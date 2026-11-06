@@ -361,6 +361,10 @@ alter table department
     add constraint DEPARTMENT_NAME_UQ
         unique (department_name);
 
+alter table login
+    add constraint LOGIN_PERSON_FK
+        foreign key (person_id)
+            references person (id);
 alter table position
     add constraint POSITION_PK
         primary key (id);
@@ -739,6 +743,8 @@ values ('Clinic Staff', 'The account for a clinic staff');
 
 insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number)
 values ('John', 'Michael', 'Doe', 'john.doe@example.com', date '2015-05-15', 'Male', '123 Rizal Street, San Pedro, Laguna', '09191223222');
+insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number)
+values ('John', 'Michael', 'Doe', 'john.doe@example.com', date '2015-05-15', 'Male', '123 Rizal Street, San Pedro, Laguna', '09191223222');
 
 insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number)
 values ('Jowan', 'Carl', 'Quirona', 'jowan123@rocs.edu.ph', date '2005-03-14', 'Male', 'Langkaan', '09171234501');
@@ -810,6 +816,22 @@ values (5, 5, null);
 insert into personnel_position (personnel_id, position_id, department_id)
 values (6, 6, null);
 
+insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number)
+values ('Jowan', 'Carl', 'Quirona', 'jowan123@rocs.edu.ph', date '2005-03-14', 'Male', 'Langkaan', '09171234501');
+insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number)
+values ('Allison', null, 'Reyes', 'allison23@rocs.edu.ph', date '2004-08-22', 'Female', 'Silang', '09171234502');
+insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number)
+values ('Ana', 'Ramos', 'Corpuz', 'anaramos@rocs.edu.ph', date '1990-05-17', 'Female', 'Tagaytay', '09171234504');
+insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number)
+values ('Carlos', 'Diaz', 'Gona', 'carlosyolo@rocs.edu.ph', date '1985-11-02', 'Male', 'General Trias', '09171234505');
+insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number)
+values ('Elena', null, 'Bautista', 'elenabautista@rocs.edu.ph', date '1980-02-11', 'Female', 'Lalaan Dos', '09171234507');
+insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number)
+values ('Roberto', null, 'Aquino', 'robertoaquino@rocs.edu.ph', date '1978-09-25', 'Male', 'Manila', '09171234508');
+insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number)
+values ('Grace', 'Mae', 'Villar', 'villarmae@rocs.edu.ph', date '1988-04-03', 'Female', 'Alfonso, Tagaytay', '09171234509');
+insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number)
+values ('Antonio', null, 'Ferrer', 'ferrerantonio@rocs.edu.ph', date '1975-06-12', 'Male', 'Silang', '09171234510');
 insert into section (code, name, department_id, year_level, semester, academic_year, adviser_id)
 values ('401', 'BSIT 401', 3, '2nd Year', '2nd Semester', '2026-2027', 3);
 insert into section (code, name, department_id, year_level, semester, academic_year, adviser_id)
@@ -892,22 +914,8 @@ select ms.id as medicine_stock_id,
 
 select * from inventory_view;
 
-insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number, login_id)
-values ('Jowan', 'Carl', 'Quirona', 'jowan123@rocs.edu.ph', date '2005-03-14', 'Male', 'Langkaan', '09171234501', null);
-insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number, login_id)
-values ('Allison', null, 'Reyes', 'allison23@rocs.edu.ph', date '2004-08-22', 'Female', 'Silang', '09171234502', null);
-insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number, login_id)
-values ('Ana', 'Ramos', 'Corpuz', 'anaramos@rocs.edu.ph', date '1990-05-17', 'Female', 'Tagaytay', '09171234504', null);
-insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number, login_id)
-values ('Carlos', 'Diaz', 'Gona', 'carlosyolo@rocs.edu.ph', date '1985-11-02', 'Male', 'General Trias', '09171234505', null);
-insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number, login_id)
-values ('Elena', null, 'Bautista', 'elenabautista@rocs.edu.ph', date '1980-02-11', 'Female', 'Lalaan Dos', '09171234507', null);
-insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number, login_id)
-values ('Roberto', null, 'Aquino', 'robertoaquino@rocs.edu.ph', date '1978-09-25', 'Male', 'Manila', '09171234508', null);
-insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number, login_id)
-values ('Grace', 'Mae', 'Villar', 'villarmae@rocs.edu.ph', date '1988-04-03', 'Female', 'Alfonso, Tagaytay', '09171234509', null);
-insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number, login_id)
-values ('Antonio', null, 'Ferrer', 'ferrerantonio@rocs.edu.ph', date '1975-06-12', 'Male', 'Silang', '09171234510', null);
+insert into login (username, password, role_id, last_login_date, person_id)
+values ('staff', '1234', 1, null, 1);
 
 insert into department (department_name)
 values ('Junior High School');

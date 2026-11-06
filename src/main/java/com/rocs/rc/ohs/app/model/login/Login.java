@@ -25,6 +25,11 @@ public class Login {
     /** The date and time of the user's last login. */
     private Date lastLoginDate;
 
+    /** The ID of the role of the login user. */
+    private Long roleId;
+
+    /** The ID of the person who owns the login account. */
+    private Long personId;
     /**
      * Retrieves the role assigned to the login user.
      *
@@ -113,5 +118,41 @@ public class Login {
      */
     public void setLastLoginDate(Date newLastLoginDate) {
         this.lastLoginDate = newLastLoginDate;
+    }
+
+    /**
+     * Retrieves the ID of the role of the login user.
+     *
+     * @return The ID of the role of the login user.
+     */
+    public Long getRoleId() {
+        return roleId;
+    }
+
+    /**
+     * Sets the ID of the role of the login user.
+     *
+     * @param newRoleId The ID of the role of the login user.
+     */
+    public void setRoleId(Long newRoleId) {
+        this.roleId = newRoleId;
+    }
+
+    /**
+     * Retrieves the ID of the person who owns the login account.
+     *
+     * @return The ID of the person who owns the login account.
+     */
+    public Long getPersonId() {
+        return personId;
+    }
+
+    /**
+     * Sets the ID of the person who owns the login account.
+     *
+     * @param newPersonId The ID of the person who owns the login account.
+     */
+    public void setPersonId(Long newPersonId) {
+        this.personId = newPersonId;
     }
 }
