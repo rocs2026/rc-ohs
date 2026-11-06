@@ -1,3 +1,4 @@
+
 package com.rocs.rc.ohs.app.model.login;
 
 import com.rocs.rc.ohs.app.model.person.Person;
@@ -30,6 +31,7 @@ public class Login {
 
     /** The ID of the person who owns the login account. */
     private Long personId;
+
     /**
      * Retrieves the role assigned to the login user.
      *

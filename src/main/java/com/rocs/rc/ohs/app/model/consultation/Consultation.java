@@ -1,3 +1,4 @@
+
 package com.rocs.rc.ohs.app.model.consultation;
 
 import com.rocs.rc.ohs.app.model.enums.recordtype.RecordType;

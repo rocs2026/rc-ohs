@@ -2,7 +2,6 @@
 package com.rocs.rc.ohs.app.model.student;
 
 import com.rocs.rc.ohs.app.model.section.Section;
-import com.rocs.rc.ohs.app.model.student.Student;
 import java.util.Date;
 
 /**

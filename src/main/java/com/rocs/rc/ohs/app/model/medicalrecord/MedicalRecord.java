@@ -1,3 +1,4 @@
+
 package com.rocs.rc.ohs.app.model.medicalrecord;
 
 import com.rocs.rc.ohs.app.model.consultation.Consultation;
