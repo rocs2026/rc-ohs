@@ -1,7 +1,6 @@
 package com.rocs.rc.ohs.app.model.medicine;
 
 /**
- * Represents a medicine in the clinic.
  * Represents a medicine available in the clinic.
  */
 public class Medicine {
@@ -12,8 +11,6 @@ public class Medicine {
     /** The name of the medicine. */
     private String medicineName;
 
-    /** The ID of the category of the medicine. */
-    private Long categoryId;
     /** The category of the medicine. */
     private MedicineCategory category;
 
@@ -58,26 +55,18 @@ public class Medicine {
 
     /**
      * Retrieves the category of the medicine.
-     * Retrieves the ID of the category of the medicine.
      *
      * @return the category of the medicine.
-     * @return the ID of the category of the medicine.
      */
     public MedicineCategory getCategory() {
         return category;
-    public Long getCategoryId() {
-        return categoryId;
     }
 
     /**
-     * Sets the ID of the category of the medicine.
      * Sets the category of the medicine.
      *
-     * @param newCategoryId the ID of the category of the medicine.
      * @param newCategory the category of the medicine.
      */
-    public void setCategoryId(Long newCategoryId) {
-        this.categoryId = newCategoryId;
     public void setCategory(MedicineCategory newCategory) {
         this.category = newCategory;
     }

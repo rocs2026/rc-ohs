@@ -2,6 +2,7 @@
 package com.rocs.rc.ohs.app.model.section;
 
 import com.rocs.rc.ohs.app.model.department.Department;
+import com.rocs.rc.ohs.app.model.personnel.Personnel;
 
 /**
  * Represents a section in the system.
