@@ -24,7 +24,7 @@ public class Department {
         return departmentName;
     }
 
-    /** Sets the name of this department. */
+    /** Updates the department name that appears in OHS records. */
     public void setDepartmentName(String newDepartmentName) {
         this.departmentName = newDepartmentName;
     }
