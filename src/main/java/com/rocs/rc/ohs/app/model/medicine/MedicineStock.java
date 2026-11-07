@@ -6,7 +6,8 @@ import java.time.LocalDateTime;
 
 /**
  * Represents a medicine stock batch in the clinic.
- */public class MedicineStock {
+ */
+public class MedicineStock {
 
     /** The unique ID of the medicine stock. */
     private Long id;
