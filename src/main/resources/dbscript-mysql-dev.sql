@@ -175,107 +175,107 @@ create table prescription (
 
 -- create test data
 insert into role (role, description) values
-    ('Clinic Staff', 'The account for a clinic staff');
+('Clinic Staff', 'The account for a clinic staff');
 
 insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number) values
-    ('John', 'Michael', 'Doe', 'john.doe@example.com', '2015-05-15', 'Male', '123 Rizal Street, San Pedro, Laguna', '09191223222');
+('John', 'Michael', 'Doe', 'john.doe@example.com', '2015-05-15', 'Male', '123 Rizal Street, San Pedro, Laguna', '09191223222');
 
 insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number) values
-    ('Jowan', 'Carl', 'Quirona', 'jowan123@rocs.edu.ph', '2005-03-14', 'Male', 'Langkaan', '09171234501'),
-    ('Allison', null, 'Reyes', 'allison23@rocs.edu.ph', '2004-08-22', 'Female', 'Silang', '09171234502'),
-    ('Ana', 'Ramos', 'Corpuz', 'anaramos@rocs.edu.ph', '1990-05-17', 'Female', 'Tagaytay', '09171234504'),
-    ('Carlos', 'Diaz', 'Gona', 'carlosyolo@rocs.edu.ph', '1985-11-02', 'Male', 'General Trias', '09171234505'),
-    ('Elena', null, 'Bautista', 'elenabautista@rocs.edu.ph', '1980-02-11', 'Female', 'Lalaan Dos', '09171234507'),
-    ('Roberto', null, 'Aquino', 'robertoaquino@rocs.edu.ph', '1978-09-25', 'Male', 'Manila', '09171234508'),
-    ('Grace', 'Mae', 'Villar', 'villarmae@rocs.edu.ph', '1988-04-03', 'Female', 'Alfonso, Tagaytay', '09171234509'),
-    ('Antonio', null, 'Ferrer', 'ferrerantonio@rocs.edu.ph', '1975-06-12', 'Male', 'Silang', '09171234510');
+('Jowan', 'Carl', 'Quirona', 'jowan123@rocs.edu.ph', '2005-03-14', 'Male', 'Langkaan', '09171234501'),
+('Allison', null, 'Reyes', 'allison23@rocs.edu.ph', '2004-08-22', 'Female', 'Silang', '09171234502'),
+('Ana', 'Ramos', 'Corpuz', 'anaramos@rocs.edu.ph', '1990-05-17', 'Female', 'Tagaytay', '09171234504'),
+('Carlos', 'Diaz', 'Gona', 'carlosyolo@rocs.edu.ph', '1985-11-02', 'Male', 'General Trias', '09171234505'),
+('Elena', null, 'Bautista', 'elenabautista@rocs.edu.ph', '1980-02-11', 'Female', 'Lalaan Dos', '09171234507'),
+('Roberto', null, 'Aquino', 'robertoaquino@rocs.edu.ph', '1978-09-25', 'Male', 'Manila', '09171234508'),
+('Grace', 'Mae', 'Villar', 'villarmae@rocs.edu.ph', '1988-04-03', 'Female', 'Alfonso, Tagaytay', '09171234509'),
+('Antonio', null, 'Ferrer', 'ferrerantonio@rocs.edu.ph', '1975-06-12', 'Male', 'Silang', '09171234510');
 
 insert into login (username, password, role_id, last_login_date, person_id) values
-    ('staff', '1234', 1, null, 1);
+('staff', '1234', 1, null, 1);
 
 insert into department (department_name) values
-    ('Junior High School'),
-    ('Senior High School'),
-    ('College');
+('Junior High School'),
+('Senior High School'),
+('College');
 
 insert into position (position_name, category, department_id) values
-    ('Nurse', 'Clinic Staff', null),
-    ('Doctor', 'Clinic Staff', null),
-    ('College Teacher', 'RC Employee', 3),
-    ('Adviser', 'RC Employee', null),
-    ('Cashier', 'RC Employee', null),
-    ('Maintenance Personnel', 'Community', null);
+('Nurse', 'Clinic Staff', null),
+('Doctor', 'Clinic Staff', null),
+('College Teacher', 'RC Employee', 3),
+('Adviser', 'RC Employee', null),
+('Cashier', 'RC Employee', null),
+('Maintenance Personnel', 'Community', null);
 
 insert into personnel (person_id, employee_id) values
-        (4, 'EMP-001'),
-        (5, 'EMP-002'),
-        (6, 'EMP-003'),
-        (7, 'EMP-004'),
-        (8, 'EMP-005'),
-        (9, null);
+(4, 'EMP-001'),
+(5, 'EMP-002'),
+(6, 'EMP-003'),
+(7, 'EMP-004'),
+(8, 'EMP-005'),
+(9, null);
 
 insert into personnel_position (personnel_id, position_id, department_id) values
-    (1, 1, null),
-    (2, 2, null),
-    (3, 3, 3),
-    (3, 4, 3),
-    (4, 3, 3),
-    (4, 4, 3),
-    (5, 5, null),
-    (6, 6, null);
+(1, 1, null),
+(2, 2, null),
+(3, 3, 3),
+(3, 4, 3),
+(4, 3, 3),
+(4, 4, 3),
+(5, 5, null),
+(6, 6, null);
 
 insert into section (code, name, department_id, year_level, semester, academic_year, adviser_id) values
-    ('401', 'BSIT 401', 3, '2nd Year', '2nd Semester', '2026-2027', 3),
-    ('601', 'BSIT 601', 3, '3rd Year', '2nd Semester', '2026-2027', 4);
+('401', 'BSIT 401', 3, '2nd Year', '2nd Semester', '2026-2027', 3),
+('601', 'BSIT 601', 3, '3rd Year', '2nd Semester', '2026-2027', 4);
 
 insert into student (person_id, student_number) values
-    (2, 'CT22-0166'),
-    (3, 'CT23-0987');
+(2, 'CT22-0166'),
+(3, 'CT23-0987');
 
 insert into student_section (student_id, section_id) values
-    (1, 1),
-    (2, 2);
+(1, 1),
+(2, 2);
 
 insert into consultation (patient_id, staff_id, record_type, consultation_date, complaint, diagnosis, treatment, action_taken, remarks) values
-    (2, 2, 'Check-up', '2026-10-20 09:30:00', 'Cough, sore throat and fever', 'Bacterial throat infection', 'Antibiotic course and rest', 'Prescribed medicine', 'Return after 7 days'),
-    (9, 1, 'Follow-up', '2026-10-22 14:00:00', 'Dizziness', 'Mild dehydration', 'Drink plenty of water and rest', 'Advised rest', 'No medicine needed');
+(2, 2, 'Check-up', '2026-10-20 09:30:00', 'Cough, sore throat and fever', 'Bacterial throat infection', 'Antibiotic course and rest', 'Prescribed medicine', 'Return after 7 days'),
+(9, 1, 'Follow-up', '2026-10-22 14:00:00', 'Dizziness', 'Mild dehydration', 'Drink plenty of water and rest', 'Advised rest', 'No medicine needed');
 
 insert into medical_record (patient_id, consultation_id, medical_conditions, allergies) values
-    (2, 1, 'Asthma', null),
-    (9, 2, 'Hypertension', null);
+(2, 1, 'Asthma', null),
+(9, 2, 'Hypertension', null);
 
 insert into medicine_category (category_name) values
-    ('Analgesic'),
-    ('Antibiotic');
+('Analgesic'),
+('Antibiotic');
 
 insert into medicine (medicine_name, category_id, unit) values
-    ('Paracetamol 500mg', 1, 'tablet'),
-    ('Amoxicillin 500mg', 2, 'capsule');
+('Paracetamol 500mg', 1, 'tablet'),
+('Amoxicillin 500mg', 2, 'capsule');
 
 insert into medicine_stock (medicine_id, personnel_id, batch_number, quantity_received, expiration_date, status) values
-    (1, 1, 'B-001', 50, '2027-12-31', 'Enough'),
-    (2, 1, 'B-002', 50, '2027-06-30', 'Enough');
+(1, 1, 'B-001', 50, '2027-12-31', 'Enough'),
+(2, 1, 'B-002', 50, '2027-06-30', 'Enough');
 
 insert into prescription (consultation_id, medicine_stock_id, personnel_id, quantity_to_dispense, dose, frequency, instructions) values
-    (1, 1, 2, 1, '500mg', 'Every 6 hours', 'Take after meals'),
-    (1, 2, 2, 2, '500mg', '3 times a day', 'Finish all capsules');
+(1, 1, 2, 1, '500mg', 'Every 6 hours', 'Take after meals'),
+(1, 2, 2, 2, '500mg', '3 times a day', 'Finish all capsules');
 
 -- create join, function, view, procedure
 delimiter $$
 create function fn_remaining_stock (p_medicine_stock_id bigint)
-    returns int
-    reads sql data
+returns int
+reads sql data
 begin
     declare v_remaining int;
 
-select ms.quantity_received - coalesce(sum(p.quantity_to_dispense), 0)
-into v_remaining
-from medicine_stock ms
-         left join prescription p on p.medicine_stock_id = ms.id
-where ms.id = p_medicine_stock_id
-group by ms.id, ms.quantity_received;
+    select ms.quantity_received - coalesce(sum(p.quantity_to_dispense), 0)
+      into v_remaining
+      from medicine_stock ms
+      left join prescription p on p.medicine_stock_id = ms.id
+     where ms.id = p_medicine_stock_id
+     group by ms.id, ms.quantity_received;
 
-return v_remaining;
+    return v_remaining;
 end$$
 delimiter ;
 
@@ -293,9 +293,9 @@ select ms.id as medicine_stock_id,
        fn_remaining_stock(ms.id) as remaining_quantity,
        ms.expiration_date,
        ms.status
-from medicine_stock ms
-         join medicine m on m.id = ms.medicine_id
-         left join medicine_category mc on mc.id = m.category_id;
+  from medicine_stock ms
+  join medicine m on m.id = ms.medicine_id
+  left join medicine_category mc on mc.id = m.category_id;
 
 select * from inventory_view;
 
