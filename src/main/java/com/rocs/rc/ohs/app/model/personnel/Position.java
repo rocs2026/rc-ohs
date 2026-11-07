@@ -1,4 +1,3 @@
-
 package com.rocs.rc.ohs.app.model.personnel;
 
 import com.rocs.rc.ohs.app.model.department.Department;
