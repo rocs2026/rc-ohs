@@ -18,34 +18,42 @@ public class Position {
     private Department department;
 
 
+    /** Returns the unique ID assigned to this position. */
     public Long getPositionId() {
         return id;
     }
 
+    /** Sets the unique ID of this position. */
     public void setPositionId(Long newPositionId) {
         this.id = newPositionId;
     }
 
+    /** Returns the title of this position, such as the job title shown in OHS records. */
     public String getPositionName() {
         return positionName;
     }
 
+    /** Sets the title of this position. */
     public void setPositionName(String newPositionName) {
         this.positionName = newPositionName;
     }
 
+    /** Returns the category this position is grouped under. */
     public String getCategory() {
         return category;
     }
 
+    /** Sets the category this position is grouped under. */
     public void setCategory(String newCategory) {
         this.category = newCategory;
     }
 
+    /** Returns the department this position belongs to. */
     public Department getDepartment() {
         return department;
     }
 
+    /** Sets the department this position belongs to. */
     public void setDepartment(Department newDepartment) {
         this.department = newDepartment;
     }

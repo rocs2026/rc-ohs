@@ -4,8 +4,9 @@ import com.rocs.rc.ohs.app.model.personnel.Personnel;
 
 import java.time.LocalDateTime;
 
-/** Represents a medicine stock batch in the clinic.*/
-public class MedicineStock {
+/**
+ * Represents a medicine stock batch in the clinic.
+ */public class MedicineStock {
 
     /** The unique ID of the medicine stock. */
     private Long id;
