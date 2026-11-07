@@ -12,32 +12,32 @@ public class PersonnelPosition {
     /** The position assigned to the personnel. */
     private Position position;
 
-    /** Returns the unique ID of this personnel position. */
+    /** @return the personnel position ID */
     public Long getId(){
         return id;
     }
 
-    /** Sets the unique ID of this personnel position. */
+    /** @param newId the new personnel position ID */
     public void setId(Long newId){
         this.id = newId;
     }
 
-    /** Returns the personnel assigned to this position. */
+    /** @return the assigned personnel */
     public Personnel getPersonnel() {
         return personnel;
     }
 
-    /** Sets the personnel assigned to this position. */
+    /** @param newPersonnel the personnel to assign */
     public void setPersonnel(Personnel newPersonnel) {
         this.personnel = newPersonnel;
     }
 
-    /** Returns the position assigned to the personnel. */
+    /** @return the assigned position */
     public Position getPosition() {
         return position;
     }
 
-    /** Sets the position assigned to the personnel. */
+    /** @param newPosition the position to assign */
     public void setPosition(Position newPosition) {
         this.position = newPosition;
     }

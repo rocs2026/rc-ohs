@@ -31,83 +31,83 @@ public class Section {
     private Personnel adviser;
 
 
-    /** Returns the unique ID of this section. */
+    /** @return the section ID */
     public Long getId() {
         return id;
     }
 
 
-    /** Sets the unique ID of this section. */
+    /** @param newId the new section ID */
     public void setId(Long newId) {
         this.id = newId;
     }
 
-    /** Returns the short code that identifies this section. */
+    /** @return the section code */
     public String getCode() {
         return code;
     }
 
-    /** Sets the short code that identifies this section. */
+    /** @param newCode the new section code */
     public void setCode(String newCode) {
         this.code = newCode;
     }
 
-    /** Returns the full name of this section. */
+    /** @return the section name */
     public String getName() {
         return name;
     }
 
-    /** Sets the full name of this section. */
+    /** @param newName the new section name */
     public void setName(String newName) {
         this.name = newName;
     }
 
-    /** Returns the department this section belongs to. */
+    /** @return the owning department */
     public Department getDepartment() {
         return department;
     }
 
-    /** Sets the department this section belongs to. */
+    /** @param newDepartment the department to assign */
     public void setDepartment(Department newDepartment) {
         this.department = newDepartment;
     }
 
-    /** Returns the year level of the students in this section. */
+    /** @return the year level */
     public Integer getYearLevel() {
         return yearLevel;
     }
 
-    /** Sets the year level of the students in this section. */
+    /** @param newYearLevel the new year level */
     public void setYearLevel(Integer newYearLevel) {
         this.yearLevel = newYearLevel;
     }
 
-    /** Returns the semester in which this section is offered. */
+    /** @return the semester */
     public String getSemester() {
         return semester;
     }
 
-    /** Sets the semester in which this section is offered. */
+    /** @param newSemester the new semester */
     public void setSemester(String newSemester) {
         this.semester = newSemester;
     }
 
-    /** Returns the academic year this section belongs to, such as 2026-2027. */
+    /** @return the academic year */
     public String getAcademicYear() {
         return academicYear;
     }
 
-    /** Sets the academic year this section belongs to. */
+    /** @param newAcademicYear the new academic year */
     public void setAcademicYear(String newAcademicYear) {
         this.academicYear = newAcademicYear;
     }
 
-    /** Returns the personnel member assigned as adviser of this section. */
+    /** @return the section adviser */
     public Personnel getAdviser() {
         return adviser;
     }
 
-    /** Sets the personnel member assigned as adviser of this section. */
+    /** @param newAdviser the personnel member to assign as adviser */
     public void setAdviser(Personnel newAdviser) {
         this.adviser = newAdviser;
     }

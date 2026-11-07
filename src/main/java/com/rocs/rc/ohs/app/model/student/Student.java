@@ -16,31 +16,32 @@ public class Student {
     private String studentNumber;
 
 
+    /** @return the student ID */
     public Long getId() {
         return id;
     }
 
-    /** Sets the unique ID of this student record. */
+    /** @param newId the new student ID */
     public void setId(Long newId) {
         this.id = newId;
     }
 
-    /** Returns the person details linked to this student. */
+    /** @return the linked person */
     public Person getPerson() {
         return person;
     }
 
-    /** Sets the person details linked to this student. */
+    /** @param newPerson the person to link */
     public void setPerson(Person newPerson) {
         this.person = newPerson;
     }
 
-    /** Returns the student number issued by the school. */
+    /** @return the student number */
     public String getStudentNumber() {
         return studentNumber;
     }
 
-    /** Sets the student number issued by the school. */
+    /** @param newStudentNumber the new student number */
     public void setStudentNumber(String newStudentNumber) {
         this.studentNumber = newStudentNumber;
     }

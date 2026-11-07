@@ -9,22 +9,22 @@ public class Department {
     /** The name of the department. */
     private String departmentName;
 
-    /** Returns the unique ID assigned to this department. */
+    /** @return the department ID */
     public Long getDepartmentId() {
         return id;
     }
 
-    /** Sets the unique ID of this department. */
+    /** @param newDepartmentId the new department ID */
     public void setDepartmentId(Long newDepartmentId) {
         this.id = newDepartmentId;
     }
 
-    /** Returns the name of this department as shown in OHS records. */
+    /** @return the department name */
     public String getDepartmentName() {
         return departmentName;
     }
 
-    /** Updates the department name that appears in OHS records. */
+    /** @param newDepartmentName the new department name */
     public void setDepartmentName(String newDepartmentName) {
         this.departmentName = newDepartmentName;
     }
