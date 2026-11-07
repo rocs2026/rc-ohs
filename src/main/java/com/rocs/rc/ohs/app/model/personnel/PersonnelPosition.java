@@ -13,12 +13,12 @@ public class PersonnelPosition {
     private Position position;
 
     /** @return the personnel position ID */
-    public Long getId(){
+    public Long getId() {
         return id;
     }
 
     /** @param newId the new personnel position ID */
-    public void setId(Long newId){
+    public void setId(Long newId) {
         this.id = newId;
     }
 
