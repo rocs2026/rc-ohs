@@ -170,7 +170,7 @@ create table prescription (
     foreign key (consultation_id) references consultation (id),
     foreign key (medicine_stock_id) references medicine_stock (id),
     foreign key (personnel_id) references personnel (id),
-    Check (quantity_to_dispense > 0)
+    check (quantity_to_dispense > 0)
 );
 
 -- create test data
