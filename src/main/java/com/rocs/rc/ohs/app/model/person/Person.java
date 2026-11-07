@@ -1,13 +1,10 @@
-
 package com.rocs.rc.ohs.app.model.person;
 
 import com.rocs.rc.ohs.app.model.enums.gender.Gender;
 
 import java.time.LocalDateTime;
 
-/**
- * Represents a person in the system.
- */
+/** Represents a person in the system.*/
 public class Person {
 
     /** The unique ID of the person. */

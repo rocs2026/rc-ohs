@@ -2,6 +2,7 @@
 drop user if exists 'rcis'@'localhost';
 drop database if exists rcis;
 
+
 -- create database
 create database rcis;
 
@@ -19,690 +20,263 @@ use rcis;
 
 -- create tables
 create table role (
-    id bigint primary key auto_increment,
-    role varchar(128),
-    description varchar(64)
-    id bigint primary key auto_increment,
-    role varchar(128),
-    description varchar(64)
-);
-
-create database if not exists rcis;
-use rcis;
-create table login (
-    id int primary key auto_increment,
-    username varchar(16),
-    password varchar(64),
-    role_id int,
-    last_login_date timestamp null,
-    foreign key (role_id) references role (id)
+                      id bigint primary key auto_increment,
+                      role varchar(128),
+                      description varchar(64)
 );
 
 create table person (
-    id bigint primary key auto_increment,
-    id bigint primary key auto_increment,
-    first_name varchar(16),
-    middle_name varchar(16),
-    last_name varchar(64),
-    email varchar(128),
-    date_of_birth date,
-    gender enum('Male', 'Female'),
-    address varchar(255),
-    contact_number varchar(16)
-);
-
-create table login (
-    id bigint primary key auto_increment,
-    username varchar(16),
-    password varchar(64),
-    role_id bigint,
-    last_login_date timestamp null,
-    person_id bigint not null,
-    foreign key (role_id) references role (id),
-    foreign key (person_id) references person (id)
-);
-
-create table department (
-    department_id bigint primary key auto_increment,
-    department_name varchar(30) not null unique
-);
-
-create table position (
-    id bigint primary key auto_increment,
-    position_name varchar(100) not null,
-    category varchar(20) not null,
-    department_id bigint,
-    foreign key (department_id) references department (department_id)
-);
-
-create table personnel (
-    id bigint primary key auto_increment,
-    person_id bigint not null unique,
-    employee_id varchar(30) unique,
-    foreign key (person_id) references person (id)
-);
-
-create table personnel_position (
-    personnel_id bigint not null,
-    position_id bigint not null,
-    department_id bigint,
-    primary key (personnel_id, position_id),
-    foreign key (personnel_id) references personnel (id),
-    foreign key (position_id) references position (id),
-    foreign key (department_id) references department (department_id)
-);
-
-create table section (
-    id bigint primary key auto_increment,
-    code varchar(30) not null,
-    name varchar(100) not null,
-    department_id bigint not null,
-    year_level varchar(30) not null,
-    semester varchar(30),
-    academic_year varchar(20) not null,
-    adviser_id bigint,
-    foreign key (department_id) references department (department_id),
-    foreign key (adviser_id) references personnel (id)
-);
-
-create table student (
-    id bigint primary key auto_increment,
-    person_id bigint not null unique,
-    student_number varchar(30) not null unique,
-    foreign key (person_id) references person (id)
-);
-
-create table student_section (
-    id bigint primary key auto_increment,
-    student_id bigint not null,
-    section_id bigint not null,
-    enrolled_date timestamp not null default current_timestamp,
-    foreign key (student_id) references student (id),
-    foreign key (section_id) references section (id)
-);
-
-create table consultation (
-    id bigint primary key auto_increment,
-    patient_id bigint not null,
-    staff_id bigint not null,
-    record_type varchar(50) not null,
-    consultation_date datetime not null,
-    complaint text,
-    diagnosis text not null,
-    treatment text not null,
-    action_taken text,
-    remarks text,
-    foreign key (patient_id) references person (id),
-    foreign key (staff_id) references personnel (id),
-    check (record_type in ('Check-up', 'Follow-up'))
-);
-
-create table medical_record (
-    id bigint primary key auto_increment,
-    patient_id bigint not null,
-    consultation_id bigint not null,
-    medical_conditions text,
-    allergies text,
-    foreign key (patient_id) references person (id),
-    foreign key (consultation_id) references consultation (id)
-);
-
-create table medicine_category (
-    id bigint primary key auto_increment,
-    category_name varchar(100) not null unique
-);
-
-create table medicine (
-    id bigint primary key auto_increment,
-    medicine_name varchar(100) not null,
-    category_id bigint,
-    unit varchar(30) not null,
-    foreign key (category_id) references medicine_category (id)
-);
-
-create table medicine_stock (
-    id bigint primary key auto_increment,
-    medicine_id bigint not null,
-    personnel_id bigint not null,
-    batch_number varchar(50),
-    quantity_received int not null,
-    expiration_date date,
-    status varchar(20) not null,
-    foreign key (medicine_id) references medicine (id),
-    foreign key (personnel_id) references personnel (id),
-    check (quantity_received >= 0)
-);
-
-create table prescription (
-    id bigint primary key auto_increment,
-    consultation_id bigint not null,
-    medicine_stock_id bigint not null,
-    personnel_id bigint not null,
-    quantity_to_dispense int not null,
-    dose varchar(100) not null,
-    frequency varchar(100) not null,
-    instructions text,
-    foreign key (consultation_id) references consultation (id),
-    foreign key (medicine_stock_id) references medicine_stock (id),
-    foreign key (personnel_id) references personnel (id),
-    check (quantity_to_dispense > 0)
-                        person_id int auto_increment primary key,
-                        last_name varchar(50),
-                        first_name varchar(50),
-                        middle_name varchar(50),
-                        email varchar(100),
+                        id bigint primary key auto_increment,
+                        first_name varchar(16),
+                        middle_name varchar(16),
+                        last_name varchar(64),
+                        email varchar(128),
                         date_of_birth date,
-                        gender varchar(20),
+                        gender enum('Male', 'Female'),
                         address varchar(255),
-                        contact_number varchar(20)
-);
-
-create table staff (
-                       staff_id int auto_increment primary key,
-                       person_id int not null unique,
-                       staff_number varchar(20) not null unique,
-                       position varchar(50),
-                       department varchar(100),
-
-                       constraint fk_staff_person
-                           foreign key (person_id)
-                               references person(person_id)
-                               on update cascade
-                               on delete restrict
-);
-
-create table medicine (
-                          medicine_id int auto_increment primary key,
-                          medicine_name varchar(100) not null,
-                          category varchar(50),
-                          unit varchar(30)
-);
-
-create table inventory (
-                           item_id int auto_increment primary key,
-                           medicine_id int not null,
-                           staff_id int not null,
-                           batch_number varchar(50),
-                           stock_quantity int not null default 0,
-                           minimum_stock_level int not null default 0,
-                           expiration_date date,
-
-                           constraint fk_inventory_medicine
-                               foreign key (medicine_id)
-                                   references medicine(medicine_id)
-                                   on update cascade
-                                   on delete restrict,
-
-                           constraint fk_inventory_staff
-                               foreign key (staff_id)
-                                   references staff(staff_id)
-                                   on update cascade
-                                   on delete restrict,
-
-                           constraint chk_stock_quantity
-                               check (stock_quantity >= 0),
-
-                           constraint chk_minimum_stock
-                               check (minimum_stock_level >= 0)
-    id int primary key auto_increment,
-    first_name varchar(16),
-    middle_name varchar(16),
-    last_name varchar(64),
-    email varchar(128),
-    date_of_birth date,
-    gender enum('Male', 'Female'),
-    address varchar(255),
-    contact_number varchar(16)
+                        contact_number varchar(16)
 );
 
 create table login (
-    id bigint primary key auto_increment,
-    username varchar(16),
-    password varchar(64),
-    role_id bigint,
-    last_login_date timestamp null,
-    person_id bigint not null,
-    foreign key (role_id) references role (id),
-    foreign key (person_id) references person (id)
+                       id bigint primary key auto_increment,
+                       username varchar(16),
+                       password varchar(64),
+                       role_id bigint,
+                       last_login_date timestamp null,
+                       person_id bigint not null,
+                       foreign key (role_id) references role (id),
+                       foreign key (person_id) references person (id)
 );
 
 create table department (
-    department_id bigint primary key auto_increment,
-    department_name varchar(30) not null unique
+                            department_id bigint primary key auto_increment,
+                            department_name varchar(30) not null unique
 );
 
 create table position (
-    id bigint primary key auto_increment,
-    position_name varchar(100) not null,
-    category varchar(20) not null,
-    department_id bigint,
-    foreign key (department_id) references department (department_id)
+                          id bigint primary key auto_increment,
+                          position_name varchar(100) not null,
+                          category varchar(20) not null,
+                          department_id bigint,
+                          foreign key (department_id) references department (department_id)
 );
 
 create table personnel (
-    id bigint primary key auto_increment,
-    person_id bigint not null unique,
-    employee_id varchar(30) unique,
-    foreign key (person_id) references person (id)
+                           id bigint primary key auto_increment,
+                           person_id bigint not null unique,
+                           employee_id varchar(30) unique,
+                           foreign key (person_id) references person (id)
 );
 
 create table personnel_position (
-    personnel_id bigint not null,
-    position_id bigint not null,
-    department_id bigint,
-    primary key (personnel_id, position_id),
-    foreign key (personnel_id) references personnel (id),
-    foreign key (position_id) references position (id),
-    foreign key (department_id) references department (department_id)
+                                    personnel_id bigint not null,
+                                    position_id bigint not null,
+                                    department_id bigint,
+                                    primary key (personnel_id, position_id),
+                                    foreign key (personnel_id) references personnel (id),
+                                    foreign key (position_id) references position (id),
+                                    foreign key (department_id) references department (department_id)
 );
 
 create table section (
-    id bigint primary key auto_increment,
-    code varchar(30) not null,
-    name varchar(100) not null,
-    department_id bigint not null,
-    year_level varchar(30) not null,
-    semester varchar(30),
-    academic_year varchar(20) not null,
-    adviser_id bigint,
-    foreign key (department_id) references department (department_id),
-    foreign key (adviser_id) references personnel (id)
+                         id bigint primary key auto_increment,
+                         code varchar(30) not null,
+                         name varchar(100) not null,
+                         department_id bigint not null,
+                         year_level varchar(30) not null,
+                         semester varchar(30),
+                         academic_year varchar(20) not null,
+                         adviser_id bigint,
+                         foreign key (department_id) references department (department_id),
+                         foreign key (adviser_id) references personnel (id)
 );
 
 create table student (
-    id bigint primary key auto_increment,
-    person_id bigint not null unique,
-    student_number varchar(30) not null unique,
-    foreign key (person_id) references person (id)
+                         id bigint primary key auto_increment,
+                         person_id bigint not null unique,
+                         student_number varchar(30) not null unique,
+                         foreign key (person_id) references person (id)
 );
 
 create table student_section (
-    id bigint primary key auto_increment,
-    student_id bigint not null,
-    section_id bigint not null,
-    enrolled_date timestamp not null default current_timestamp,
-    foreign key (student_id) references student (id),
-    foreign key (section_id) references section (id)
+                                 id bigint primary key auto_increment,
+                                 student_id bigint not null,
+                                 section_id bigint not null,
+                                 enrolled_date timestamp not null default current_timestamp,
+                                 foreign key (student_id) references student (id),
+                                 foreign key (section_id) references section (id)
 );
 
 create table consultation (
-    id bigint primary key auto_increment,
-    patient_id bigint not null,
-    staff_id bigint not null,
-    record_type varchar(50) not null,
-    consultation_date datetime not null,
-    complaint text,
-    diagnosis text not null,
-    treatment text not null,
-    action_taken text,
-    remarks text,
-    foreign key (patient_id) references person (id),
-    foreign key (staff_id) references personnel (id),
-    check (record_type in ('Check-up', 'Follow-up'))
+                              id bigint primary key auto_increment,
+                              patient_id bigint not null,
+                              staff_id bigint not null,
+                              record_type varchar(50) not null,
+                              consultation_date datetime not null,
+                              complaint text,
+                              diagnosis text not null,
+                              treatment text not null,
+                              action_taken text,
+                              remarks text,
+                              foreign key (patient_id) references person (id),
+                              foreign key (staff_id) references personnel (id),
+                              check (record_type in ('Check-up', 'Follow-up'))
 );
 
 create table medical_record (
-    id bigint primary key auto_increment,
-    patient_id bigint not null,
-    consultation_id bigint not null,
-    medical_conditions text,
-    allergies text,
-    foreign key (patient_id) references person (id),
-    foreign key (consultation_id) references consultation (id)
+                                id bigint primary key auto_increment,
+                                patient_id bigint not null,
+                                consultation_id bigint not null,
+                                medical_conditions text,
+                                allergies text,
+                                foreign key (patient_id) references person (id),
+                                foreign key (consultation_id) references consultation (id)
 );
 
 create table medicine_category (
-    id bigint primary key auto_increment,
-    category_name varchar(100) not null unique
+                                   id bigint primary key auto_increment,
+                                   category_name varchar(100) not null unique
 );
 
 create table medicine (
-    id bigint primary key auto_increment,
-    medicine_name varchar(100) not null,
-    category_id bigint,
-    unit varchar(30) not null,
-    foreign key (category_id) references medicine_category (id)
+                          id bigint primary key auto_increment,
+                          medicine_name varchar(100) not null,
+                          category_id bigint,
+                          unit varchar(30) not null,
+                          foreign key (category_id) references medicine_category (id)
 );
 
 create table medicine_stock (
-    id bigint primary key auto_increment,
-    medicine_id bigint not null,
-    personnel_id bigint not null,
-    batch_number varchar(50),
-    quantity_received int not null,
-    expiration_date date,
-    status varchar(20) not null,
-    foreign key (medicine_id) references medicine (id),
-    foreign key (personnel_id) references personnel (id),
-    check (quantity_received >= 0)
+                                id bigint primary key auto_increment,
+                                medicine_id bigint not null,
+                                personnel_id bigint not null,
+                                batch_number varchar(50),
+                                quantity_received int not null,
+                                expiration_date date,
+                                status varchar(20) not null,
+                                foreign key (medicine_id) references medicine (id),
+                                foreign key (personnel_id) references personnel (id),
+                                check (quantity_received >= 0)
 );
 
 create table prescription (
-    id bigint primary key auto_increment,
-    consultation_id bigint not null,
-    medicine_stock_id bigint not null,
-    personnel_id bigint not null,
-    quantity_to_dispense int not null,
-    dose varchar(100) not null,
-    frequency varchar(100) not null,
-    instructions text,
-    foreign key (consultation_id) references consultation (id),
-    foreign key (medicine_stock_id) references medicine_stock (id),
-    foreign key (personnel_id) references personnel (id),
-    check (quantity_to_dispense > 0)
+                              id bigint primary key auto_increment,
+                              consultation_id bigint not null,
+                              medicine_stock_id bigint not null,
+                              personnel_id bigint not null,
+                              quantity_to_dispense int not null,
+                              dose varchar(100) not null,
+                              frequency varchar(100) not null,
+                              instructions text,
+                              foreign key (consultation_id) references consultation (id),
+                              foreign key (medicine_stock_id) references medicine_stock (id),
+                              foreign key (personnel_id) references personnel (id),
+                              check (quantity_to_dispense > 0)
 );
 
 -- create test data
 insert into role (role, description) values
-('Clinic Staff', 'The account for a clinic staff');
+    ('Clinic Staff', 'The account for a clinic staff');
 
 insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number) values
-('John', 'Michael', 'Doe', 'john.doe@example.com', '2015-05-15', 'Male', '123 Rizal Street, San Pedro, Laguna', '09191223222');
+    ('John', 'Michael', 'Doe', 'john.doe@example.com', '2015-05-15', 'Male', '123 Rizal Street, San Pedro, Laguna', '09191223222');
 
 insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number) values
-('Jowan', 'Carl', 'Quirona', 'jowan123@rocs.edu.ph', '2005-03-14', 'Male', 'Langkaan', '09171234501'),
-('Allison', null, 'Reyes', 'allison23@rocs.edu.ph', '2004-08-22', 'Female', 'Silang', '09171234502'),
-('Ana', 'Ramos', 'Corpuz', 'anaramos@rocs.edu.ph', '1990-05-17', 'Female', 'Tagaytay', '09171234504'),
-('Carlos', 'Diaz', 'Gona', 'carlosyolo@rocs.edu.ph', '1985-11-02', 'Male', 'General Trias', '09171234505'),
-('Elena', null, 'Bautista', 'elenabautista@rocs.edu.ph', '1980-02-11', 'Female', 'Lalaan Dos', '09171234507'),
-('Roberto', null, 'Aquino', 'robertoaquino@rocs.edu.ph', '1978-09-25', 'Male', 'Manila', '09171234508'),
-('Grace', 'Mae', 'Villar', 'villarmae@rocs.edu.ph', '1988-04-03', 'Female', 'Alfonso, Tagaytay', '09171234509'),
-('Antonio', null, 'Ferrer', 'ferrerantonio@rocs.edu.ph', '1975-06-12', 'Male', 'Silang', '09171234510');
+                                                                                                                   ('Jowan', 'Carl', 'Quirona', 'jowan123@rocs.edu.ph', '2005-03-14', 'Male', 'Langkaan', '09171234501'),
+                                                                                                                   ('Allison', null, 'Reyes', 'allison23@rocs.edu.ph', '2004-08-22', 'Female', 'Silang', '09171234502'),
+                                                                                                                   ('Ana', 'Ramos', 'Corpuz', 'anaramos@rocs.edu.ph', '1990-05-17', 'Female', 'Tagaytay', '09171234504'),
+                                                                                                                   ('Carlos', 'Diaz', 'Gona', 'carlosyolo@rocs.edu.ph', '1985-11-02', 'Male', 'General Trias', '09171234505'),
+                                                                                                                   ('Elena', null, 'Bautista', 'elenabautista@rocs.edu.ph', '1980-02-11', 'Female', 'Lalaan Dos', '09171234507'),
+                                                                                                                   ('Roberto', null, 'Aquino', 'robertoaquino@rocs.edu.ph', '1978-09-25', 'Male', 'Manila', '09171234508'),
+                                                                                                                   ('Grace', 'Mae', 'Villar', 'villarmae@rocs.edu.ph', '1988-04-03', 'Female', 'Alfonso, Tagaytay', '09171234509'),
+                                                                                                                   ('Antonio', null, 'Ferrer', 'ferrerantonio@rocs.edu.ph', '1975-06-12', 'Male', 'Silang', '09171234510');
 
 insert into login (username, password, role_id, last_login_date, person_id) values
-('staff', '1234', 1, null, 1);
+    ('staff', '1234', 1, null, 1);
 
 insert into department (department_name) values
-('Junior High School'),
-('Senior High School'),
-('College');
+                                             ('Junior High School'),
+                                             ('Senior High School'),
+                                             ('College');
 
 insert into position (position_name, category, department_id) values
-('Nurse', 'Clinic Staff', null),
-('Doctor', 'Clinic Staff', null),
-('College Teacher', 'RC Employee', 3),
-('Adviser', 'RC Employee', null),
-('Cashier', 'RC Employee', null),
-('Maintenance Personnel', 'Community', null);
+                                                                  ('Nurse', 'Clinic Staff', null),
+                                                                  ('Doctor', 'Clinic Staff', null),
+                                                                  ('College Teacher', 'RC Employee', 3),
+                                                                  ('Adviser', 'RC Employee', null),
+                                                                  ('Cashier', 'RC Employee', null),
+                                                                  ('Maintenance Personnel', 'Community', null);
 
 insert into personnel (person_id, employee_id) values
-(4, 'EMP-001'),
-(5, 'EMP-002'),
-(6, 'EMP-003'),
-(7, 'EMP-004'),
-(8, 'EMP-005'),
-(9, null);
+                                                   (4, 'EMP-001'),
+                                                   (5, 'EMP-002'),
+                                                   (6, 'EMP-003'),
+                                                   (7, 'EMP-004'),
+                                                   (8, 'EMP-005'),
+                                                   (9, null);
 
 insert into personnel_position (personnel_id, position_id, department_id) values
-(1, 1, null),
-(2, 2, null),
-(3, 3, 3),
-(3, 4, 3),
-(4, 3, 3),
-(4, 4, 3),
-(5, 5, null),
-(6, 6, null);
+                                                                              (1, 1, null),
+                                                                              (2, 2, null),
+                                                                              (3, 3, 3),
+                                                                              (3, 4, 3),
+                                                                              (4, 3, 3),
+                                                                              (4, 4, 3),
+                                                                              (5, 5, null),
+                                                                              (6, 6, null);
 
 insert into section (code, name, department_id, year_level, semester, academic_year, adviser_id) values
-('401', 'BSIT 401', 3, '2nd Year', '2nd Semester', '2026-2027', 3),
-('601', 'BSIT 601', 3, '3rd Year', '2nd Semester', '2026-2027', 4);
+                                                                                                     ('401', 'BSIT 401', 3, '2nd Year', '2nd Semester', '2026-2027', 3),
+                                                                                                     ('601', 'BSIT 601', 3, '3rd Year', '2nd Semester', '2026-2027', 4);
 
 insert into student (person_id, student_number) values
-(2, 'CT22-0166'),
-(3, 'CT23-0987');
+                                                    (2, 'CT22-0166'),
+                                                    (3, 'CT23-0987');
 
 insert into student_section (student_id, section_id) values
-(1, 1),
-(2, 2);
+                                                         (1, 1),
+                                                         (2, 2);
 
 insert into consultation (patient_id, staff_id, record_type, consultation_date, complaint, diagnosis, treatment, action_taken, remarks) values
-(2, 2, 'Check-up', '2026-10-20 09:30:00', 'Cough, sore throat and fever', 'Bacterial throat infection', 'Antibiotic course and rest', 'Prescribed medicine', 'Return after 7 days'),
-(9, 1, 'Follow-up', '2026-10-22 14:00:00', 'Dizziness', 'Mild dehydration', 'Drink plenty of water and rest', 'Advised rest', 'No medicine needed');
+                                                                                                                                            (2, 2, 'Check-up', '2026-10-20 09:30:00', 'Cough, sore throat and fever', 'Bacterial throat infection', 'Antibiotic course and rest', 'Prescribed medicine', 'Return after 7 days'),
+                                                                                                                                            (9, 1, 'Follow-up', '2026-10-22 14:00:00', 'Dizziness', 'Mild dehydration', 'Drink plenty of water and rest', 'Advised rest', 'No medicine needed');
 
 insert into medical_record (patient_id, consultation_id, medical_conditions, allergies) values
-(2, 1, 'Asthma', null),
-(9, 2, 'Hypertension', null);
+                                                                                            (2, 1, 'Asthma', null),
+                                                                                            (9, 2, 'Hypertension', null);
 
 insert into medicine_category (category_name) values
-('Analgesic'),
-('Antibiotic');
+                                                  ('Analgesic'),
+                                                  ('Antibiotic');
 
 insert into medicine (medicine_name, category_id, unit) values
-('Paracetamol 500mg', 1, 'tablet'),
-('Amoxicillin 500mg', 2, 'capsule');
+                                                            ('Paracetamol 500mg', 1, 'tablet'),
+                                                            ('Amoxicillin 500mg', 2, 'capsule');
 
 insert into medicine_stock (medicine_id, personnel_id, batch_number, quantity_received, expiration_date, status) values
-(1, 1, 'B-001', 50, '2027-12-31', 'Enough'),
-(2, 1, 'B-002', 50, '2027-06-30', 'Enough');
-insert into role (role, description) values
-('Clinic Staff', 'The account for a clinic staff');
-
-insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number) values
-('John', 'Michael', 'Doe', 'john.doe@example.com', '2015-05-15', 'Male', '123 Rizal Street, San Pedro, Laguna', '09191223222');
-
-insert into person (first_name, middle_name, last_name, email, date_of_birth, gender, address, contact_number) values
-('Jowan', 'Carl', 'Quirona', 'jowan123@rocs.edu.ph', '2005-03-14', 'Male', 'Langkaan', '09171234501'),
-('Allison', null, 'Reyes', 'allison23@rocs.edu.ph', '2004-08-22', 'Female', 'Silang', '09171234502'),
-('Ana', 'Ramos', 'Corpuz', 'anaramos@rocs.edu.ph', '1990-05-17', 'Female', 'Tagaytay', '09171234504'),
-('Carlos', 'Diaz', 'Gona', 'carlosyolo@rocs.edu.ph', '1985-11-02', 'Male', 'General Trias', '09171234505'),
-('Elena', null, 'Bautista', 'elenabautista@rocs.edu.ph', '1980-02-11', 'Female', 'Lalaan Dos', '09171234507'),
-('Roberto', null, 'Aquino', 'robertoaquino@rocs.edu.ph', '1978-09-25', 'Male', 'Manila', '09171234508'),
-('Grace', 'Mae', 'Villar', 'villarmae@rocs.edu.ph', '1988-04-03', 'Female', 'Alfonso, Tagaytay', '09171234509'),
-('Antonio', null, 'Ferrer', 'ferrerantonio@rocs.edu.ph', '1975-06-12', 'Male', 'Silang', '09171234510');
-
-insert into login (username, password, role_id, last_login_date, person_id) values
-('staff', '1234', 1, null, 1);
-
-insert into department (department_name) values
-('Junior High School'),
-('Senior High School'),
-('College');
-insert into person (
-    last_name, first_name, middle_name,
-    email, date_of_birth, gender,
-    address, contact_number
-)
-values
-    ('Santos', 'Maria', 'Reyes',
-     'maria@example.com', '2000-05-15', 'Female',
-     'Dasmarinas, Cavite', '09123456789'),
-
-    ('Dela Cruz', 'Juan', 'Garcia',
-     'juan@example.com', '1998-08-20', 'Male',
-     'Cavite, Philippines', '09987654321');
-insert into position (position_name, category, department_id) values
-('Nurse', 'Clinic Staff', null),
-('Doctor', 'Clinic Staff', null),
-('College Teacher', 'RC Employee', 3),
-('Adviser', 'RC Employee', null),
-('Cashier', 'RC Employee', null),
-('Maintenance Personnel', 'Community', null);
-
-insert into staff (
-    person_id, staff_number, position, department
-)
-values
-    (1, 'STF-001', 'Pharmacist', 'Pharmacy'),
-    (2, 'STF-002', 'Inventory Clerk', 'Inventory');
-
-insert into medicine (
-    medicine_name, category, unit
-)
-values
-    ('Paracetamol', 'Pain Reliever', 'Tablet'),
-    ('Amoxicillin', 'Antibiotic', 'Capsule'),
-    ('Vitamin C', 'Vitamin', 'Bottle');
-
-insert into inventory (
-    medicine_id, staff_id, batch_number,
-    stock_quantity, minimum_stock_level, expiration_date
-)
-values
-    (1, 1, 'PAR-2026-001', 500, 100, '2027-12-31'),
-    (2, 1, 'AMO-2026-001', 50, 100, '2027-06-30'),
-    (3, 2, 'VIT-2026-001', 200, 50, '2028-01-31');
-
-create view inventory_view as
-select
-    i.item_id,
-    m.medicine_id,
-    m.medicine_name,
-    m.category,
-    m.unit,
-    i.batch_number,
-    i.stock_quantity,
-    i.minimum_stock_level,
-    i.expiration_date,
-    s.staff_id,
-    s.staff_number,
-    s.position,
-    s.department,
-    p.person_id,
-    p.first_name,
-    p.last_name
-from inventory i
-         join medicine m
-              on i.medicine_id = m.medicine_id
-         join staff s
-              on i.staff_id = s.staff_id
-         join person p
-              on s.person_id = p.person_id;
-
-select * from inventory_view;
+                                                                                                                     (1, 1, 'B-001', 50, '2027-12-31', 'Enough'),
+                                                                                                                     (2, 1, 'B-002', 50, '2027-06-30', 'Enough');
 
 insert into prescription (consultation_id, medicine_stock_id, personnel_id, quantity_to_dispense, dose, frequency, instructions) values
-(1, 1, 2, 1, '500mg', 'Every 6 hours', 'Take after meals'),
-(1, 2, 2, 2, '500mg', '3 times a day', 'Finish all capsules');
-select
-    medicine_name,
-    stock_quantity,
-    minimum_stock_level
-from inventory_view
-where stock_quantity <= minimum_stock_level;
+                                                                                                                                     (1, 1, 2, 1, '500mg', 'Every 6 hours', 'Take after meals'),
+                                                                                                                                     (1, 2, 2, 2, '500mg', '3 times a day', 'Finish all capsules');
 
 -- create join, function, view, procedure
 delimiter $$
 create function fn_remaining_stock (p_medicine_stock_id bigint)
-returns int
-reads sql data
-begin
-    declare v_remaining int;
-select
-    medicine_name,
-    batch_number,
-    expiration_date
-from inventory_view
-where expiration_date < curdate();
-
-    select ms.quantity_received - coalesce(sum(p.quantity_to_dispense), 0)
-      into v_remaining
-      from medicine_stock ms
-      left join prescription p on p.medicine_stock_id = ms.id
-     where ms.id = p_medicine_stock_id
-     group by ms.id, ms.quantity_received;
-select
-    p.first_name,
-    p.last_name,
-    s.staff_number,
-    s.position,
-    m.medicine_name,
-    i.stock_quantity
-from inventory i
-         join medicine m
-              on i.medicine_id = m.medicine_id
-         join staff s
-              on i.staff_id = s.staff_id
-         join person p
-              on s.person_id = p.person_id;
-insert into personnel (person_id, employee_id) values
-(4, 'EMP-001'),
-(5, 'EMP-002'),
-(6, 'EMP-003'),
-(7, 'EMP-004'),
-(8, 'EMP-005'),
-(9, null);
-
-    return v_remaining;
-end$$
-delimiter ;
-insert into personnel_position (personnel_id, position_id, department_id) values
-(1, 1, null),
-(2, 2, null),
-(3, 3, 3),
-(3, 4, 3),
-(4, 3, 3),
-(4, 4, 3),
-(5, 5, null),
-(6, 6, null);
-
-select fn_remaining_stock(1);
-select fn_remaining_stock(2);
-insert into section (code, name, department_id, year_level, semester, academic_year, adviser_id) values
-('401', 'BSIT 401', 3, '2nd Year', '2nd Semester', '2026-2027', 3),
-('601', 'BSIT 601', 3, '3rd Year', '2nd Semester', '2026-2027', 4);
-
-create view inventory_view as
-select ms.id as medicine_stock_id,
-       m.id as medicine_id,
-       m.medicine_name,
-       mc.category_name,
-       m.unit,
-       ms.batch_number,
-       ms.quantity_received,
-       fn_remaining_stock(ms.id) as remaining_quantity,
-       ms.expiration_date,
-       ms.status
-  from medicine_stock ms
-  join medicine m on m.id = ms.medicine_id
-  left join medicine_category mc on mc.id = m.category_id;
-insert into student (person_id, student_number) values
-(2, 'CT22-0166'),
-(3, 'CT23-0987');
-
-insert into student_section (student_id, section_id) values
-(1, 1),
-(2, 2);
-
-insert into consultation (patient_id, staff_id, record_type, consultation_date, complaint, diagnosis, treatment, action_taken, remarks) values
-(2, 2, 'Check-up', '2026-10-20 09:30:00', 'Cough, sore throat and fever', 'Bacterial throat infection', 'Antibiotic course and rest', 'Prescribed medicine', 'Return after 7 days'),
-(9, 1, 'Follow-up', '2026-10-22 14:00:00', 'Dizziness', 'Mild dehydration', 'Drink plenty of water and rest', 'Advised rest', 'No medicine needed');
-
-insert into medical_record (patient_id, consultation_id, medical_conditions, allergies) values
-(2, 1, 'Asthma', null),
-(9, 2, 'Hypertension', null);
-
-insert into medicine_category (category_name) values
-('Analgesic'),
-('Antibiotic');
-
-insert into medicine (medicine_name, category_id, unit) values
-('Paracetamol 500mg', 1, 'tablet'),
-('Amoxicillin 500mg', 2, 'capsule');
-
-insert into medicine_stock (medicine_id, personnel_id, batch_number, quantity_received, expiration_date, status) values
-(1, 1, 'B-001', 50, '2027-12-31', 'Enough'),
-(2, 1, 'B-002', 50, '2027-06-30', 'Enough');
-
-insert into prescription (consultation_id, medicine_stock_id, personnel_id, quantity_to_dispense, dose, frequency, instructions) values
-(1, 1, 2, 1, '500mg', 'Every 6 hours', 'Take after meals'),
-(1, 2, 2, 2, '500mg', '3 times a day', 'Finish all capsules');
-
--- create join, function, view, procedure
-delimiter $$
-create function fn_remaining_stock (p_medicine_stock_id bigint)
-returns int
-reads sql data
+    returns int
+    reads sql data
 begin
     declare v_remaining int;
 
-    select ms.quantity_received - coalesce(sum(p.quantity_to_dispense), 0)
-      into v_remaining
-      from medicine_stock ms
-      left join prescription p on p.medicine_stock_id = ms.id
-     where ms.id = p_medicine_stock_id
-     group by ms.id, ms.quantity_received;
+select ms.quantity_received - coalesce(sum(p.quantity_to_dispense), 0)
+into v_remaining
+from medicine_stock ms
+         left join prescription p on p.medicine_stock_id = ms.id
+where ms.id = p_medicine_stock_id
+group by ms.id, ms.quantity_received;
 
-    return v_remaining;
+return v_remaining;
 end$$
 delimiter ;
 
@@ -720,13 +294,10 @@ select ms.id as medicine_stock_id,
        fn_remaining_stock(ms.id) as remaining_quantity,
        ms.expiration_date,
        ms.status
-  from medicine_stock ms
-  join medicine m on m.id = ms.medicine_id
-  left join medicine_category mc on mc.id = m.category_id;
+from medicine_stock ms
+         join medicine m on m.id = ms.medicine_id
+         left join medicine_category mc on mc.id = m.category_id;
 
-select * from inventory_view;
-
-commit;
 select * from inventory_view;
 
 commit;
