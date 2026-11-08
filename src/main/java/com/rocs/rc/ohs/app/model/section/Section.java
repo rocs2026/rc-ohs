@@ -34,7 +34,7 @@ public class Section {
 
 
     /**
-     * Returns the unique ID of this section.
+     * Retrieves the unique ID of this section.
      *
      * @return the section ID
      */
@@ -44,7 +44,7 @@ public class Section {
 
 
     /**
-     * Updates the unique ID used to identify this section.
+     * Sets the unique ID used to identify this section.
      *
      * @param newId the new section ID
      */
@@ -53,7 +53,7 @@ public class Section {
     }
 
     /**
-     * Returns the short code that identifies this section.
+     * Retrieves the short code that identifies this section.
      *
      * @return the section code
      */
@@ -62,7 +62,7 @@ public class Section {
     }
 
     /**
-     * Changes the short code that identifies this section.
+     * Sets the short code that identifies this section.
      *
      * @param newCode the new section code
      */
@@ -71,7 +71,7 @@ public class Section {
     }
 
     /**
-     * Returns the full name of this section.
+     * Retrieves the full name of this section.
      *
      * @return the section name
      */
@@ -80,7 +80,7 @@ public class Section {
     }
 
     /**
-     * Changes the full name of this section.
+     * Sets the full name of this section.
      *
      * @param newName the new section name
      */
@@ -89,7 +89,7 @@ public class Section {
     }
 
     /**
-     * Returns the department this section belongs to.
+     * Retrieves the department this section belongs to.
      *
      * @return the owning department
      */
@@ -98,7 +98,7 @@ public class Section {
     }
 
     /**
-     * Assigns this section to the given department.
+     * Sets this section to the given department.
      *
      * @param newDepartment the department to assign
      */
@@ -107,7 +107,7 @@ public class Section {
     }
 
     /**
-     * Returns the year level of the students in this section, such as Grade 7.
+     * Retrieves the year level of the students in this section, such as Grade 7.
      *
      * @return the year level
      */
@@ -116,7 +116,7 @@ public class Section {
     }
 
     /**
-     * Changes the year level of the students in this section.
+     * Sets the year level of the students in this section.
      *
      * @param newYearLevel the new year level, such as Grade 7
      */
@@ -125,7 +125,7 @@ public class Section {
     }
 
     /**
-     * Returns the semester in which this section is offered.
+     * Retrieves the semester in which this section is offered.
      *
      * @return the semester
      */
@@ -134,7 +134,7 @@ public class Section {
     }
 
     /**
-     * Changes the semester in which this section is offered.
+     * Sets the semester in which this section is offered.
      *
      * @param newSemester the new semester
      */
@@ -143,7 +143,7 @@ public class Section {
     }
 
     /**
-     * Returns the academic year of this section, such as 2026-2027.
+     * Retrieves the academic year of this section, such as 2026-2027.
      *
      * @return the academic year
      */
@@ -152,7 +152,7 @@ public class Section {
     }
 
     /**
-     * Changes the academic year of this section.
+     * Sets the academic year of this section.
      *
      * @param newAcademicYear the new academic year
      */
@@ -161,7 +161,7 @@ public class Section {
     }
 
     /**
-     * Returns the personnel member assigned as adviser of this section.
+     * Retrieves the personnel member assigned as adviser of this section.
      *
      * @return the section adviser
      */
@@ -170,7 +170,7 @@ public class Section {
     }
 
     /**
-     * Assigns the given personnel member as adviser of this section.
+     * Sets the given personnel member as adviser of this section.
      *
      * @param newAdviser the personnel member to assign as adviser
      */

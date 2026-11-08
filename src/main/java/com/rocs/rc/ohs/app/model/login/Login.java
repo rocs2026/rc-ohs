@@ -27,7 +27,7 @@ public class Login {
 
 
     /**
-     * Returns the role that determines this login's access in the OHS app.
+     * Retrieves the role that determines this login's access in the OHS app.
      *
      * @return the assigned role
      */
@@ -36,7 +36,7 @@ public class Login {
     }
 
     /**
-     * Assigns the role that determines this login's access.
+     * Sets the role that determines this login's access.
      *
      * @param newRole the role to assign
      */
@@ -45,7 +45,7 @@ public class Login {
     }
 
     /**
-     * Returns the person this login account belongs to.
+     * Retrieves the person this login account belongs to.
      *
      * @return the linked person
      */
@@ -54,7 +54,7 @@ public class Login {
     }
 
     /**
-     * Links this login account to the given person.
+     * Sets this login account to the given person.
      *
      * @param newPerson the person to link
      */
@@ -63,7 +63,7 @@ public class Login {
     }
 
     /**
-     * Returns the username used to sign in.
+     * Retrieves the username used to sign in.
      *
      * @return the username
      */
@@ -81,7 +81,7 @@ public class Login {
     }
 
     /**
-     * Returns the stored password of this login account.
+     * Retrieves the stored password of this login account.
      *
      * @return the stored password
      */
@@ -101,7 +101,7 @@ public class Login {
 
 
     /**
-     * Returns the date and time of the account's most recent login.
+     * Retrieves the date and time of the account's most recent login.
      *
      * @return the last login date and time
      */

@@ -16,7 +16,7 @@ public class Role {
 
 
     /**
-     * Returns the unique ID of this role.
+     * Retrieves the unique ID of this role.
      *
      * @return the role ID
      */
@@ -26,7 +26,7 @@ public class Role {
 
 
     /**
-     * Updates the unique ID of this role.
+     * Sets the unique ID of this role.
      *
      * @param newId the new role ID
      */
@@ -35,7 +35,7 @@ public class Role {
     }
 
     /**
-     * Returns the name of this role.
+     * Retrieves the name of this role.
      *
      * @return the role name
      */
@@ -44,7 +44,7 @@ public class Role {
     }
 
     /**
-     * Updates the name of this role.
+     * Sets the name of this role.
      *
      * @param newRole the new role name
      */
@@ -53,7 +53,7 @@ public class Role {
     }
 
     /**
-     * Returns the description of what this role is used for.
+     * Retrieves the description of what this role is used for.
      *
      * @return the role description
      */
@@ -62,7 +62,7 @@ public class Role {
     }
 
     /**
-     * Updates the description of what this role is used for.
+     * Sets the description of what this role is used for.
      *
      * @param newDescription the new role description
      */

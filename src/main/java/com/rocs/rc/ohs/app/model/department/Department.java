@@ -12,7 +12,7 @@ public class Department {
     private String departmentName;
 
     /**
-     * Returns the unique ID assigned to this department.
+     * Retrieves the unique ID assigned to this department.
      *
      * @return the department ID
      */
@@ -21,7 +21,7 @@ public class Department {
     }
 
     /**
-     * Updates the unique ID used to identify this department.
+     * Sets the unique ID used to identify this department.
      *
      * @param newDepartmentId the new department ID
      */
@@ -30,7 +30,7 @@ public class Department {
     }
 
     /**
-     * Returns the department name as shown in OHS records.
+     * Retrieves the department name as shown in OHS records.
      *
      * @return the department name
      */
@@ -39,7 +39,7 @@ public class Department {
     }
 
     /**
-     * Updates the department name that appears in OHS records.
+     * Sets the department name that appears in OHS records.
      *
      * @param newDepartmentName the new department name
      */

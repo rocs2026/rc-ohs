@@ -23,7 +23,7 @@ public class  StudentSection {
 
 
     /**
-     * Returns the unique ID of this student-section enrollment record.
+     * Retrieves the unique ID of this student-section enrollment record.
      *
      * @return the enrollment record ID
      */
@@ -33,7 +33,7 @@ public class  StudentSection {
 
 
     /**
-     * Updates the unique ID of this enrollment record.
+     * Sets the unique ID of this enrollment record.
      *
      * @param newId the new enrollment record ID
      */
@@ -42,7 +42,7 @@ public class  StudentSection {
     }
 
     /**
-     * Returns the student enrolled in the section.
+     * Retrieves the student enrolled in the section.
      *
      * @return the enrolled student
      */
@@ -51,7 +51,7 @@ public class  StudentSection {
     }
 
     /**
-     * Enrolls the given student in the section.
+     * Sets the given student in the section.
      *
      * @param newStudent the student to enroll
      */
@@ -60,7 +60,7 @@ public class  StudentSection {
     }
 
     /**
-     * Returns the section the student is enrolled in.
+     * Retrieves the section the student is enrolled in.
      *
      * @return the enrolled section
      */
@@ -69,7 +69,7 @@ public class  StudentSection {
     }
 
     /**
-     * Places the student in the given section.
+     * Sets the student in the given section.
      *
      * @param newSection the section to place the student in
      */
@@ -78,7 +78,7 @@ public class  StudentSection {
     }
 
     /**
-     * Returns the date and time the student was enrolled in the section.
+     * Retrieves the date and time the student was enrolled in the section.
      *
      * @return the enrollment date and time
      */
@@ -87,7 +87,7 @@ public class  StudentSection {
     }
 
     /**
-     * Records the date and time the student was enrolled in the section.
+     * Sets the date and time the student was enrolled in the section.
      *
      * @param newEnrolledDate the enrollment date and time
      */

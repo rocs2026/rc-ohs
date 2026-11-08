@@ -19,7 +19,7 @@ public class Student {
 
 
     /**
-     * Returns the unique ID of this student record.
+     * Retrieves the unique ID of this student record.
      *
      * @return the student ID
      */
@@ -28,7 +28,7 @@ public class Student {
     }
 
     /**
-     * Updates the unique ID of this student record.
+     * Sets the unique ID of this student record.
      *
      * @param newId the new student ID
      */
@@ -37,7 +37,7 @@ public class Student {
     }
 
     /**
-     * Returns the person details linked to this student.
+     * Retrieves the person details linked to this student.
      *
      * @return the linked person
      */
@@ -46,7 +46,7 @@ public class Student {
     }
 
     /**
-     * Links this student to the given person details.
+     * Sets this student to the given person details.
      *
      * @param newPerson the person to link
      */
@@ -55,7 +55,7 @@ public class Student {
     }
 
     /**
-     * Returns the student number issued by the school.
+     * Retrieves the student number issued by the school.
      *
      * @return the student number
      */
@@ -64,7 +64,7 @@ public class Student {
     }
 
     /**
-     * Changes the student number issued by the school.
+     * Sets the student number issued by the school.
      *
      * @param newStudentNumber the new student number
      */
