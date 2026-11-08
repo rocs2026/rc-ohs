@@ -3,14 +3,14 @@ package com.rocs.rc.ohs.app.model.medicine;
 import com.rocs.rc.ohs.app.model.personnel.Personnel;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+
 /**
  * Represents a medicine stock batch in the clinic.
  */
 public class MedicineStock {
 
     /** The unique ID of the medicine stock. */
-    private UUID id;
+    private String id;
 
     /** The medicine associated with the stock. */
     private Medicine medicine;
@@ -35,7 +35,7 @@ public class MedicineStock {
      *
      * @return the unique ID of the medicine stock.
      */
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
@@ -44,7 +44,7 @@ public class MedicineStock {
      *
      * @param newId the unique ID of the medicine stock.
      */
-    public void setId(UUID newId) {
+    public void setId(String newId) {
         this.id = newId;
     }
 

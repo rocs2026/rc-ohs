@@ -1,7 +1,6 @@
 package com.rocs.rc.ohs.app.model.login;
 
 import java.util.Date;
-import java.util.UUID;
 
 /**
  * Represents a login account in the system.
@@ -9,7 +8,7 @@ import java.util.UUID;
 public class Login {
 
     /** The unique ID of the login user. */
-    private UUID id;
+    private String id;
 
     /** The username used to log in. */
     private String username;
@@ -31,7 +30,7 @@ public class Login {
      *
      * @return The ID of the login user.
      */
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
@@ -40,7 +39,7 @@ public class Login {
      *
      * @param newId The ID of the login user.
      */
-    public void setId(UUID newId) {
+    public void setId(String newId) {
         this.id = newId;
     }
 

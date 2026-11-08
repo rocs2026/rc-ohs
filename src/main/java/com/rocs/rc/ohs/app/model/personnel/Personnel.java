@@ -1,14 +1,14 @@
 package com.rocs.rc.ohs.app.model.personnel;
 
 import com.rocs.rc.ohs.app.model.person.Person;
-import java.util.UUID;
+
 /**
  * Represents a clinic personnel in the system.
  */
 public class Personnel {
 
     /** The unique ID of the personnel. */
-    private UUID id;
+    private String id;
 
     /** The person associated with the personnel. */
     private Person person;
@@ -21,7 +21,7 @@ public class Personnel {
      *
      * @return the unique ID of the personnel.
      */
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
@@ -30,7 +30,7 @@ public class Personnel {
      *
      * @param newId the unique ID of the personnel.
      */
-    public void setId(UUID newId) {
+    public void setId(String newId) {
         this.id = newId;
     }
 

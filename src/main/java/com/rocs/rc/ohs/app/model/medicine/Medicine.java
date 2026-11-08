@@ -1,12 +1,11 @@
 package com.rocs.rc.ohs.app.model.medicine;
-import java.util.UUID;
 /**
  * Represents a medicine available in the clinic.
  */
 public class Medicine {
 
     /** The unique ID of the medicine. */
-    private UUID id;
+    private String id;
 
     /** The name of the medicine. */
     private String medicineName;
@@ -22,7 +21,7 @@ public class Medicine {
      *
      * @return the unique ID of the medicine.
      */
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
@@ -31,7 +30,7 @@ public class Medicine {
      *
      * @param newId the unique ID of the medicine.
      */
-    public void setId(UUID newId) {
+    public void setId(String newId) {
         this.id = newId;
     }
 

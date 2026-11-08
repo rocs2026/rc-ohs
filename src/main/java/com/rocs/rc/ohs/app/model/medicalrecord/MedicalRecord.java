@@ -2,7 +2,6 @@ package com.rocs.rc.ohs.app.model.medicalrecord;
 
 import com.rocs.rc.ohs.app.model.consultation.Consultation;
 import com.rocs.rc.ohs.app.model.person.Person;
-import java.util.UUID;
 
 /**
  * Represents the medical record of a patient.
@@ -10,7 +9,7 @@ import java.util.UUID;
 public class MedicalRecord {
 
     /** The unique ID of the medical record. */
-    private UUID id;
+    private String id;
 
     /** The patient associated with the medical record. */
     private Person patient;
@@ -29,7 +28,7 @@ public class MedicalRecord {
      *
      * @return the unique ID of the medical record.
      */
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
@@ -39,7 +38,7 @@ public class MedicalRecord {
      *
      * @param newId the unique ID of the medical record.
      */
-    public void setId(UUID newId) {
+    public void setId(String newId) {
         this.id = newId;
     }
 
