@@ -13,6 +13,7 @@ public class PersonnelPosition {
 
     /** The position assigned to the personnel. */
     private Position position;
+
     /**
      * Retrieves the unique ID of this personnel position.
      *
