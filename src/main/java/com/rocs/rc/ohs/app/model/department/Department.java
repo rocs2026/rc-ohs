@@ -13,7 +13,8 @@ public class Department {
      * Returns the unique ID assigned to this department.
      *
      * @return the department ID
-     */    public Long getDepartmentId() {
+     */
+    public Long getDepartmentId() {
         return id;
     }
 
@@ -21,7 +22,8 @@ public class Department {
      * Updates the unique ID used to identify this department.
      *
      * @param newDepartmentId the new department ID
-     */    public void setDepartmentId(Long newDepartmentId) {
+     */
+    public void setDepartmentId(Long newDepartmentId) {
         this.id = newDepartmentId;
     }
 
@@ -29,7 +31,8 @@ public class Department {
      * Returns the department name as shown in OHS records.
      *
      * @return the department name
-     */    public String getDepartmentName() {
+     */
+    public String getDepartmentName() {
         return departmentName;
     }
 
@@ -37,7 +40,8 @@ public class Department {
      * Updates the department name that appears in OHS records.
      *
      * @param newDepartmentName the new department name
-     */    public void setDepartmentName(String newDepartmentName) {
+     */
+    public void setDepartmentName(String newDepartmentName) {
         this.departmentName = newDepartmentName;
     }
 }
