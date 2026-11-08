@@ -24,8 +24,6 @@ public class Login {
     private Date lastLoginDate;
 
 
-
-
     /**
      * Returns the role that determines this login's access in the OHS app.
      *
