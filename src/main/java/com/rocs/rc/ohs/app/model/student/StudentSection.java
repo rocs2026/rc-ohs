@@ -20,43 +20,75 @@ public class  StudentSection {
     private LocalDateTime enrolledDate;
 
 
-    /** @return the enrollment record ID */
+    /**
+     * Returns the unique ID of this student-section enrollment record.
+     *
+     * @return the enrollment record ID
+     */
     public Long getId() {
         return id;
     }
 
 
-    /** @param newId the new enrollment record ID */
+    /**
+     * Updates the unique ID of this enrollment record.
+     *
+     * @param newId the new enrollment record ID
+     */
     public void setId(Long newId) {
         this.id = newId;
     }
 
-    /** @return the enrolled student */
+    /**
+     * Returns the student enrolled in the section.
+     *
+     * @return the enrolled student
+     */
     public Student getStudent() {
         return student;
     }
 
-    /** @param newStudent the student to enroll */
+    /**
+     * Enrolls the given student in the section.
+     *
+     * @param newStudent the student to enroll
+     */
     public void setStudent(Student newStudent) {
         this.student = newStudent;
     }
 
-    /** @return the enrolled section */
+    /**
+     * Returns the section the student is enrolled in.
+     *
+     * @return the enrolled section
+     */
     public Section getSection() {
         return section;
     }
 
-    /** @param newSection the section to place the student in */
+    /**
+     * Places the student in the given section.
+     *
+     * @param newSection the section to place the student in
+     */
     public void setSection(Section newSection) {
         this.section = newSection;
     }
 
-    /** @return the enrollment date and time */
+    /**
+     * Returns the date and time the student was enrolled in the section.
+     *
+     * @return the enrollment date and time
+     */
     public LocalDateTime getEnrolledDate() {
         return enrolledDate;
     }
 
-    /** @param newEnrolledDate the enrollment date and time */
+    /**
+     * Records the date and time the student was enrolled in the section.
+     *
+     * @param newEnrolledDate the enrollment date and time
+     */
     public void setEnrolledDate(LocalDateTime newEnrolledDate) {
         this.enrolledDate = newEnrolledDate;
     }

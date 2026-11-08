@@ -17,43 +17,74 @@ public class Position {
     /** The department associated with the position. */
     private Department department;
 
-
-    /** @return the position ID */
+    /**
+     * Returns the unique ID assigned to this position.
+     *
+     * @return the position ID
+     */
     public Long getPositionId() {
         return id;
     }
 
-    /** @param newPositionId the new position ID */
+    /**
+     * Updates the unique ID used to identify this position.
+     *
+     * @param newPositionId the new position ID
+     */
     public void setPositionId(Long newPositionId) {
         this.id = newPositionId;
     }
 
-    /** @return the position title */
+    /**
+     * Returns the title of this position as shown in OHS records.
+     *
+     * @return the position title
+     */
     public String getPositionName() {
         return positionName;
     }
 
-    /** @param newPositionName the new position title */
+    /**
+     * Updates the title of this position.
+     *
+     * @param newPositionName the new position title
+     */
     public void setPositionName(String newPositionName) {
         this.positionName = newPositionName;
     }
 
-    /** @return the position category */
+    /**
+     * Returns the category this position is grouped under.
+     *
+     * @return the position category
+     */
     public String getCategory() {
         return category;
     }
 
-    /** @param newCategory the category to group this position under */
+    /**
+     * Moves this position to the given category.
+     *
+     * @param newCategory the category to group this position under
+     */
     public void setCategory(String newCategory) {
         this.category = newCategory;
     }
 
-    /** @return the owning department */
+    /**
+     * Returns the department this position belongs to.
+     *
+     * @return the owning department
+     */
     public Department getDepartment() {
         return department;
     }
 
-    /** @param newDepartment the department to assign */
+    /**
+     * Assigns this position to the given department.
+     *
+     * @param newDepartment the department to assign
+     */
     public void setDepartment(Department newDepartment) {
         this.department = newDepartment;
     }
