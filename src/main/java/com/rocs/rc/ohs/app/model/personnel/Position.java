@@ -20,7 +20,7 @@ public class Position {
     private Department department;
 
     /**
-     * Returns the unique ID assigned to this position.
+     * Retrieves the unique ID assigned to this position.
      *
      * @return the position ID
      */
@@ -29,7 +29,7 @@ public class Position {
     }
 
     /**
-     * Updates the unique ID used to identify this position.
+     * Sets the unique ID used to identify this position.
      *
      * @param newPositionId the new position ID
      */
@@ -38,7 +38,7 @@ public class Position {
     }
 
     /**
-     * Returns the title of this position as shown in OHS records.
+     * Retrieves the title of this position as shown in OHS records.
      *
      * @return the position title
      */
@@ -47,7 +47,7 @@ public class Position {
     }
 
     /**
-     * Updates the title of this position.
+     * Sets the title of this position.
      *
      * @param newPositionName the new position title
      */
@@ -56,7 +56,7 @@ public class Position {
     }
 
     /**
-     * Returns the category this position is grouped under.
+     * Retrieves the category this position is grouped under.
      *
      * @return the position category
      */
@@ -65,7 +65,7 @@ public class Position {
     }
 
     /**
-     * Moves this position to the given category.
+     * Sets this position to the given category.
      *
      * @param newCategory the category to group this position under
      */
@@ -74,7 +74,7 @@ public class Position {
     }
 
     /**
-     * Returns the department this position belongs to.
+     * Retrieves the department this position belongs to.
      *
      * @return the owning department
      */
@@ -83,7 +83,7 @@ public class Position {
     }
 
     /**
-     * Assigns this position to the given department.
+     * Sets this position to the given department.
      *
      * @param newDepartment the department to assign
      */

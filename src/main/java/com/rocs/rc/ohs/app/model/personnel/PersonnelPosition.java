@@ -14,7 +14,7 @@ public class PersonnelPosition {
     /** The position assigned to the personnel. */
     private Position position;
     /**
-     * Returns the unique ID of this personnel position.
+     * Retrieves the unique ID of this personnel position.
      *
      * @return the personnel position ID
      */
@@ -23,7 +23,7 @@ public class PersonnelPosition {
     }
 
     /**
-     * Updates the unique ID of this personnel position.
+     * Sets the unique ID of this personnel position.
      *
      * @param newId the new personnel position ID
      */
@@ -32,7 +32,7 @@ public class PersonnelPosition {
     }
 
     /**
-     * Returns the personnel assigned to this position.
+     * Retrieves the personnel assigned to this position.
      *
      * @return the assigned personnel
      */
@@ -41,7 +41,7 @@ public class PersonnelPosition {
     }
 
     /**
-     * Assigns the given personnel to this position.
+     * Sets the given personnel to this position.
      *
      * @param newPersonnel the personnel to assign
      */
@@ -50,7 +50,7 @@ public class PersonnelPosition {
     }
 
     /**
-     * Returns the position assigned to the personnel.
+     * Retrieves the position assigned to the personnel.
      *
      * @return the assigned position
      */
@@ -59,7 +59,7 @@ public class PersonnelPosition {
     }
 
     /**
-     * Assigns the given position to the personnel.
+     * Sets the given position to the personnel.
      *
      * @param newPosition the position to assign
      */
