@@ -107,9 +107,9 @@ public class Section {
     }
 
     /**
-     * Retrieves the year level of the students in this section, such as Grade 7.
+     * Retrieves the year level of the students in this section.
      *
-     * @return the year level
+     * @return the year level, such as Grade 7
      */
     public String getYearLevel() {
         return yearLevel;
