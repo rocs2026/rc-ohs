@@ -3,14 +3,14 @@ package com.rocs.rc.ohs.app.model.prescription;
 import com.rocs.rc.ohs.app.model.consultation.Consultation;
 import com.rocs.rc.ohs.app.model.medicine.MedicineStock;
 import com.rocs.rc.ohs.app.model.personnel.Personnel;
-
+import java.util.UUID;
 /**
  * Represents a medicine prescribed during a consultation.
  */
 public class Prescription {
 
     /** The unique ID of the prescription. */
-    private Long id;
+    private UUID id;
 
     /** The consultation associated with the prescription. */
     private Consultation consultation;
@@ -38,7 +38,7 @@ public class Prescription {
      *
      * @return the unique ID of the prescription.
      */
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
@@ -47,7 +47,7 @@ public class Prescription {
      *
      * @param newId the unique ID of the prescription.
      */
-    public void setId(Long newId) {
+    public void setId(UUID newId) {
         this.id = newId;
     }
 

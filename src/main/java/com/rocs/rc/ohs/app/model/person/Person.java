@@ -3,14 +3,14 @@ package com.rocs.rc.ohs.app.model.person;
 import com.rocs.rc.ohs.app.model.enums.gender.Gender;
 
 import java.time.LocalDateTime;
-
+import java.util.UUID;
 /**
  * Represents a person in the system.
  */
 public class Person {
 
     /** The unique ID of the person. */
-    private Long id;
+    private UUID id;
 
     /** The first name of the person. */
     private String firstName;
@@ -41,7 +41,7 @@ public class Person {
      *
      * @return the unique ID of the person.
      */
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
@@ -50,7 +50,7 @@ public class Person {
      *
      * @param newId the unique ID of the person.
      */
-    public void setId(Long newId) {
+    public void setId(UUID newId) {
         this.id = newId;
     }
 
