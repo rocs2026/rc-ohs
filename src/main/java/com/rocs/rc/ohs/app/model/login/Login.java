@@ -10,6 +10,9 @@ import java.util.Date;
  */
 public class Login {
 
+    /** The unique ID of the Login. */
+    private String id;
+
     /** The role assigned to the login user. */
     private Role role;
 
@@ -25,6 +28,25 @@ public class Login {
     /** The date and time of the user's last login. */
     private Date lastLoginDate;
 
+    /**
+     * Retrieves the unique ID of the Login.
+     *
+     * @return the unique ID of the Login.
+     */
+
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Sets the unique ID of the Login.
+     *
+     * @param newId the unique ID of the Login.
+     */
+
+    public void setId(String newId) {
+        this.id = newId;
+    }
 
     /**
      * Retrieves the role that determines this login's access in the OHS app.

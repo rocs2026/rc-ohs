@@ -9,7 +9,7 @@ import com.rocs.rc.ohs.app.model.person.Person;
 public class Student {
 
     /** The unique ID of the student. */
-    private Long id;
+    private String id;
 
     /** The student number. */
     private String studentNumber;
@@ -23,7 +23,7 @@ public class Student {
      *
      * @return the student ID
      */
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
@@ -32,7 +32,7 @@ public class Student {
      *
      * @param newId the new student ID
      */
-    public void setId(Long newId) {
+    public void setId(String newId) {
         this.id = newId;
     }
 

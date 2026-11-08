@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class  StudentSection {
 
     /** The unique ID of the student section record. */
-    private Long id;
+    private String id;
 
     /** The student assigned to the section. */
     private Student student;
@@ -27,7 +27,7 @@ public class  StudentSection {
      *
      * @return the enrollment record ID
      */
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
@@ -37,7 +37,7 @@ public class  StudentSection {
      *
      * @param newId the new enrollment record ID
      */
-    public void setId(Long newId) {
+    public void setId(String newId) {
         this.id = newId;
     }
 

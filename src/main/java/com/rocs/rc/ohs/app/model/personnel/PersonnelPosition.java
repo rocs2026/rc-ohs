@@ -6,7 +6,7 @@ package com.rocs.rc.ohs.app.model.personnel;
 public class PersonnelPosition {
 
     /** The unique ID of the personnel position. */
-    private Long id;
+    private String id;
 
     /** The personnel assigned to the position. */
     private Personnel personnel;
@@ -19,7 +19,7 @@ public class PersonnelPosition {
      *
      * @return the personnel position ID
      */
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
@@ -28,7 +28,7 @@ public class PersonnelPosition {
      *
      * @param newId the new personnel position ID
      */
-    public void setId(Long newId) {
+    public void setId(String newId) {
         this.id = newId;
     }
 

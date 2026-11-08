@@ -8,7 +8,7 @@ import com.rocs.rc.ohs.app.model.department.Department;
 public class Position {
 
     /** The unique ID of the position. */
-    private Long id;
+    private String id;
 
     /** The name of the position. */
     private String positionName;
@@ -24,7 +24,7 @@ public class Position {
      *
      * @return the position ID
      */
-    public Long getPositionId() {
+    public String getPositionId() {
         return id;
     }
 
@@ -33,7 +33,7 @@ public class Position {
      *
      * @param newPositionId the new position ID
      */
-    public void setPositionId(Long newPositionId) {
+    public void setPositionId(String newPositionId) {
         this.id = newPositionId;
     }
 
