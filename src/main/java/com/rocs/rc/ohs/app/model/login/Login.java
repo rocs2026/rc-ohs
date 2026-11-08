@@ -5,7 +5,9 @@ import com.rocs.rc.ohs.app.model.role.Role;
 
 import java.util.Date;
 
-/** Represents a login account in the system. */
+/**
+ * Represents a login account in the system.
+ */
 public class Login {
 
     /** The role assigned to the login user. */
@@ -70,7 +72,7 @@ public class Login {
     }
 
     /**
-     * Changes the username used to sign in.
+     * Sets the username used to sign in.
      *
      * @param newUsername the new username
      */
@@ -89,7 +91,7 @@ public class Login {
 
 
     /**
-     * Replaces the stored password of this login account.
+     * Sets the stored password of this login account.
      *
      * @param newPassword the new password
      */
@@ -109,7 +111,7 @@ public class Login {
 
 
     /**
-     * Records the date and time of the account's most recent login.
+     * Sets the date and time of the account's most recent login.
      *
      * @param newLastLoginDate the latest login date and time
      */

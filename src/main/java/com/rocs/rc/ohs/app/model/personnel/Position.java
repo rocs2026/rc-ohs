@@ -2,7 +2,9 @@ package com.rocs.rc.ohs.app.model.personnel;
 
 import com.rocs.rc.ohs.app.model.department.Department;
 
-/** Represents a personnel position in the system. */
+/**
+ * Represents a personnel position in the system.
+ */
 public class Position {
 
     /** The unique ID of the position. */

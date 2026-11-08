@@ -1,6 +1,8 @@
 package com.rocs.rc.ohs.app.model.personnel;
 
-/** Represents the position assigned to personnel. */
+/**
+ * Represents the position assigned to personnel.
+ */
 public class PersonnelPosition {
 
     /** The unique ID of the personnel position. */

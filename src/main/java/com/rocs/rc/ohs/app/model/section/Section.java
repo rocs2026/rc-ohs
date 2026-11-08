@@ -3,7 +3,9 @@ package com.rocs.rc.ohs.app.model.section;
 import com.rocs.rc.ohs.app.model.department.Department;
 import com.rocs.rc.ohs.app.model.personnel.Personnel;
 
-/** Represents a section in the system.*/
+/**
+ * Represents a section in the system.
+ */
 public class Section {
 
     /** The unique ID of the section. */

@@ -4,7 +4,9 @@ import com.rocs.rc.ohs.app.model.section.Section;
 
 import java.time.LocalDateTime;
 
-/** Represents a student's enrollment in a section.*/
+/**
+ * Represents a student's enrollment in a section.
+ */
 public class  StudentSection {
 
     /** The unique ID of the student section record. */

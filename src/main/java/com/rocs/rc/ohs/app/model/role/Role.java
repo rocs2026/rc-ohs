@@ -1,6 +1,8 @@
 package com.rocs.rc.ohs.app.model.role;
 
-/** Represents a role in the system.*/
+/**
+ * Represents a role in the system.
+ */
 public class Role {
 
     /** The unique ID of the role. */

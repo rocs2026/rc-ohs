@@ -1,6 +1,8 @@
 package com.rocs.rc.ohs.app.model.department;
 
-/** Represents a department in the system. */
+/**
+ * Represents a department in the system.
+ */
 public class Department {
 
     /** The unique ID of the department. */

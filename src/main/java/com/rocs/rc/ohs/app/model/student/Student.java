@@ -3,7 +3,9 @@ package com.rocs.rc.ohs.app.model.student;
 
 import com.rocs.rc.ohs.app.model.person.Person;
 
-/** Represents a student in the system.*/
+/**
+ * Represents a student in the system.
+ */
 public class Student {
 
     /** The unique ID of the student. */
