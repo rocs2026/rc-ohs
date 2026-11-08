@@ -1,5 +1,7 @@
 package com.rocs.rc.ohs.app.model.person;
 
+import com.rocs.rc.ohs.app.model.enums.gender.Gender;
+
 import java.time.LocalDateTime;
 
 /**
@@ -8,7 +10,7 @@ import java.time.LocalDateTime;
 public class Person {
 
     /** The unique ID of the person. */
-    private Long id;
+    private String id;
 
     /** The first name of the person. */
     private String firstName;
@@ -26,7 +28,7 @@ public class Person {
     private LocalDateTime dateOfBirth;
 
     /** The gender of the person. */
-    private String gender;
+    private Gender gender;
 
     /** The address of the person. */
     private String address;
@@ -39,7 +41,7 @@ public class Person {
      *
      * @return the unique ID of the person.
      */
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
@@ -48,7 +50,7 @@ public class Person {
      *
      * @param newId the unique ID of the person.
      */
-    public void setId(Long newId) {
+    public void setId(String newId) {
         this.id = newId;
     }
 
@@ -147,7 +149,7 @@ public class Person {
      *
      * @return the gender of the person.
      */
-    public String getGender() {
+    public Gender getGender() {
         return gender;
     }
 
@@ -156,7 +158,7 @@ public class Person {
      *
      * @param newGender the gender of the person.
      */
-    public void setGender(String newGender) {
+    public void setGender(Gender newGender) {
         this.gender = newGender;
     }
 
