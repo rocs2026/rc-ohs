@@ -17,10 +17,7 @@ import java.util.List;
  */
 public class MedicineDaoImpl implements MedicineDao {
 
-    /**
-     * Maps a ResultSet row to a Medicine object.
-     */
-    private Medicine extractMedicineFromResultSet(ResultSet resultSet) throws SQLException {
+    private Medicine mapResultSetToMedicine(ResultSet resultSet) throws SQLException {
         MedicineCategory category = new MedicineCategory();
         category.setId(resultSet.getString("category_id"));
         category.setCategoryName(resultSet.getString("category_name"));
@@ -52,7 +49,7 @@ public class MedicineDaoImpl implements MedicineDao {
              ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
-                medicines.add(extractMedicineFromResultSet(resultSet));
+                medicines.add(mapResultSetToMedicine(resultSet));
             }
         } catch (Exception ex) {
             throw new RuntimeException("Error retrieving the medicines", ex);
@@ -68,7 +65,6 @@ public class MedicineDaoImpl implements MedicineDao {
      */
     @Override
     public Medicine getMedicineById(String id) {
-        Medicine medicine = null;
         String sql = "SELECT medicine.id, medicine.medicine_name, medicine.unit, " +
                 "medicine.category_id, medicine_category.category_name " +
                 "FROM medicine " +
@@ -78,16 +74,15 @@ public class MedicineDaoImpl implements MedicineDao {
         try (Connection connection = MySqlConnectionHelper.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, id);
-
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    medicine = extractMedicineFromResultSet(resultSet);
+                    return mapResultSetToMedicine(resultSet);
                 }
             }
         } catch (Exception ex) {
             throw new RuntimeException("Error retrieving the medicine " + id, ex);
         }
-        return medicine;
+        return null;
     }
 
     /**
@@ -112,10 +107,9 @@ public class MedicineDaoImpl implements MedicineDao {
             String pattern = "%" + keyword.trim() + "%";
             statement.setString(1, pattern);
             statement.setString(2, pattern);
-
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    medicines.add(extractMedicineFromResultSet(resultSet));
+                    medicines.add(mapResultSetToMedicine(resultSet));
                 }
             }
         } catch (Exception ex) {
