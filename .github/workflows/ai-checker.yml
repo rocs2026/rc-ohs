@@ -50,7 +50,7 @@ jobs:
         run: |
           ant -lib "$HOME/.ant/lib" -noinput \
             -buildfile build.xml \
-            copy-dependencies ai-pattern-check
+            copy-dependencies ai
 
       - name: Upload AI Detection Reports
         if: always()
