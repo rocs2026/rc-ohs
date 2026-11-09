@@ -1,3 +1,4 @@
+
 package com.rocs.rc.ohs.data.dao.forgotpassword.impl;
 
 import com.rocs.rc.ohs.data.connection.ConnectionHelper;
@@ -13,10 +14,19 @@ import java.sql.SQLException;
  */
 public class ForgotPasswordDaoImpl implements ForgotPasswordDao {
 
+    /** Status indicating that recovery is awaiting verification. */
     private static final String PENDING = "Pending";
+
+    /** Status indicating that the user's identity is verified. */
     private static final String VERIFIED = "Verified";
+
+    /** Status indicating that password recovery is completed. */
     private static final String COMPLETED = "Completed";
+
+    /** Status indicating that identity verification has failed. */
     private static final String FAILED = "Failed";
+
+    /** Verification method used to identify the account. */
     private static final String METHOD = "Username";
 
     /**
@@ -124,7 +134,8 @@ public class ForgotPasswordDaoImpl implements ForgotPasswordDao {
                 updated = update(conn, "update login set password = ? "
                                 + "where person_id = (select p.person_id "
                                 + "from personnel p "
-                                + "join password_recovery r on r.personnel_id = p.id "
+                                + "join password_recovery r "
+                                + "on r.personnel_id = p.id "
                                 + "where r.recovery_id = ? "
                                 + "and r.recovery_status = ?)",
                         newPassword, recoveryId, VERIFIED) > 0;
@@ -142,11 +153,19 @@ public class ForgotPasswordDaoImpl implements ForgotPasswordDao {
         return updated;
     }
 
+    /**
+     * Inserts a new password recovery request into the database.
+     *
+     * @param conn The database connection.
+     * @param personnelId The personnel ID associated with the request.
+     * @return The generated recovery request ID, or null if unavailable.
+     * @throws SQLException If a database error occurs.
+     */
     private Long insertRecovery(Connection conn, long personnelId)
             throws SQLException {
 
         Long recoveryId = null;
-        // the column name array works for both Oracle and MySQL
+        // The column name array works for both Oracle and MySQL.
         try (PreparedStatement stmt = conn.prepareStatement(
                 "insert into password_recovery "
                         + "(personnel_id, recovery_status) values (?, ?)",
@@ -164,6 +183,15 @@ public class ForgotPasswordDaoImpl implements ForgotPasswordDao {
         return recoveryId;
     }
 
+    /**
+     * Executes an SQL update statement with the provided parameters.
+     *
+     * @param conn The database connection.
+     * @param sql The SQL statement to execute.
+     * @param params The parameters to bind to the statement.
+     * @return The number of affected rows.
+     * @throws SQLException If a database error occurs.
+     */
     private int update(Connection conn, String sql, Object... params)
             throws SQLException {
 
