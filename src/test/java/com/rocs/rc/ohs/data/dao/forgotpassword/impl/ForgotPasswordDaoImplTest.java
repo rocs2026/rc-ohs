@@ -28,6 +28,18 @@ import static org.mockito.Mockito.when;
  */
 class ForgotPasswordDaoImplTest {
 
+    /** Username used for testing. */
+    private String username;
+
+    /** Email address used for testing. */
+    private String email;
+
+    /** Password used for testing. */
+    private String password;
+
+    /** Token used for testing. */
+    private String token;
+
     private MockedStatic<ConnectionHelper> connectionHelper;
     private PreparedStatement insertRecovery;
     private PreparedStatement insertVerification;
