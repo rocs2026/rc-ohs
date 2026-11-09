@@ -1,3 +1,5 @@
 /.idea/
 /rc-ohs.iml
 /build/
+
+*.iml

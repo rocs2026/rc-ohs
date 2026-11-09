@@ -1,0 +1,33 @@
+name: Checkstyle on Pull Request
+
+on: [pull_request]
+
+permissions:
+  contents: read
+  checks: write
+
+jobs:
+  checkstyle:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+
+      - name: Download Checkstyle
+        run: curl -sSLO https://github.com/checkstyle/checkstyle/releases/download/checkstyle-10.17.0/checkstyle-10.17.0-all.jar
+
+      - name: Run Checkstyle
+        run: java -Dorg.checkstyle.sun.suppressionfilter.config=src/main/resources/checkstyle-suppressions.xml -jar checkstyle-10.17.0-all.jar -c /sun_checks.xml -f xml -o checkstyle-result.xml src/ || true
+
+      - name: Push Checkstyle results to GitHub
+        if: always()
+        uses: jwgmeligmeyling/checkstyle-github-action@v1.2
+        with:
+          path: '**/checkstyle-result.xml'
