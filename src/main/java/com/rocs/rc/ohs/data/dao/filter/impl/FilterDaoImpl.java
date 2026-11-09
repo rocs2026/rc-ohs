@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Implements the data access operations for filtering medical records.
@@ -109,6 +110,6 @@ public class FilterDaoImpl implements FilterDao {
      * @return The lowercase pattern wrapped in wildcards.
      */
     private String toPattern(String value) {
-        return "%" + value.trim().toLowerCase() + "%";
+        return "%" + value.trim().toLowerCase(Locale.ROOT) + "%";
     }
 }

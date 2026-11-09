@@ -268,4 +268,3 @@ import static org.mockito.Mockito.when;
             assertTrue(records.isEmpty());
         }
     }
-    
