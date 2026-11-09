@@ -29,7 +29,8 @@ public class ForgotPasswordDaoImpl implements ForgotPasswordDao {
                  PreparedStatement stmt = conn.prepareStatement(
                          "select l.id from login l "
                                  + "join person pe on pe.id = l.person_id "
-                                 + "left join personnel p on p.person_id = pe.id "
+                                 + "left join personnel p "
+                                 + "on p.person_id = pe.id "
                                  + "where lower(p.employee_id) = lower(?) "
                                  + "or lower(pe.email) = lower(?)")) {
                 stmt.setString(1, value);
@@ -68,7 +69,8 @@ public class ForgotPasswordDaoImpl implements ForgotPasswordDao {
                  PreparedStatement stmt = conn.prepareStatement(
                          "update login l "
                                  + "join person pe on pe.id = l.person_id "
-                                 + "left join personnel p on p.person_id = pe.id "
+                                 + "left join personnel p "
+                                 + "on p.person_id = pe.id "
                                  + "set l.password = ? "
                                  + "where l.username = ? "
                                  + "and (lower(p.employee_id) = lower(?) "
