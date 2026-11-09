@@ -8,6 +8,7 @@ import com.rocs.rc.ohs.data.dao.medicine.MedicineDao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +16,22 @@ import java.util.List;
  * Implements the data access operations for medicine records.
  */
 public class MedicineDaoImpl implements MedicineDao {
+
+    /**
+     * Helper method to map a ResultSet row to a Medicine object.
+     */
+    private Medicine mapResultSetToMedicine(ResultSet resultSet) throws SQLException {
+        MedicineCategory category = new MedicineCategory();
+        category.setId(resultSet.getString("category_id"));
+        category.setCategoryName(resultSet.getString("category_name"));
+
+        Medicine medicine = new Medicine();
+        medicine.setId(resultSet.getString("id"));
+        medicine.setMedicineName(resultSet.getString("medicine_name"));
+        medicine.setUnit(resultSet.getString("unit"));
+        medicine.setCategory(category);
+        return medicine;
+    }
 
     /**
      * Retrieves all available medicine records.
@@ -35,16 +52,7 @@ public class MedicineDaoImpl implements MedicineDao {
              ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
-                MedicineCategory category = new MedicineCategory();
-                category.setId(resultSet.getString("category_id"));
-                category.setCategoryName(resultSet.getString("category_name"));
-
-                Medicine medicine = new Medicine();
-                medicine.setId(resultSet.getString("id"));
-                medicine.setMedicineName(resultSet.getString("medicine_name"));
-                medicine.setUnit(resultSet.getString("unit"));
-                medicine.setCategory(category);
-                medicines.add(medicine);
+                medicines.add(mapResultSetToMedicine(resultSet));
             }
         } catch (Exception ex) {
             throw new RuntimeException("Error retrieving the medicines", ex);
@@ -73,15 +81,7 @@ public class MedicineDaoImpl implements MedicineDao {
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    MedicineCategory category = new MedicineCategory();
-                    category.setId(resultSet.getString("category_id"));
-                    category.setCategoryName(resultSet.getString("category_name"));
-
-                    medicine = new Medicine();
-                    medicine.setId(resultSet.getString("id"));
-                    medicine.setMedicineName(resultSet.getString("medicine_name"));
-                    medicine.setUnit(resultSet.getString("unit"));
-                    medicine.setCategory(category);
+                    medicine = mapResultSetToMedicine(resultSet);
                 }
             }
         } catch (Exception ex) {
@@ -115,16 +115,7 @@ public class MedicineDaoImpl implements MedicineDao {
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    MedicineCategory category = new MedicineCategory();
-                    category.setId(resultSet.getString("category_id"));
-                    category.setCategoryName(resultSet.getString("category_name"));
-
-                    Medicine medicine = new Medicine();
-                    medicine.setId(resultSet.getString("id"));
-                    medicine.setMedicineName(resultSet.getString("medicine_name"));
-                    medicine.setUnit(resultSet.getString("unit"));
-                    medicine.setCategory(category);
-                    medicines.add(medicine);
+                    medicines.add(mapResultSetToMedicine(resultSet));
                 }
             }
         } catch (Exception ex) {
