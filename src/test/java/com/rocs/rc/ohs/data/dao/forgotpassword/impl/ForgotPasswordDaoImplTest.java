@@ -1,3 +1,4 @@
+
 package com.rocs.rc.ohs.data.dao.forgotpassword.impl;
 
 import com.rocs.rc.ohs.data.connection.ConnectionHelper;
@@ -40,14 +41,31 @@ class ForgotPasswordDaoImplTest {
     /** Token used for testing. */
     private String token;
 
+    /** Static connection helper used in tests. */
     private MockedStatic<ConnectionHelper> connectionHelper;
+
+    /** Prepared statement for inserting recovery requests. */
     private PreparedStatement insertRecovery;
+
+    /** Prepared statement for inserting identity verification records. */
     private PreparedStatement insertVerification;
+
+    /** Prepared statement for updating recovery status. */
     private PreparedStatement updateStatus;
+
+    /** Prepared statement for updating passwords. */
     private PreparedStatement updatePassword;
+
+    /** Result set containing account information. */
     private ResultSet accountResult;
+
+    /** Result set containing generated keys. */
     private ResultSet keysResult;
+
+    /** Result set containing username verification results. */
     private ResultSet usernameResult;
+
+    /** DAO instance being tested. */
     private ForgotPasswordDaoImpl dao;
 
     @BeforeEach
@@ -99,7 +117,7 @@ class ForgotPasswordDaoImplTest {
     // CA 2: registered Staff ID or email, so the request can proceed
 
     @Test
-    void createRecovery_returnsRecoveryId_whenAccountIsRegistered()
+    void createRecoveryReturnsRecoveryIdWhenAccountIsRegistered()
             throws SQLException {
         when(accountResult.next()).thenReturn(true);
         when(accountResult.getLong(1)).thenReturn(5L);
@@ -114,7 +132,7 @@ class ForgotPasswordDaoImplTest {
     // CA 3: not registered, so no reset request is created
 
     @Test
-    void createRecovery_returnsNullAndCreatesNothing_whenNotRegistered()
+    void createRecoveryReturnsNullAndCreatesNothingWhenNotRegistered()
             throws SQLException {
         when(accountResult.next()).thenReturn(false);
 
@@ -125,7 +143,7 @@ class ForgotPasswordDaoImplTest {
     // CA 4: empty Staff ID or email
 
     @Test
-    void createRecovery_returnsNullWithoutConnecting_whenBlank() {
+    void createRecoveryReturnsNullWithoutConnectingWhenBlank() {
         assertNull(dao.createRecovery(null));
         assertNull(dao.createRecovery("   "));
 
@@ -135,7 +153,7 @@ class ForgotPasswordDaoImplTest {
     // CA 5: identity verification
 
     @Test
-    void verifyIdentity_verifiesRequest_whenUsernameMatches()
+    void verifyIdentityVerifiesRequestWhenUsernameMatches()
             throws SQLException {
         when(usernameResult.next()).thenReturn(true);
 
@@ -145,7 +163,7 @@ class ForgotPasswordDaoImplTest {
     }
 
     @Test
-    void verifyIdentity_recordsFailure_whenUsernameDoesNotMatch()
+    void verifyIdentityRecordsFailureWhenUsernameDoesNotMatch()
             throws SQLException {
         when(usernameResult.next()).thenReturn(false);
 
@@ -157,7 +175,7 @@ class ForgotPasswordDaoImplTest {
     // CA 5: the password changes only after verification
 
     @Test
-    void updatePassword_updatesAndCompletesRequest_whenVerified()
+    void updatePasswordUpdatesAndCompletesRequestWhenVerified()
             throws SQLException {
         when(updatePassword.executeUpdate()).thenReturn(1);
 
@@ -168,7 +186,7 @@ class ForgotPasswordDaoImplTest {
     }
 
     @Test
-    void updatePassword_changesNothing_whenNotVerified()
+    void updatePasswordChangesNothingWhenNotVerified()
             throws SQLException {
         when(updatePassword.executeUpdate()).thenReturn(0);
 
