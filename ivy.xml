@@ -15,6 +15,11 @@
         <conf name="test"    description="Required for test only" extends="runtime"/>
         <conf name="pmd"     description="PMD and CPD tools only"/>
         <conf name="checkstyle" visibility="private"/>
+        <conf name="compile" description="Required to compile application"/>
+        <conf name="runtime" description="Additional run-time dependencies" extends="compile"/>
+        <conf name="test" description="Required for test only" extends="runtime"/>
+        <conf name="pmd" description="PMD and CPD tools only"/>
+        <conf name="checkstyle" visibility="private"/>
     </configurations>
 
     <dependencies>
