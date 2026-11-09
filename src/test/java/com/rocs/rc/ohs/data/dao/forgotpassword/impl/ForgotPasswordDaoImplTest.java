@@ -1,4 +1,3 @@
-
 package com.rocs.rc.ohs.data.dao.forgotpassword.impl;
 
 import com.rocs.rc.ohs.data.connection.ConnectionHelper;
@@ -12,58 +11,31 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.startsWith;
 
 /**
  * Tests the {@link ForgotPasswordDaoImpl} class.
  */
 class ForgotPasswordDaoImplTest {
 
-    /** Username used for testing. */
-    private String username;
-
-    /** Email address used for testing. */
-    private String email;
-
-    /** Password used for testing. */
-    private String password;
-
-    /** Token used for testing. */
-    private String token;
-
     /** Static connection helper used in tests. */
     private MockedStatic<ConnectionHelper> connectionHelper;
 
-    /** Prepared statement for inserting recovery requests. */
-    private PreparedStatement insertRecovery;
+    /** Prepared statement for finding an account. */
+    private PreparedStatement findAccount;
 
-    /** Prepared statement for inserting identity verification records. */
-    private PreparedStatement insertVerification;
-
-    /** Prepared statement for updating recovery status. */
-    private PreparedStatement updateStatus;
-
-    /** Prepared statement for updating passwords. */
+    /** Prepared statement for updating the password. */
     private PreparedStatement updatePassword;
 
     /** Result set containing account information. */
     private ResultSet accountResult;
-
-    /** Result set containing generated keys. */
-    private ResultSet keysResult;
-
-    /** Result set containing username verification results. */
-    private ResultSet usernameResult;
 
     /** DAO instance being tested. */
     private ForgotPasswordDaoImpl dao;
@@ -71,36 +43,15 @@ class ForgotPasswordDaoImplTest {
     @BeforeEach
     void setUp() throws SQLException {
         Connection connection = mock(Connection.class);
-        PreparedStatement findAccount = mock(PreparedStatement.class);
-        PreparedStatement checkUsername = mock(PreparedStatement.class);
-        insertRecovery = mock(PreparedStatement.class);
-        insertVerification = mock(PreparedStatement.class);
-        updateStatus = mock(PreparedStatement.class);
+        findAccount = mock(PreparedStatement.class);
         updatePassword = mock(PreparedStatement.class);
         accountResult = mock(ResultSet.class);
-        keysResult = mock(ResultSet.class);
-        usernameResult = mock(ResultSet.class);
 
-        when(connection.prepareStatement(startsWith("select p.id")))
+        when(connection.prepareStatement(startsWith("select")))
                 .thenReturn(findAccount);
-        when(connection.prepareStatement(
-                startsWith("insert into password_recovery"),
-                any(String[].class))).thenReturn(insertRecovery);
-        when(connection.prepareStatement(
-                startsWith("select 1 from password_recovery")))
-                .thenReturn(checkUsername);
-        when(connection.prepareStatement(
-                startsWith("insert into identity_verification")))
-                .thenReturn(insertVerification);
-        when(connection.prepareStatement(
-                startsWith("update password_recovery")))
-                .thenReturn(updateStatus);
         when(connection.prepareStatement(startsWith("update login")))
                 .thenReturn(updatePassword);
-
         when(findAccount.executeQuery()).thenReturn(accountResult);
-        when(insertRecovery.getGeneratedKeys()).thenReturn(keysResult);
-        when(checkUsername.executeQuery()).thenReturn(usernameResult);
 
         connectionHelper = mockStatic(ConnectionHelper.class);
         connectionHelper.when(ConnectionHelper::getConnection)
@@ -114,83 +65,49 @@ class ForgotPasswordDaoImplTest {
         connectionHelper.close();
     }
 
-    // CA 2: registered Staff ID or email, so the request can proceed
-
+    // AC 2: registered Staff ID or email, so the request can proceed
     @Test
-    void createRecoveryReturnsRecoveryIdWhenAccountIsRegistered()
-            throws SQLException {
+    void isRegisteredReturnsTrueWhenAccountExists() throws SQLException {
         when(accountResult.next()).thenReturn(true);
-        when(accountResult.getLong(1)).thenReturn(5L);
-        when(keysResult.next()).thenReturn(true);
-        when(keysResult.getLong(1)).thenReturn(7L);
 
-        assertEquals(Long.valueOf(7L), dao.createRecovery(" EMP-001 "));
-        verify(insertRecovery).setLong(1, 5L);
-        verify(insertRecovery).setString(2, "Pending");
+        assertTrue(dao.isRegistered(" EMP-001 "));
+        verify(findAccount).setString(1, "EMP-001");
+        verify(findAccount).setString(2, "EMP-001");
     }
 
-    // CA 3: not registered, so no reset request is created
-
+    // AC 3: not registered, so the password cannot be reset
     @Test
-    void createRecoveryReturnsNullAndCreatesNothingWhenNotRegistered()
-            throws SQLException {
+    void isRegisteredReturnsFalseWhenNotRegistered() throws SQLException {
         when(accountResult.next()).thenReturn(false);
 
-        assertNull(dao.createRecovery("EMP-999"));
-        verify(insertRecovery, never()).executeUpdate();
+        assertFalse(dao.isRegistered("EMP-999"));
     }
 
-    // CA 4: empty Staff ID or email
-
+    // AC 4: empty Staff ID or email
     @Test
-    void createRecoveryReturnsNullWithoutConnectingWhenBlank() {
-        assertNull(dao.createRecovery(null));
-        assertNull(dao.createRecovery("   "));
+    void isRegisteredReturnsFalseWithoutConnectingWhenBlank() {
+        assertFalse(dao.isRegistered(null));
+        assertFalse(dao.isRegistered("   "));
 
         connectionHelper.verify(ConnectionHelper::getConnection, never());
     }
 
-    // CA 5: identity verification
-
+    // AC 5: identity verified (details match), so the password is updated
     @Test
-    void verifyIdentityVerifiesRequestWhenUsernameMatches()
-            throws SQLException {
-        when(usernameResult.next()).thenReturn(true);
-
-        assertTrue(dao.verifyIdentity(7L, "ana.corpuz"));
-        verify(insertVerification).setObject(3, "Verified");
-        verify(updateStatus).setObject(1, "Verified");
-    }
-
-    @Test
-    void verifyIdentityRecordsFailureWhenUsernameDoesNotMatch()
-            throws SQLException {
-        when(usernameResult.next()).thenReturn(false);
-
-        assertFalse(dao.verifyIdentity(7L, "someone.else"));
-        verify(insertVerification).setObject(3, "Failed");
-        verify(updateStatus, never()).executeUpdate();
-    }
-
-    // CA 5: the password changes only after verification
-
-    @Test
-    void updatePasswordUpdatesAndCompletesRequestWhenVerified()
-            throws SQLException {
+    void updatePasswordReturnsTrueWhenDetailsMatch() throws SQLException {
         when(updatePassword.executeUpdate()).thenReturn(1);
 
-        assertTrue(dao.updatePassword(7L, "NewPass123"));
-        verify(updatePassword).setObject(1, "NewPass123");
-        verify(updatePassword).setObject(3, "Verified");
-        verify(updateStatus).setObject(1, "Completed");
+        assertTrue(dao.updatePassword("EMP-001", "ana.corpuz", "NewPass123"));
+        verify(updatePassword).setString(1, "NewPass123");
+        verify(updatePassword).setString(2, "ana.corpuz");
     }
 
+    // AC 5: identity not verified, so nothing is updated
     @Test
-    void updatePasswordChangesNothingWhenNotVerified()
+    void updatePasswordReturnsFalseWhenDetailsDoNotMatch()
             throws SQLException {
         when(updatePassword.executeUpdate()).thenReturn(0);
 
-        assertFalse(dao.updatePassword(7L, "NewPass123"));
-        verify(updateStatus, never()).executeUpdate();
+        assertFalse(dao.updatePassword("EMP-001", "someone.else", "NewPass123"));
     }
 }
