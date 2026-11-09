@@ -74,6 +74,7 @@ class ForgotPasswordDaoImplTest {
         verify(findAccount).setString(1, "EMP-001");
         verify(findAccount).setString(2, "EMP-001");
     }
+
     // AC 3: not registered, so the password cannot be reset
     @Test
     void isRegisteredReturnsFalseWhenNotRegistered() throws SQLException {
@@ -81,6 +82,7 @@ class ForgotPasswordDaoImplTest {
 
         assertFalse(dao.isRegistered("EMP-999"));
     }
+
     // AC 4: empty Staff ID or email
     @Test
     void isRegisteredReturnsFalseWithoutConnectingWhenBlank() {
@@ -89,6 +91,7 @@ class ForgotPasswordDaoImplTest {
 
         connectionHelper.verify(ConnectionHelper::getConnection, never());
     }
+
     // AC 5: identity verified (details match), so the password is updated
     @Test
     void updatePasswordReturnsTrueWhenDetailsMatch() throws SQLException {
@@ -98,12 +101,14 @@ class ForgotPasswordDaoImplTest {
         verify(updatePassword).setString(1, "NewPass123");
         verify(updatePassword).setString(2, "ana.corpuz");
     }
+
     // AC 5: identity not verified, so nothing is updated
     @Test
     void updatePasswordReturnsFalseWhenDetailsDoNotMatch()
             throws SQLException {
         when(updatePassword.executeUpdate()).thenReturn(0);
 
-        assertFalse(dao.updatePassword("EMP-001", "someone.else", "NewPass123"));
+        assertFalse(dao.updatePassword(
+                "EMP-001", "someone.else", "NewPass123"));
     }
 }
