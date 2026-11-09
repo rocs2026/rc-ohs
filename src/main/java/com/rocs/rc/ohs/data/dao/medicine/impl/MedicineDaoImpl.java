@@ -30,6 +30,26 @@ public class MedicineDaoImpl implements MedicineDao {
         return medicine;
     }
 
+    private List<Medicine> fetchMedicines(String sql, Object... params) {
+        List<Medicine> medicines = new ArrayList<>();
+        try (Connection connection = MySqlConnectionHelper.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            for (int i = 0; i < params.length; i++) {
+                statement.setObject(i + 1, params[i]);
+            }
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    medicines.add(mapResultSetToMedicine(resultSet));
+                }
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException("Error executing database query", ex);
+        }
+        return medicines;
+    }
+
     /**
      * Retrieves all available medicine records.
      *
@@ -37,24 +57,12 @@ public class MedicineDaoImpl implements MedicineDao {
      */
     @Override
     public List<Medicine> getAllMedicine() {
-        List<Medicine> medicines = new ArrayList<>();
         String sql = "SELECT medicine.id, medicine.medicine_name, medicine.unit, " +
                 "medicine.category_id, medicine_category.category_name " +
                 "FROM medicine " +
                 "LEFT JOIN medicine_category ON medicine.category_id = medicine_category.id " +
                 "ORDER BY medicine.medicine_name";
-
-        try (Connection connection = MySqlConnectionHelper.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet resultSet = statement.executeQuery()) {
-
-            while (resultSet.next()) {
-                medicines.add(mapResultSetToMedicine(resultSet));
-            }
-        } catch (Exception ex) {
-            throw new RuntimeException("Error retrieving the medicines", ex);
-        }
-        return medicines;
+        return fetchMedicines(sql);
     }
 
     /**
@@ -70,19 +78,8 @@ public class MedicineDaoImpl implements MedicineDao {
                 "FROM medicine " +
                 "LEFT JOIN medicine_category ON medicine.category_id = medicine_category.id " +
                 "WHERE medicine.id = ?";
-
-        try (Connection connection = MySqlConnectionHelper.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, id);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return mapResultSetToMedicine(resultSet);
-                }
-            }
-        } catch (Exception ex) {
-            throw new RuntimeException("Error retrieving the medicine " + id, ex);
-        }
-        return null;
+        List<Medicine> result = fetchMedicines(sql, id);
+        return result.isEmpty() ? null : result.get(0);
     }
 
     /**
@@ -93,7 +90,6 @@ public class MedicineDaoImpl implements MedicineDao {
      */
     @Override
     public List<Medicine> searchMedicine(String keyword) {
-        List<Medicine> medicines = new ArrayList<>();
         String sql = "SELECT medicine.id, medicine.medicine_name, medicine.unit, " +
                 "medicine.category_id, medicine_category.category_name " +
                 "FROM medicine " +
@@ -101,20 +97,7 @@ public class MedicineDaoImpl implements MedicineDao {
                 "WHERE medicine.medicine_name LIKE ? " +
                 "OR medicine_category.category_name LIKE ? " +
                 "ORDER BY medicine.medicine_name";
-
-        try (Connection connection = MySqlConnectionHelper.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            String pattern = "%" + keyword.trim() + "%";
-            statement.setString(1, pattern);
-            statement.setString(2, pattern);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    medicines.add(mapResultSetToMedicine(resultSet));
-                }
-            }
-        } catch (Exception ex) {
-            throw new RuntimeException("Error searching the medicines", ex);
-        }
-        return medicines;
+        String pattern = "%" + keyword.trim() + "%";
+        return fetchMedicines(sql, pattern, pattern);
     }
 }
