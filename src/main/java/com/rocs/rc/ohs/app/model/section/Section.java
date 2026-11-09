@@ -10,6 +10,7 @@ public class Section {
 
     /** The unique ID of the section. */
     private Long id;
+    private String id;
 
     /** The code of the section. */
     private String code;
@@ -39,6 +40,7 @@ public class Section {
      * @return the section ID
      */
     public Long getId() {
+    public String getId() {
         return id;
     }
 
@@ -49,6 +51,7 @@ public class Section {
      * @param newId the new section ID
      */
     public void setId(Long newId) {
+    public void setId(String newId) {
         this.id = newId;
     }
 
