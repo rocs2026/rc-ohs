@@ -31,7 +31,7 @@ public class ForgotPasswordDaoImpl  implements ForgotPasswordDao {
         } catch (SQLException e) {
             System.out.println("Error Checking Account:" + e.getMessage());
             return false;
-            }
+        }
     }
     @Override
     public boolean updatePassword(String staffIdOrEmail, String username,
@@ -46,15 +46,15 @@ public class ForgotPasswordDaoImpl  implements ForgotPasswordDao {
                 + "and (lower(employee_id) = lower(?) or lower(email) = lower(?))";
 
         try (Connection connection = ConnectionHelper.getConnection();
-                 PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setString(1, newPassword);
-                statement.setString(2, username.trim());
-                statement.setString(3, value);
-                statement.setString(4, value);
-                return statement.executeUpdate() > 0;
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, newPassword);
+            statement.setString(2, username.trim());
+            statement.setString(3, value);
+            statement.setString(4, value);
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
-                System.out.println("Error updating password: " + e.getMessage());
-                return false;
-            }
+            System.out.println("Error updating password: " + e.getMessage());
+            return false;
         }
     }
+}
