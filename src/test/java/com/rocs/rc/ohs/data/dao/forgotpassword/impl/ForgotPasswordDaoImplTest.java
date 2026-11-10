@@ -28,10 +28,10 @@ class ForgotPasswordDaoImplTest {
     /** Static connection helper used in tests. */
     private MockedStatic<ConnectionHelper> connectionHelper;
 
-    /** Prep statement for finding an account. */
+    /** Prepared statement for finding an account. */
     private PreparedStatement findAccount;
 
-    /** Prep statement for updating the password. */
+    /** Prepared statement for updating the password. */
     private PreparedStatement updatePassword;
 
     /** Result set containing account information. */
