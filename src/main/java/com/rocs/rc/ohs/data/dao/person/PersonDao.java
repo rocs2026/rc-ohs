@@ -27,5 +27,3 @@ public interface PersonDao {
      */
     List<Person> findByName(String name);
 }
-
-

@@ -169,5 +169,3 @@ public class MedicalRecordDaoImpl implements MedicalRecordDao {
         return medicalRecord;
     }
 }
-
-

@@ -16,6 +16,7 @@ import java.util.List;
 /**
  * Implements the data access operations for persons.
  */
+
 public class PersonDaoImpl implements PersonDao {
 
     /** The columns selected for a person. */
@@ -144,4 +145,3 @@ public class PersonDaoImpl implements PersonDao {
         return null;
     }
 }
-
