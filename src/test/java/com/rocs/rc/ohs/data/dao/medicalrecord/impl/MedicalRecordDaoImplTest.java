@@ -84,7 +84,7 @@ public class MedicalRecordDaoImplTest {
      * @throws SQLException if the sql query update fails
      */
     @Test
-    void updateMedicalRecord_whenIdReturnsNothing_returnsFalse()
+    void updateMedicalRecordWhenIdReturnsNothingReturnsFalse()
             throws SQLException {
         when(statement.executeUpdate()).thenReturn(0);
 
@@ -100,7 +100,7 @@ public class MedicalRecordDaoImplTest {
      * @throws SQLException if database connection has error
      */
     @Test
-    void updateMedicalRecord_whenNameReturnsNothing_returnsFalse()
+    void updateMedicalRecordWhenNameReturnsNothingReturnsFalse()
             throws SQLException {
         when(statement.executeUpdate()).thenReturn(0);
 
@@ -116,7 +116,7 @@ public class MedicalRecordDaoImplTest {
      * @throws SQLException if the update has failed
      */
     @Test
-    void updateMedicalRecord_whenIdReturnsSingleResult_returnsTrue()
+    void updateMedicalRecordWhenIdReturnsSingleResultReturnsTrue()
             throws SQLException {
         when(statement.executeUpdate()).thenReturn(1);
 
@@ -132,7 +132,7 @@ public class MedicalRecordDaoImplTest {
      * @throws SQLException if sql params are wrong.
      */
     @Test
-    void updateMedicalRecord_whenNameReturnsSingleResult_returnsTrue()
+    void updateMedicalRecordWhenNameReturnsSingleResultReturnsTrue()
             throws SQLException {
         when(statement.executeUpdate()).thenReturn(1);
 
@@ -148,7 +148,7 @@ public class MedicalRecordDaoImplTest {
      * @throws SQLException if table update cannot process data.
      */
     @Test
-    void updateMedicalRecord_whenSelectedFromMultipleResults_returnsTrue()
+    void updateMedicalRecordWhenSelectedFromMultipleResultsReturnsTrue()
             throws SQLException {
         when(statement.executeUpdate()).thenReturn(1);
 
@@ -164,7 +164,7 @@ public class MedicalRecordDaoImplTest {
      * @throws SQLException if verification drops.
      */
     @Test
-    void updateMedicalRecord_whenUpdated_sendsNewValuesToDatabase()
+    void updateMedicalRecordWhenUpdatedSendsNewValuesToDatabase()
             throws SQLException {
         when(statement.executeUpdate()).thenReturn(1);
 
