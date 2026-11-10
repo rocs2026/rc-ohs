@@ -18,7 +18,8 @@ public class ForgotPasswordDaoImpl  implements ForgotPasswordDao {
             return false;
         }
         String value = staffIdOrEmail.trim();
-        String sql = "select id from login" + "where lower (employee_id) = lower(?) or lower(email) = lower(?)";
+        String sql = "select id from login"
+                +"where lower (employee_id) = lower(?) or lower(email) = lower(?)";
 
         try (Connection connection = ConnectionHelper.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -35,23 +36,23 @@ public class ForgotPasswordDaoImpl  implements ForgotPasswordDao {
     @Override
     public boolean updatePassword(String staffIdOrEmail, String username,
                                   String newPassword) {
-        if (staffIdOrEmail == null || staffIdOrEmail.trim().isEmpty() ||
-                username == null || newPassword == null) {
+        if (staffIdOrEmail == null || staffIdOrEmail.trim().isEmpty()
+                || username == null || newPassword == null) {
             return false;
         }
         String value = staffIdOrEmail.trim();
-        String sql = "update login set password = ? where username ?"
-                + "and(lower(employee_id) = "
-                + "lower(?) or lower(email) = lower(?))";
 
-            try (Connection connection = ConnectionHelper.getConnection();
+        String sql = "update login set password = ? where username ?"
+                + "and (lower(employee_id) = lower(?) or lower(email) = lower(?))";
+
+        try (Connection connection = ConnectionHelper.getConnection();
                  PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setString(1, newPassword);
                 statement.setString(2, username.trim());
                 statement.setString(3, value);
                 statement.setString(4, value);
                 return statement.executeUpdate() > 0;
-            } catch (SQLException e) {
+        } catch (SQLException e) {
                 System.out.println("Error updating password: " + e.getMessage());
                 return false;
             }
