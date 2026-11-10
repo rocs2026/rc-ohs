@@ -22,35 +22,38 @@ public class ForgotPasswordDaoImpl  implements ForgotPasswordDao {
 
         try (Connection connection = ConnectionHelper.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1,value);
-            statement.setString(2,value);
+            statement.setString(1, value);
+            statement.setString(2, value);
             try (ResultSet resultSet = statement.executeQuery()) {
                 return resultSet.next();
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println("Error Checking Account:" + e.getMessage());
             return false;
             }
     }
     @Override
-    public boolean updatePassword(String staffIdOrEmail, String username, String newPassword) {
+    public boolean updatePassword(String staffIdOrEmail, String username,
+                                  String newPassword) {
         if (staffIdOrEmail == null || staffIdOrEmail.trim().isEmpty() ||
-        username == null || newPassword == null){
+                username == null || newPassword == null) {
             return false;
         }
         String value = staffIdOrEmail.trim();
-        String sql = "update login set password = ? where username ? " + "and(lower(employee_id) = lower(?) or lower(email) = lower(?))";
+        String sql = "update login set password = ? where username ?"
+                + "and(lower(employee_id) = "
+                + "lower(?) or lower(email) = lower(?))";
 
-        try (Connection connection = ConnectionHelper.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)){
-            statement.setString(1,newPassword);
-            statement.setString(2, username.trim());
-            statement.setString(3, value);
-            statement.setString(4,value);
-            return  statement.executeUpdate() > 0;
-        }catch (SQLException e){
-            System.out.println("Error updating password: " + e.getMessage());
-            return false;
+            try (Connection connection = ConnectionHelper.getConnection();
+                 PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, newPassword);
+                statement.setString(2, username.trim());
+                statement.setString(3, value);
+                statement.setString(4, value);
+                return statement.executeUpdate() > 0;
+            } catch (SQLException e) {
+                System.out.println("Error updating password: " + e.getMessage());
+                return false;
+            }
         }
     }
-}
