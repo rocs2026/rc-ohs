@@ -27,7 +27,7 @@ public class ForgotPasswordDaoImpl implements ForgotPasswordDao {
             String value = staffIdOrEmail.trim();
             try (Connection conn = ConnectionHelper.getConnection();
                  PreparedStatement stmt = conn.prepareStatement(
-                         "select l.id from login l "
+                         "select l.id from login l"
                                  + "where lower(l.employee_id) = lower(?) "
                                  + "or lower(l.email) = lower(?)")) {
                 stmt.setString(1, value);
