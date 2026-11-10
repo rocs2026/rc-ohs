@@ -1,12 +1,11 @@
 package com.rocs.rc.ohs.data.connection;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 
 /**
  * Provides database connections for the application.
  */
-public final class ConnectionHelper {
+public final class ConnectionHelper extends MySqlConnectionHelper {
 
     /** The JDBC URL of the database. */
     public static final String URL = "jdbc:oracle:thin:@localhost:1521:rogate";
@@ -40,5 +39,4 @@ public final class ConnectionHelper {
             throw new RuntimeException("Error connecting to the database.", ex);
         }
     }
-
 }

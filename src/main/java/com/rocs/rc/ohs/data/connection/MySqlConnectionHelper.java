@@ -1,18 +1,14 @@
 package com.rocs.rc.ohs.data.connection;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 
 /**
- * Provides database connections for the application.
+ * Provides MySQL database connections.
  */
-public final class MySqlConnectionHelper {
+public class MySqlConnectionHelper {
 
     /** The JDBC URL of the database. */
     public static final String URL = "jdbc:mysql://localhost:3306/rcis";
-
-    /** The JDBC driver class name. */
-    public static final String MYSQL_DRIVER = "com.mysql.cj.jdbc.Driver";
 
     /** The database username. */
     public static final String USERNAME = "rcis";
@@ -21,23 +17,22 @@ public final class MySqlConnectionHelper {
     public static final String PASSWORD = "Changeme0";
 
     /**
-     * Prevents instantiation of this utility class.
+     * Allows subclasses to extend this helper.
      */
-    private MySqlConnectionHelper() {
+    protected MySqlConnectionHelper() {
     }
 
     /**
-     * Opens a connection to the database.
+     * Opens a connection to the MySQL database.
      *
      * @return A {@link Connection} to the database.
      */
-    public static Connection getConnection() {
+    public static Connection mySqlGetConnection() {
         try {
-            Class.forName(MYSQL_DRIVER);
+            Class.forName("com.mysql.cj.jdbc.Driver");
             return DriverManager.getConnection(URL, USERNAME, PASSWORD);
         } catch (Exception ex) {
             throw new RuntimeException("Error connecting to the database.", ex);
         }
     }
-
 }
