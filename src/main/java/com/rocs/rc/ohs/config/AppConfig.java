@@ -19,7 +19,6 @@ public final class AppConfig {
     private static final Properties VALUES = new Properties();
 
     static {
-        // 1. Try classpath first
         try (InputStream stream = AppConfig.class.getClassLoader()
                 .getResourceAsStream(FILE_NAME)) {
             if (stream != null) {
@@ -30,7 +29,6 @@ public final class AppConfig {
                     "Could not read " + FILE_NAME + " from classpath.", e);
         }
 
-        // 2. Fallback to working directory if not found in classpath
         if (VALUES.isEmpty()) {
             Path source = Paths.get(FILE_NAME);
             if (Files.isReadable(source)) {
@@ -56,7 +54,7 @@ public final class AppConfig {
     /**
      * Returns the value for a key, or null if not found.
      *
-     * @param key The property name.
+     * @param key The configuration key to look up.
      * @return The property value, or null.
      */
     public static String get(String key) {
@@ -68,9 +66,24 @@ public final class AppConfig {
     }
 
     /**
+     * Returns the value for a key, or a default value if not found.
+     *
+     * @param key          Key to search for in the properties.
+     * @param defaultValue The fallback value.
+     * @return The property value, or the default value.
+     */
+    public static String get(String key, String defaultValue) {
+        String value = get(key);
+        if (value == null || value.trim().isEmpty()) {
+            return defaultValue;
+        }
+        return value.trim();
+    }
+
+    /**
      * Returns the value for a key and throws an exception if missing.
      *
-     * @param key The property name.
+     * @param key Property name to fetch.
      * @return The configured value, trimmed.
      * @throws IllegalStateException If the key is missing or blank.
      */

@@ -32,20 +32,6 @@ public class LogicAnalyzer implements CodeAnalyzer {
             Pattern.CASE_INSENSITIVE
     );
 
-    private static final Pattern PRINT_STACK_TRACE = Pattern.compile(
-            "\\.printStackTrace\\s*\\("
-    );
-
-    /**
-     * A catch block whose only reaction is printing to the console. Generated
-     * DAO/service code very often replaces real error handling with
-     * {@code System.out.println(e.getMessage())}.
-     */
-    private static final Pattern CATCH_PRINTS_TO_CONSOLE = Pattern.compile(
-            "catch\\s*\\([^)]*\\)\\s*\\{[^}]*System\\.(?:out|err)\\."
-                    + "(?:print|printf|println)\\s*\\("
-    );
-
     @Override
     public void analyze(AnalysisContext context) {
 
@@ -109,31 +95,6 @@ public class LogicAnalyzer implements CodeAnalyzer {
 
             context.addTechnicalNote(
                     "Prefer PreparedStatement parameters over SQL concatenation."
-            );
-        }
-
-        if (PRINT_STACK_TRACE.matcher(structure).find()) {
-            context.addTechnicalNote(
-                    "Consider using a logging framework instead of printStackTrace()."
-            );
-        }
-
-        if (CATCH_PRINTS_TO_CONSOLE.matcher(structure).find()) {
-            context.addPoints(
-                    Categories.LOGIC,
-                    4,
-                    "Exception handler only prints the error to the console."
-            );
-
-            context.addTechnicalNote(
-                    "Consider logging or propagating the exception instead of "
-                            + "printing it to the console."
-            );
-        }
-
-        if (structure.contains("System.out.println") && structure.contains("catch")) {
-            context.addTechnicalNote(
-                    "Consider using a logging framework for exception reporting."
             );
         }
     }
