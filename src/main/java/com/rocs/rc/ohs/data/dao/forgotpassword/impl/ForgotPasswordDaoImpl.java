@@ -28,11 +28,8 @@ public class ForgotPasswordDaoImpl implements ForgotPasswordDao {
             try (Connection conn = ConnectionHelper.getConnection();
                  PreparedStatement stmt = conn.prepareStatement(
                          "select l.id from login l "
-                                 + "join person pe on pe.id = l.person_id "
-                                 + "left join personnel p "
-                                 + "on p.person_id = pe.id "
-                                 + "where lower(p.employee_id) = lower(?) "
-                                 + "or lower(pe.email) = lower(?)")) {
+                                 + "where lower(l.employee_id) = lower(?) "
+                                 + "or lower(l.email) = lower(?)")) {
                 stmt.setString(1, value);
                 stmt.setString(2, value);
 
@@ -68,13 +65,10 @@ public class ForgotPasswordDaoImpl implements ForgotPasswordDao {
             try (Connection conn = ConnectionHelper.getConnection();
                  PreparedStatement stmt = conn.prepareStatement(
                          "update login l "
-                                 + "join person pe on pe.id = l.person_id "
-                                 + "left join personnel p "
-                                 + "on p.person_id = pe.id "
                                  + "set l.password = ? "
                                  + "where l.username = ? "
-                                 + "and (lower(p.employee_id) = lower(?) "
-                                 + "or lower(pe.email) = lower(?))")) {
+                                 + "and (lower(l.employee_id) = lower(?) "
+                                 + "or lower(l.email) = lower(?))")) {
                 stmt.setString(1, newPassword);
                 stmt.setString(2, username.trim());
                 stmt.setString(3, value);
