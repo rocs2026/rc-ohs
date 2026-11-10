@@ -18,8 +18,9 @@ public class ForgotPasswordDaoImpl  implements ForgotPasswordDao {
             return false;
         }
         String value = staffIdOrEmail.trim();
-        String sql = "select id from login"
-                +"where lower (employee_id) = lower(?) or lower(email) = lower(?)";
+        String sql = " select id from login "
+                + "where lower (employee_id) = "
+                + "lower(?) or lower(email) = lower(?)";
 
         try (Connection connection = ConnectionHelper.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -42,8 +43,10 @@ public class ForgotPasswordDaoImpl  implements ForgotPasswordDao {
         }
         String value = staffIdOrEmail.trim();
 
-        String sql = "update login set password = ? where username ?"
-                + "and (lower(employee_id) = lower(?) or lower(email) = lower(?))";
+        String sql = " update login set password = ?"
+                + " where username ? "
+                + " and (lower(employee_id) = lower(?) "
+                + " or lower(email) = lower(?))";
 
         try (Connection connection = ConnectionHelper.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
