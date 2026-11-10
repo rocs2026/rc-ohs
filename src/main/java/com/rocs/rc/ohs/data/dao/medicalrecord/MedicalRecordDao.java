@@ -34,3 +34,4 @@ public interface MedicalRecordDao {
      */
     boolean addMedicalRecord(MedicalRecord medicalRecord);
 }
+

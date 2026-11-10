@@ -16,18 +16,37 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.startsWith;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+/**
+ * Tests the {@link PersonDaoImpl} class.
+ */
 class PersonDaoImplTest {
 
+    /** The ID of the person used in tests. */
     private static final String PERSON_ID =
             "f04cac48-889d-4a62-9a2b-a274406ece20";
 
+    /** Static connection helper used in tests. */
     private MockedStatic<ConnectionHelper> connectionHelper;
+
+    /** Prepared statement for finding persons. */
     private PreparedStatement findPersons;
+
+    /** Result set containing person information. */
     private ResultSet personResult;
+
+    /** DAO instance being tested. */
     private PersonDaoImpl dao;
 
     @BeforeEach

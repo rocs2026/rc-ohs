@@ -16,23 +16,48 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.startsWith;
-import static org.mockito.Mockito.*;
-
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+/**
+ * Tests the {@link MedicalRecordDaoImpl} class.
+ */
 class MedicalRecordDaoImplTest {
 
+    /** The ID of the medical record used in tests. */
     private static final String RECORD_ID =
             "4e49eb71-3481-476b-b6ba-5662a48df1e5";
+
+    /** The ID of the patient used in tests. */
     private static final String PATIENT_ID =
             "ea67a306-d343-4847-b204-c92f2d4cc9e0";
+
+    /** The ID of the consultation used in tests. */
     private static final String CONSULTATION_ID =
             "a451a504-a3d4-4721-bf8d-a18b8c199356";
 
+    /** Static connection helper used in tests. */
     private MockedStatic<ConnectionHelper> connectionHelper;
+
+    /** Prepared statement for finding medical records. */
     private PreparedStatement findRecords;
+
+    /** Prepared statement for adding a medical record. */
     private PreparedStatement insertRecord;
+
+    /** Result set containing medical record information. */
     private ResultSet recordResult;
+
+    /** DAO instance being tested. */
     private MedicalRecordDaoImpl dao;
 
     @BeforeEach
