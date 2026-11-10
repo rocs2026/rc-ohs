@@ -6,6 +6,7 @@ import com.rocs.rc.ohs.app.model.person.Person;
 import com.rocs.rc.ohs.app.model.personnel.Personnel;
 import com.rocs.rc.ohs.data.connection.ConnectionHelper;
 import com.rocs.rc.ohs.data.dao.consultation.ConsultationDao;
+import com.rocs.rc.ohs.data.utils.QueryConstants;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,43 +15,29 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Implements the data access operations for consultations.
  */
 public class ConsultationDaoImpl implements ConsultationDao {
 
-    /** The SQL statement that saves a consultation. */
-    private static final String INSERT_SQL =
-            "INSERT INTO consultation (id, patient_id, staff_id, "
-                    + "record_type, consultation_date, complaint, diagnosis, "
-                    + "treatment, action_taken, remarks) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-    /** The SQL statement that retrieves the consultations of a patient. */
-    private static final String FIND_BY_PATIENT_SQL =
-            "SELECT id, staff_id, record_type, consultation_date, "
-                    + "complaint, diagnosis, treatment, action_taken, remarks "
-                    + "FROM consultation WHERE patient_id = ? "
-                    + "ORDER BY consultation_date DESC";
-
     /**
      * Saves a new consultation using the given connection.
      *
      * @param connection The connection to use. It is not closed here.
-     * @param consultation The consultation to save.
-     * @return The saved {@link Consultation} with its generated UUID.
+     * @param consultation The consultation to save. Its ID must be set.
+     * @return The saved {@link Consultation}.
+     * @throws IllegalArgumentException If a required value is missing.
      */
     @Override
     public Consultation add(Connection connection,
                             Consultation consultation) {
-        String id = UUID.randomUUID().toString();
-        try (PreparedStatement statement =
-                     connection.prepareStatement(INSERT_SQL)) {
+        validate(consultation);
+        try (PreparedStatement statement = connection.prepareStatement(
+                QueryConstants.ADD_CONSULTATION_STATEMENT)) {
             Timestamp date =
                     Timestamp.valueOf(consultation.getConsultationDate());
-            statement.setString(1, id);
+            statement.setString(1, consultation.getId());
             statement.setString(2, consultation.getPatient().getId());
             statement.setString(3, consultation.getStaff().getId());
             statement.setString(4, consultation.getRecordType().getValue());
@@ -61,7 +48,6 @@ public class ConsultationDaoImpl implements ConsultationDao {
             statement.setString(9, consultation.getActionTaken());
             statement.setString(10, consultation.getRemarks());
             statement.executeUpdate();
-            consultation.setId(id);
             return consultation;
         } catch (SQLException ex) {
             throw new RuntimeException("Error saving the consultation.", ex);
@@ -78,8 +64,8 @@ public class ConsultationDaoImpl implements ConsultationDao {
     public List<Consultation> findByPatientId(String patientId) {
         List<Consultation> consultations = new ArrayList<>();
         try (Connection connection = ConnectionHelper.getConnection();
-             PreparedStatement statement =
-                     connection.prepareStatement(FIND_BY_PATIENT_SQL)) {
+             PreparedStatement statement = connection.prepareStatement(
+                     QueryConstants.GET_CONSULTATIONS_BY_PATIENT_STATEMENT)) {
             statement.setString(1, patientId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
@@ -91,6 +77,24 @@ public class ConsultationDaoImpl implements ConsultationDao {
                     "Error retrieving the consultations.", ex);
         }
         return consultations;
+    }
+
+    /**
+     * Checks that the consultation has everything the insert needs.
+     *
+     * @param consultation The consultation to check.
+     * @throws IllegalArgumentException If a required value is missing.
+     */
+    private void validate(Consultation consultation) {
+        if (consultation == null
+                || consultation.getId() == null
+                || consultation.getPatient() == null
+                || consultation.getStaff() == null
+                || consultation.getRecordType() == null
+                || consultation.getConsultationDate() == null) {
+            throw new IllegalArgumentException("The consultation, its ID, "
+                    + "patient, staff, record type and date are required.");
+        }
     }
 
     /**

@@ -15,14 +15,15 @@ public interface PrescriptionDao {
      * can save it together with other records in one transaction.
      *
      * @param connection The connection to use. It is not closed here.
-     * @param prescription The prescription to save.
-     * @return The saved {@link Prescription} with its generated UUID.
+     * @param prescription The prescription to save. Its ID must be set.
+     * @return The saved {@link Prescription}.
      */
     Prescription add(Connection connection, Prescription prescription);
 
     /**
      * Retrieves all prescriptions issued in a consultation, with the name
-     * and unit of each medicine.
+     * and unit of each medicine, so they can be shown in the patient's
+     * medical records.
      *
      * @param consultationId The UUID of the consultation.
      * @return A list of prescriptions of the consultation.

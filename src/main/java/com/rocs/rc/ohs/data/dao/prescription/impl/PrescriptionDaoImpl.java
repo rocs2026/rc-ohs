@@ -7,6 +7,7 @@ import com.rocs.rc.ohs.app.model.personnel.Personnel;
 import com.rocs.rc.ohs.app.model.prescription.Prescription;
 import com.rocs.rc.ohs.data.connection.ConnectionHelper;
 import com.rocs.rc.ohs.data.dao.prescription.PrescriptionDao;
+import com.rocs.rc.ohs.data.utils.QueryConstants;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,44 +15,27 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Implements the data access operations for prescriptions.
  */
 public class PrescriptionDaoImpl implements PrescriptionDao {
 
-    /** The SQL statement that saves a prescription. */
-    private static final String INSERT_SQL =
-            "INSERT INTO prescription (id, consultation_id, "
-                    + "medicine_stock_id, personnel_id, quantity_to_dispense, "
-                    + "dose, frequency, instructions) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
-    /** The SQL statement that retrieves the prescriptions of a consultation. */
-    private static final String FIND_BY_CONSULTATION_SQL =
-            "SELECT p.id, p.medicine_stock_id, p.personnel_id, "
-                    + "p.quantity_to_dispense, p.dose, p.frequency, "
-                    + "p.instructions, m.medicine_name, m.unit "
-                    + "FROM prescription p "
-                    + "JOIN medicine_stock ms ON ms.id = p.medicine_stock_id "
-                    + "JOIN medicine m ON m.id = ms.medicine_id "
-                    + "WHERE p.consultation_id = ? ORDER BY p.id";
-
     /**
      * Saves a new prescription using the given connection.
      *
      * @param connection The connection to use. It is not closed here.
-     * @param prescription The prescription to save.
-     * @return The saved {@link Prescription} with its generated UUID.
+     * @param prescription The prescription to save. Its ID must be set.
+     * @return The saved {@link Prescription}.
+     * @throws IllegalArgumentException If a required value is missing.
      */
     @Override
     public Prescription add(Connection connection,
                             Prescription prescription) {
-        String id = UUID.randomUUID().toString();
-        try (PreparedStatement statement =
-                     connection.prepareStatement(INSERT_SQL)) {
-            statement.setString(1, id);
+        validate(prescription);
+        try (PreparedStatement statement = connection.prepareStatement(
+                QueryConstants.ADD_PRESCRIPTION_STATEMENT)) {
+            statement.setString(1, prescription.getId());
             statement.setString(2, prescription.getConsultation().getId());
             statement.setString(3, prescription.getMedicineStock().getId());
             statement.setString(4, prescription.getPersonnel().getId());
@@ -60,7 +44,6 @@ public class PrescriptionDaoImpl implements PrescriptionDao {
             statement.setString(7, prescription.getFrequency());
             statement.setString(8, prescription.getInstructions());
             statement.executeUpdate();
-            prescription.setId(id);
             return prescription;
         } catch (SQLException ex) {
             throw new RuntimeException("Error saving the prescription.", ex);
@@ -78,8 +61,9 @@ public class PrescriptionDaoImpl implements PrescriptionDao {
     public List<Prescription> findByConsultationId(String consultationId) {
         List<Prescription> prescriptions = new ArrayList<>();
         try (Connection connection = ConnectionHelper.getConnection();
-             PreparedStatement statement =
-                     connection.prepareStatement(FIND_BY_CONSULTATION_SQL)) {
+             PreparedStatement statement = connection.prepareStatement(
+                     QueryConstants
+                             .GET_PRESCRIPTIONS_BY_CONSULTATION_STATEMENT)) {
             statement.setString(1, consultationId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
@@ -92,6 +76,24 @@ public class PrescriptionDaoImpl implements PrescriptionDao {
                     "Error retrieving the prescriptions.", ex);
         }
         return prescriptions;
+    }
+
+    /**
+     * Checks that the prescription has everything the insert needs.
+     *
+     * @param prescription The prescription to check.
+     * @throws IllegalArgumentException If a required value is missing.
+     */
+    private void validate(Prescription prescription) {
+        if (prescription == null
+                || prescription.getId() == null
+                || prescription.getConsultation() == null
+                || prescription.getMedicineStock() == null
+                || prescription.getPersonnel() == null) {
+            throw new IllegalArgumentException("The prescription, its ID, "
+                    + "consultation, medicine stock and personnel are "
+                    + "required.");
+        }
     }
 
     /**

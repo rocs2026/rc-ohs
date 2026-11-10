@@ -17,7 +17,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -32,6 +31,10 @@ class PrescriptionDaoImplTest {
     /** The ID of a consultation in the test data. */
     private static final String CONSULTATION_ID =
             "a451a504-a3d4-4721-bf8d-a18b8c199356";
+
+    /** The ID given to a new prescription, as the facade would do. */
+    private static final String NEW_ID =
+            "9f4e6c1a-2b7d-4c58-8a31-5d0e7b9c2f14";
 
     /** The ID of the Amoxicillin 500mg stock in the test data. */
     private static final String STOCK_ID =
@@ -56,11 +59,6 @@ class PrescriptionDaoImplTest {
     /** The DAO under test. */
     private PrescriptionDaoImpl dao;
 
-    /**
-     * Mocks the connection so that no real database is used.
-     *
-     * @throws SQLException If the mocks cannot be set up.
-     */
     @BeforeEach
     void setUp() throws SQLException {
         connection = mock(Connection.class);
@@ -76,27 +74,19 @@ class PrescriptionDaoImplTest {
         dao = new PrescriptionDaoImpl();
     }
 
-    /**
-     * Releases the mocked connection helper.
-     */
     @AfterEach
     void tearDown() {
         connectionHelper.close();
     }
 
-    /**
-     * The prescription is recorded under the consultation.
-     *
-     * @throws SQLException If a mock call fails.
-     */
+    // The prescription is recorded under the consultation.
     @Test
     void savesThePrescriptionUnderTheConsultation()
             throws SQLException {
         Prescription saved = dao.add(connection, newPrescription());
 
-        assertNotNull(saved.getId());
-        assertEquals(36, saved.getId().length());
-        verify(statement).setString(1, saved.getId());
+        assertEquals(NEW_ID, saved.getId());
+        verify(statement).setString(1, NEW_ID);
         verify(statement).setString(2, CONSULTATION_ID);
         verify(statement).setString(3, STOCK_ID);
         verify(statement).setString(4, PERSONNEL_ID);
@@ -106,12 +96,7 @@ class PrescriptionDaoImplTest {
         verify(statement).executeUpdate();
     }
 
-    /**
-     * The saved prescription details are retrieved for the
-     * consultation.
-     *
-     * @throws SQLException If a mock call fails.
-     */
+    // The saved prescription details are retrieved for the consultation.
     @Test
     void returnsTheSavedPrescriptionDetails() throws SQLException {
         when(resultSet.next()).thenReturn(true, false);
@@ -137,11 +122,6 @@ class PrescriptionDaoImplTest {
         assertEquals(2, prescription.getQuantityToDispense());
     }
 
-    /**
-     * Creates the Amoxicillin prescription used by the test cases.
-     *
-     * @return The new prescription.
-     */
     private Prescription newPrescription() {
         Consultation consultation = new Consultation();
         consultation.setId(CONSULTATION_ID);
@@ -150,6 +130,7 @@ class PrescriptionDaoImplTest {
         Personnel personnel = new Personnel();
         personnel.setId(PERSONNEL_ID);
         Prescription prescription = new Prescription();
+        prescription.setId(NEW_ID);
         prescription.setConsultation(consultation);
         prescription.setMedicineStock(stock);
         prescription.setPersonnel(personnel);

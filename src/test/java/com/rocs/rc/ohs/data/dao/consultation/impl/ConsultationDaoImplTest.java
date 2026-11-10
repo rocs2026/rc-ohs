@@ -19,7 +19,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -47,6 +46,10 @@ class ConsultationDaoImplTest {
     private static final String CONSULTATION_ID =
             "a451a504-a3d4-4721-bf8d-a18b8c199356";
 
+    /** The ID given to a new consultation, as the facade would do. */
+    private static final String NEW_ID =
+            "0bd75b66-0afb-4901-88d6-c1e851432727";
+
     /** The date of the consultation in the test cases. */
     private static final LocalDateTime DATE =
             LocalDateTime.of(2026, 10, 20, 9, 30);
@@ -55,7 +58,7 @@ class ConsultationDaoImplTest {
     private static final String DIAGNOSIS = "Bacterial throat infection";
 
     /** The treatment of Jowan in the test cases. */
-    private static final String TREATMENT = "Antibiotic course and rest";
+    private static final String TREATMENT = "Antibiotic and rest";
 
     /** The mocked connection helper. */
     private MockedStatic<ConnectionHelper> connectionHelper;
@@ -72,11 +75,6 @@ class ConsultationDaoImplTest {
     /** The DAO under test. */
     private ConsultationDaoImpl dao;
 
-    /**
-     * Mocks the connection so that no real database is used.
-     *
-     * @throws SQLException If the mocks cannot be set up.
-     */
     @BeforeEach
     void setUp() throws SQLException {
         connection = mock(Connection.class);
@@ -92,19 +90,12 @@ class ConsultationDaoImplTest {
         dao = new ConsultationDaoImpl();
     }
 
-    /**
-     * Releases the mocked connection helper.
-     */
     @AfterEach
     void tearDown() {
         connectionHelper.close();
     }
 
-    /**
-     * The treatment plan is saved as part of the consultation.
-     *
-     * @throws SQLException If a mock call fails.
-     */
+    // Treatment plan is saved as part of the consultation.
     @Test
     void savesTheTreatmentPlan() throws SQLException {
         Consultation consultation = newConsultation(ANTONIO_ID,
@@ -118,20 +109,14 @@ class ConsultationDaoImplTest {
         verify(statement).executeUpdate();
     }
 
-    /**
-     * The consultation is saved with the patient, date, diagnosis
-     * and treatment plan.
-     *
-     * @throws SQLException If a mock call fails.
-     */
+    // The consultation is saved with all its details.
     @Test
     void savesTheConsultationWithAllDetails() throws SQLException {
         Consultation saved = dao.add(connection,
                 newConsultation(JOWAN_ID, DIAGNOSIS, TREATMENT));
 
-        assertNotNull(saved.getId());
-        assertEquals(36, saved.getId().length());
-        verify(statement).setString(1, saved.getId());
+        assertEquals(NEW_ID, saved.getId());
+        verify(statement).setString(1, NEW_ID);
         verify(statement).setString(2, JOWAN_ID);
         verify(statement).setString(3, STAFF_ID);
         verify(statement).setString(4, RecordType.CHECK_UP.getValue());
@@ -141,11 +126,7 @@ class ConsultationDaoImplTest {
         verify(statement).executeUpdate();
     }
 
-    /**
-     * The saved consultation details are retrieved for the patient.
-     *
-     * @throws SQLException If a mock call fails.
-     */
+    // The saved consultation details are retrieved for the patient.
     @Test
     void returnsTheSavedConsultationDetails() throws SQLException {
         when(resultSet.next()).thenReturn(true, false);
@@ -170,15 +151,6 @@ class ConsultationDaoImplTest {
         assertEquals(TREATMENT, consultation.getTreatment());
     }
 
-    /**
-     * Creates a consultation with the given patient, diagnosis and
-     * treatment.
-     *
-     * @param patientId The ID of the patient.
-     * @param diagnosis The diagnosis.
-     * @param treatment The treatment plan.
-     * @return The new consultation.
-     */
     private Consultation newConsultation(String patientId, String diagnosis,
                                          String treatment) {
         Person patient = new Person();
@@ -186,6 +158,7 @@ class ConsultationDaoImplTest {
         Personnel staff = new Personnel();
         staff.setId(STAFF_ID);
         Consultation consultation = new Consultation();
+        consultation.setId(NEW_ID);
         consultation.setPatient(patient);
         consultation.setStaff(staff);
         consultation.setRecordType(RecordType.CHECK_UP);
