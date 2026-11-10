@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Implements the data access operations for persons.
@@ -80,7 +81,8 @@ public class PersonDaoImpl implements PersonDao {
             return persons;
         }
 
-        String pattern = "%" + name.trim().toLowerCase() + "%";
+        String pattern =
+                "%" + name.trim().toLowerCase(Locale.ROOT) + "%";
 
         try (Connection conn = ConnectionHelper.getConnection();
              PreparedStatement stmt =

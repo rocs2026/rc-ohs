@@ -120,15 +120,24 @@ public class MedicalRecordDaoImpl implements MedicalRecordDao {
              PreparedStatement stmt = conn.prepareStatement(INSERT_SQL)) {
 
             int index = 1;
-            stmt.setString(index++, medicalRecord.getId());
-            stmt.setString(index++, medicalRecord.getPatient().getId());
+
+            stmt.setString(index, medicalRecord.getId());
+            index++;
+
+            stmt.setString(index, medicalRecord.getPatient().getId());
+            index++;
+
             if (medicalRecord.getConsultation() == null) {
-                stmt.setNull(index++, Types.VARCHAR);
+                stmt.setNull(index, Types.VARCHAR);
             } else {
-                stmt.setString(index++,
+                stmt.setString(index,
                         medicalRecord.getConsultation().getId());
             }
-            stmt.setString(index++, medicalRecord.getMedicalConditions());
+            index++;
+
+            stmt.setString(index, medicalRecord.getMedicalConditions());
+            index++;
+
             stmt.setString(index, medicalRecord.getAllergies());
 
             return stmt.executeUpdate() == 1;
