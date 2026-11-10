@@ -16,7 +16,7 @@ public class ForgotPasswordDaoImpl implements ForgotPasswordDao {
     /**
      * Checks if the Staff ID or email belongs to an existing account.
      *
-     * @param staffIdOrEmail The Staff ID or the email address.
+     * @param staffIdOrEmail The Staff IDt or the email address.
      * @return True if an account matches, false if blank or not found.
      */
     @Override
