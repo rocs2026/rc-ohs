@@ -58,7 +58,8 @@ public class MedicalRecordDaoImplTest {
      * @throws SQLException if the statement cannot be prepared.
      */
     @BeforeEach
-    void setUp() throws SQLException {
+    void setUp()
+            throws SQLException {
         when(connection.prepareStatement(anyString())).thenReturn(statement);
         medicalRecordDao = new MedicalRecordDaoImpl(connection);
     }
@@ -80,6 +81,7 @@ public class MedicalRecordDaoImplTest {
     /**
      * TESTCASE1: Should return false if no ID exists.
      *
+     * @throws SQLException if the sql query update fails
      */
     @Test
     void updateMedicalRecord_whenIdReturnsNothing_returnsFalse()
@@ -95,6 +97,7 @@ public class MedicalRecordDaoImplTest {
     /**
      * TC2: Returns false if name has no match.
      *
+     * @throws SQLException if database connection has error
      */
     @Test
     void updateMedicalRecord_whenNameReturnsNothing_returnsFalse()
@@ -110,6 +113,7 @@ public class MedicalRecordDaoImplTest {
     /**
      * TC3: Returns true when update is successful for single ID.
      *
+     * @throws SQLException if the update has failed
      */
     @Test
     void updateMedicalRecord_whenIdReturnsSingleResult_returnsTrue()
@@ -125,6 +129,7 @@ public class MedicalRecordDaoImplTest {
     /**
      * TC4: Check if update returns true using  name parameter.
      *
+     * @throws SQLException if sql params are wrong.
      */
     @Test
     void updateMedicalRecord_whenNameReturnsSingleResult_returnsTrue()
@@ -140,6 +145,7 @@ public class MedicalRecordDaoImplTest {
     /**
      * TC7: Update should work even if chosen from multiple search results.
      *
+     * @throws SQLException if table update cannot process data.
      */
     @Test
     void updateMedicalRecord_whenSelectedFromMultipleResults_returnsTrue()
@@ -153,8 +159,9 @@ public class MedicalRecordDaoImplTest {
     }
 
     /**
-     * TC9: Verify that corrects values are actually passed to the statement
-     * .
+     * TC9: Verify that corrects values are actually passed to the statement.
+     *
+     * @throws SQLException if verification drops.
      */
     @Test
     void updateMedicalRecord_whenUpdated_sendsNewValuesToDatabase()

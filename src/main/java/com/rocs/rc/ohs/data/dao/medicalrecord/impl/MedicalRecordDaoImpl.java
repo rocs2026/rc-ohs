@@ -24,7 +24,7 @@ public class MedicalRecordDaoImpl implements MedicalRecordDao {
     /**
      * Create a DAO that uses the given database connection.
      *
-     * @param newConnection the database connection.
+     * @param newConnection connection.
      */
 
     public MedicalRecordDaoImpl(Connection newConnection) {
@@ -33,16 +33,21 @@ public class MedicalRecordDaoImpl implements MedicalRecordDao {
 
     /** {@inheritDoc} */
     @Override
-    public boolean updateMedicalRecord(MedicalRecord medicalRecord) {
-        try (PreparedStatement statement =
-                    connection.prepareStatement(UPDATE_MEDICAL_RECORD)) {
-            statement.setString(1, medicalRecord.getMedicalConditions());
-            statement.setString(2, medicalRecord.getAllergies());
-            statement.setString(3, medicalRecord.getId());
+    public boolean updateMedicalRecord(
+            MedicalRecord medicalRecord) {
+        try (PreparedStatement statement = connection
+                .prepareStatement(UPDATE_MEDICAL_RECORD)) {
+            statement.setString(1,
+                    medicalRecord.getMedicalConditions());
+            statement.setString(2,
+                    medicalRecord.getAllergies());
+            statement.setString(3,
+                    medicalRecord.getId());
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw  new RuntimeException(
-                    "Failed to update medical record: " + medicalRecord.getId(), e);
+            String id = medicalRecord.getId();
+            throw new RuntimeException(
+                    "Failed to update medical record: " + id, e);
         }
     }
 }
