@@ -25,19 +25,19 @@ import static org.mockito.ArgumentMatchers.startsWith;
  */
 class ForgotPasswordDaoImplTest {
 
-    /** Static connection helper used in tests. */
+    /** Static connec helper used in tests. */
     private MockedStatic<ConnectionHelper> connectionHelper;
 
-    /** Prepared statement for finding an account. */
+    /** Prep state for finding an account. */
     private PreparedStatement findAccount;
 
-    /** Prepared statement for updating the password. */
+    /** Prep state for updating the password. */
     private PreparedStatement updatePassword;
 
-    /** Result set containing account information. */
+    /** Result set for containing account information. */
     private ResultSet accountResult;
 
-    /** DAO instance being tested. */
+    /** DAO instance being tested.*/
     private ForgotPasswordDaoImpl dao;
 
     @BeforeEach
@@ -65,7 +65,7 @@ class ForgotPasswordDaoImplTest {
         connectionHelper.close();
     }
 
-    // AC 2: registered Staff ID or email, so the request can proceed
+    // AC2: registered Staff ID or email, so the request can proceed
     @Test
     void isRegisteredReturnsTrueWhenAccountExists() throws SQLException {
         when(accountResult.next()).thenReturn(true);
@@ -75,7 +75,7 @@ class ForgotPasswordDaoImplTest {
         verify(findAccount).setString(2, "EMP-001");
     }
 
-    // AC 3: not registered, so the password cannot be reset
+    // AC3: not registered, so the password cannot be reset
     @Test
     void isRegisteredReturnsFalseWhenNotRegistered() throws SQLException {
         when(accountResult.next()).thenReturn(false);
@@ -83,7 +83,7 @@ class ForgotPasswordDaoImplTest {
         assertFalse(dao.isRegistered("EMP-999"));
     }
 
-    // AC 4: empty Staff ID or email
+    // AC4: empty Staff ID or email
     @Test
     void isRegisteredReturnsFalseWithoutConnectingWhenBlank() {
         assertFalse(dao.isRegistered(null));
@@ -92,7 +92,7 @@ class ForgotPasswordDaoImplTest {
         connectionHelper.verify(ConnectionHelper::getConnection, never());
     }
 
-    // AC 5: identity verified (details match), so the password is updated
+    // AC5: identity verified (details match), so the password is updated
     @Test
     void updatePasswordReturnsTrueWhenDetailsMatch() throws SQLException {
         when(updatePassword.executeUpdate()).thenReturn(1);
@@ -102,7 +102,7 @@ class ForgotPasswordDaoImplTest {
         verify(updatePassword).setString(2, "ana.corpuz");
     }
 
-    // AC 5: identity not verified, so nothing is updated
+    // AC5: identity not verified, so nothing is updated
     @Test
     void updatePasswordReturnsFalseWhenDetailsDoNotMatch()
             throws SQLException {
