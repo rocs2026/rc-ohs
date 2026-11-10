@@ -1,7 +1,5 @@
 package com.rocs.rc.ohs.data.dao.medicine;
-
 import com.rocs.rc.ohs.app.model.medicine.Medicine;
-
 import java.util.List;
 
 /**
