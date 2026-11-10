@@ -32,6 +32,23 @@ public class LogicAnalyzer implements CodeAnalyzer {
             Pattern.CASE_INSENSITIVE
     );
 
+    // =========================================================================
+    // NAKA-COMMENT OUT: Console printing detection
+    // Inalis muna natin ito para hindi ma-flag ang System.out.println at
+    // printStackTrace sa catch blocks.
+    // =========================================================================
+    /*
+    private static final Pattern PRINT_STACK_TRACE = Pattern.compile(
+            "\\.printStackTrace\\s*\\("
+    );
+
+    private static final Pattern CATCH_PRINTS_TO_CONSOLE = Pattern.compile(
+            "catch\\s*\\([^)]*\\)\\s*\\{[^}]*System\\.(?:out|err)\\."
+                    + "(?:print|printf|println)\\s*\\("
+    );
+    */
+    // =========================================================================
+
     @Override
     public void analyze(AnalysisContext context) {
 
@@ -97,5 +114,36 @@ public class LogicAnalyzer implements CodeAnalyzer {
                     "Prefer PreparedStatement parameters over SQL concatenation."
             );
         }
+
+        // =====================================================================
+        // NAKA-COMMENT OUT: Logic para sa console printing
+        // =====================================================================
+        /*
+        if (PRINT_STACK_TRACE.matcher(structure).find()) {
+            context.addTechnicalNote(
+                    "Consider using a logging framework instead of printStackTrace()."
+            );
+        }
+
+        if (CATCH_PRINTS_TO_CONSOLE.matcher(structure).find()) {
+            context.addPoints(
+                    Categories.LOGIC,
+                    4,
+                    "Exception handler only prints the error to the console."
+            );
+
+            context.addTechnicalNote(
+                    "Consider logging or propagating the exception instead of "
+                            + "printing it to the console."
+            );
+        }
+
+        if (structure.contains("System.out.println") && structure.contains("catch")) {
+            context.addTechnicalNote(
+                    "Consider using a logging framework for exception reporting."
+            );
+        }
+        */
+        // =====================================================================
     }
 }
