@@ -32,7 +32,38 @@ public class ConsultationDaoImpl implements ConsultationDao {
     @Override
     public Consultation add(Connection connection,
                             Consultation consultation) {
-        validate(consultation);
+        if (consultation == null) {
+            throw new IllegalArgumentException(
+                    "Consultation cannot be null.");
+        }
+
+        if (consultation.getId() == null) {
+            throw new IllegalArgumentException(
+                    "Consultation ID cannot be null.");
+        }
+
+        if (consultation.getConsultationDate() == null) {
+            throw new IllegalArgumentException(
+                    "Consultation date cannot be null.");
+        }
+
+        if (consultation.getPatient() == null
+                || consultation.getPatient().getId() == null) {
+            throw new IllegalArgumentException(
+                    "Patient cannot be null.");
+        }
+
+        if (consultation.getStaff() == null
+                || consultation.getStaff().getId() == null) {
+            throw new IllegalArgumentException(
+                    "Staff cannot be null.");
+        }
+
+        if (consultation.getRecordType() == null) {
+            throw new IllegalArgumentException(
+                    "Record type cannot be null.");
+        }
+
         try (PreparedStatement statement = connection.prepareStatement(
                 QueryConstants.ADD_CONSULTATION_STATEMENT)) {
             Timestamp date =
@@ -77,24 +108,6 @@ public class ConsultationDaoImpl implements ConsultationDao {
                     "Error retrieving the consultations.", ex);
         }
         return consultations;
-    }
-
-    /**
-     * Checks that the consultation has everything the insert needs.
-     *
-     * @param consultation The consultation to check.
-     * @throws IllegalArgumentException If a required value is missing.
-     */
-    private void validate(Consultation consultation) {
-        if (consultation == null
-                || consultation.getId() == null
-                || consultation.getPatient() == null
-                || consultation.getStaff() == null
-                || consultation.getRecordType() == null
-                || consultation.getConsultationDate() == null) {
-            throw new IllegalArgumentException("The consultation, its ID, "
-                    + "patient, staff, record type and date are required.");
-        }
     }
 
     /**

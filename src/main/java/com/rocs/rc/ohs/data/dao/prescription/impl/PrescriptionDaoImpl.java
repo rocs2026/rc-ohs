@@ -32,7 +32,34 @@ public class PrescriptionDaoImpl implements PrescriptionDao {
     @Override
     public Prescription add(Connection connection,
                             Prescription prescription) {
-        validate(prescription);
+        if (prescription == null) {
+            throw new IllegalArgumentException(
+                    "Prescription cannot be null.");
+        }
+
+        if (prescription.getId() == null) {
+            throw new IllegalArgumentException(
+                    "Prescription ID cannot be null.");
+        }
+
+        if (prescription.getConsultation() == null
+                || prescription.getConsultation().getId() == null) {
+            throw new IllegalArgumentException(
+                    "Consultation cannot be null.");
+        }
+
+        if (prescription.getMedicineStock() == null
+                || prescription.getMedicineStock().getId() == null) {
+            throw new IllegalArgumentException(
+                    "Medicine stock cannot be null.");
+        }
+
+        if (prescription.getPersonnel() == null
+                || prescription.getPersonnel().getId() == null) {
+            throw new IllegalArgumentException(
+                    "Personnel cannot be null.");
+        }
+
         try (PreparedStatement statement = connection.prepareStatement(
                 QueryConstants.ADD_PRESCRIPTION_STATEMENT)) {
             statement.setString(1, prescription.getId());
@@ -76,24 +103,6 @@ public class PrescriptionDaoImpl implements PrescriptionDao {
                     "Error retrieving the prescriptions.", ex);
         }
         return prescriptions;
-    }
-
-    /**
-     * Checks that the prescription has everything the insert needs.
-     *
-     * @param prescription The prescription to check.
-     * @throws IllegalArgumentException If a required value is missing.
-     */
-    private void validate(Prescription prescription) {
-        if (prescription == null
-                || prescription.getId() == null
-                || prescription.getConsultation() == null
-                || prescription.getMedicineStock() == null
-                || prescription.getPersonnel() == null) {
-            throw new IllegalArgumentException("The prescription, its ID, "
-                    + "consultation, medicine stock and personnel are "
-                    + "required.");
-        }
     }
 
     /**

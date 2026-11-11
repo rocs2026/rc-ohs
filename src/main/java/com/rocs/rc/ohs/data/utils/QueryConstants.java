@@ -1,3 +1,4 @@
+
 package com.rocs.rc.ohs.data.utils;
 
 /**
@@ -12,8 +13,14 @@ public final class QueryConstants {
     }
 
     /**
-     * Updates the Medical record of a patient (med conditions,
-     * allergies).
+     * Updates the Medical record of a patient (med conditions, allergies).
+     */
+    public static final String UPDATE_MEDICAL_RECORD_STATEMENT =
+            "UPDATE medical_record "
+                    + "SET medical_conditions = ?, allergies = ? "
+                    + "WHERE id = ?";
+
+    /**
      * Saves a consultation when the clinic staff records a patient's
      * consultation with its diagnosis and treatment plan.
      */
@@ -24,13 +31,8 @@ public final class QueryConstants {
                     + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     /**
-     * Retrieves the saved consultations of a patient, latest first, so
-     * the clinic staff can view them in the patient's medical records.
+     * Retrieves the saved consultations of a patient, latest first.
      */
-    public static final String UPDATE_MEDICAL_RECORD_STATEMENT =
-            "UPDATE medical_record "
-                + "SET medical_conditions = ?, allergies = ? "
-                + "WHERE id =?";
     public static final String GET_CONSULTATIONS_BY_PATIENT_STATEMENT =
             "SELECT id, staff_id, record_type, consultation_date, "
                     + "complaint, diagnosis, treatment, action_taken, "
@@ -38,8 +40,7 @@ public final class QueryConstants {
                     + "ORDER BY consultation_date DESC";
 
     /**
-     * Saves a prescription under a consultation when the clinic staff
-     * prescribes a medicine with its dose, frequency and quantity.
+     * Saves a prescription under a consultation.
      */
     public static final String ADD_PRESCRIPTION_STATEMENT =
             "INSERT INTO prescription (id, consultation_id, "
@@ -49,8 +50,7 @@ public final class QueryConstants {
 
     /**
      * Retrieves the prescriptions of a consultation with the name and
-     * unit of each medicine, so the clinic staff can view them in the
-     * patient's medical records.
+     * unit of each medicine.
      */
     public static final String GET_PRESCRIPTIONS_BY_CONSULTATION_STATEMENT =
             "SELECT p.id, p.medicine_stock_id, p.personnel_id, "
