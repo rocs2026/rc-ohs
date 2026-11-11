@@ -18,15 +18,6 @@ public interface LoginDao {
     Login login(String username);
 
     /**
-     * Checks if the Staff ID or email belongs to an existing account.
-     *
-     * @param staffIdOrEmail The Staff ID or the email address.
-     * @return True if an account matches, false if blank or not found.
-     */
-
-    boolean isRegistered(String staffIdOrEmail);
-
-    /**
      * Updates the password only if the Staff ID or email and the
      * username belong to the same account.
      *

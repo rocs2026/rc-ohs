@@ -55,30 +55,6 @@ public class LoginDaoImpl implements LoginDao {
         return login;
     }
 
-    @Override
-    public boolean isRegistered(String staffIdOrEmail) {
-
-        if (staffIdOrEmail == null || staffIdOrEmail.trim().isEmpty()) {
-            return false;
-        }
-        String value = staffIdOrEmail.trim();
-        String sql = "select id from login "
-                + "where lower(employee_id) = lower(?) "
-                + "or lower(email) = lower(?)";
-
-        try (Connection connection = ConnectionHelper.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, value);
-            statement.setString(2, value);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                return resultSet.next();
-            }
-        } catch (SQLException e) {
-            System.out.println("Error Checking Account: " + e.getMessage());
-        }
-
-        return false;
-    }
 
     @Override
     public boolean updatePassword(String staffIdOrEmail,
