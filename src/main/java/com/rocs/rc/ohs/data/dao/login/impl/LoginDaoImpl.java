@@ -57,25 +57,25 @@ public class LoginDaoImpl implements LoginDao {
 
 
     @Override
-    public boolean updatePassword(String staffIdOrEmail,
+    public boolean updatePassword(String email,
                                   String username, String newPassword) {
-        if (staffIdOrEmail == null || staffIdOrEmail.trim().isEmpty()
+        if (email == null || email.trim().isEmpty()
                 || username == null || newPassword == null) {
             return false;
         }
-        String value = staffIdOrEmail.trim();
+        String value = email.trim();
 
         String sql = "update login set password = ? "
                 + "where username = ? "
-                + "and (lower(employee_id) = lower(?) "
-                + "or lower(email) = lower(?))";
+                + "and person_id in (select pe.id from person pe "
+                + "join personnel p on p.person_id = pe.id "
+                + "where lower(pe.email) = lower(?))";
 
         try (Connection connection = ConnectionHelper.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, newPassword);
             statement.setString(2, username.trim());
             statement.setString(3, value);
-            statement.setString(4, value);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             System.out.println("Error updating password: " + e.getMessage());
@@ -83,5 +83,4 @@ public class LoginDaoImpl implements LoginDao {
         }
     }
 }
-
 

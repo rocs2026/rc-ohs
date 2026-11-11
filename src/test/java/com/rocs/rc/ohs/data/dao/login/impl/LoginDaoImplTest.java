@@ -65,7 +65,7 @@ class LoginDaoImplTest {
         connectionHelper.verify(ConnectionHelper::getConnection, never());
     }
 
-    //AC5:identity verified (details match), so the password is updated.
+    //Identity verified (details match), so the password is updated.
     @Test
     void updatePasswordReturnsTrueWhenDetailsMatch() throws SQLException {
         when(updatePassword.executeUpdate()).thenReturn(1);
@@ -76,7 +76,7 @@ class LoginDaoImplTest {
         verify(updatePassword).setString(2, "ana.corpuz");
     }
 
-    //AC5:identity not verified, so nothing is updated.
+    //Identity not verified, so nothing is updated.
     @Test
     void updatePasswordReturnsFalseWhenDetailsDoNotMatch()
             throws SQLException {
