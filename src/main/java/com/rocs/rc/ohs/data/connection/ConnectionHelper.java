@@ -1,42 +1,38 @@
 package com.rocs.rc.ohs.data.connection;
+
+
+import com.rocs.rc.ohs.config.AppConfig;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
- * Provides database connections for the application.
+ * Utility class for managing database connections.
  */
 public final class ConnectionHelper extends MySqlConnectionHelper {
 
-    /** The JDBC URL of the database. */
-    public static final String URL = "jdbc:oracle:thin:@localhost:1521:rogate";
-
-    /** The JDBC driver class name. */
-    public static final String ORACLE_DRIVER =
-            "oracle.jdbc.driver.OracleDriver";
-
-    /** The database username. */
-    public static final String USERNAME = "rcis";
-
-    /** The database password. */
-    public static final String PASSWORD = "Changeme0";
-
-    /**
-     * Prevents instantiation of this utility class.
-     */
     private ConnectionHelper() {
+        // Prevent instantiation
     }
 
     /**
-     * Opens a connection to the database.
+     * Establishes and returns a database connection.
      *
-     * @return A {@link Connection} to the database.
+     * @return A valid database connection.
+     * @throws SQLException If connection fails or driver is missing.
      */
-    public static Connection getConnection() {
+    public static Connection getConnection() throws SQLException {
         try {
-            Class.forName(ORACLE_DRIVER).newInstance();
-            return DriverManager.getConnection(URL, USERNAME, PASSWORD);
-        } catch (Exception ex) {
-            throw new RuntimeException("Error connecting to the database.", ex);
+            String driver = AppConfig.getRequired("db.driver");
+            String url = AppConfig.getRequired("db.url");
+            String username = AppConfig.getRequired("db.username");
+            String password = AppConfig.getRequired("db.password");
+
+            Class.forName(driver);
+            return DriverManager.getConnection(url, username, password);
+        } catch (ClassNotFoundException e) {
+            throw new SQLException("Database driver not found.", e);
         }
     }
 }

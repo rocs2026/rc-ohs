@@ -1,752 +1,878 @@
-
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Heuristic scanner for coding patterns that commonly appear in generated
+ * ("AI slop") code.
+ *
+ * <p>The score is an aggregate of five categories and is intentionally
+ * explainable: every point is backed by an evidence line in the report. It is
+ * not a satisfiable authorship test.</p>
+ *
+ * <p>Exit codes:</p>
+ * <ul>
+ *   <li>{@code 0} - analysis completed and the score is below the threshold.</li>
+ *   <li>{@code 1} - analysis completed and the score reached the threshold.</li>
+ *   <li>{@code 2} - the detector could not run (bad arguments, unreadable
+ *       input, unexpected failure).</li>
+ * </ul>
+ *
+ * <p>Usage: {@code AiPatternDetector [options] <source-dir> <report-file>}</p>
+ */
 public class AiPatternDetector {
 
-    private static final int MAX_CATEGORY_SCORE = 20;
     private static final int MAX_SCORE = 100;
-    private static final int DETECTION_THRESHOLD = 10;
+    private static final int DEFAULT_THRESHOLD = 5;
 
-    private static final Pattern IDENTIFIER =
-            Pattern.compile("\\b[a-zA-Z_$][a-zA-Z0-9_$]*\\b");
+    /**
+     * Weight of the worst file relative to the mean. A single generated file
+     * should not disappear into the average score of a large repository, but
+     * the mean still matters so one noisy file alone does not define the
+     * project.
+     */
+    private static final double MAX_FILE_WEIGHT = 0.60;
 
-    private static final Pattern TEST_METHOD =
-            Pattern.compile("@Test\\s*(?:\\([^)]*\\))?\\s*(?:public\\s+)?"
-                    + "(?:void|[\\w<>\\[\\]]+)\\s+(\\w+)\\s*\\(");
+    private static final int MAX_TABLE_FILES = 20;
+    private static final int MAX_FINDING_FILES = 15;
+    private static final int MAX_EVIDENCE_LINES = 40;
+    private static final int MAX_LISTED_FILES = 50;
 
-    private static final List<String> GENERIC_NAMES = Arrays.asList(
-            "data", "result", "temp", "tmp", "object",
-            "value", "flag", "helper", "manager", "handler",
-            "process", "execute", "response", "request"
+    private static final List<String> DEFAULT_EXCLUDES = Arrays.asList(
+            "build", "target", ".git", "out", "node_modules", "generated"
     );
 
-    private static final List<String> TEMPLATE_PHRASES = Arrays.asList(
-            "this method is used to",
-            "this test verifies that",
-            "this test checks that",
-            "should return the expected",
-            "initializes the test environment",
-            "sets up the test environment",
-            "the purpose of this method",
-            "assert that the result"
+    private static final DateTimeFormatter TIMESTAMP =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss 'UTC'");
+
+    private static final List<CodeAnalyzer> ANALYZERS = Arrays.asList(
+            new NamingAnalyzer(),
+            new CommentAnalyzer(),
+            new StructureAnalyzer(),
+            new AiTraitsAnalyzer(),
+            new LogicAnalyzer(),
+            new DaoPatternAnalyzer()
     );
-
-    private static final Map<String, Category> categories =
-            new LinkedHashMap<>();
-
-    private static final List<String> analyzedFiles = new ArrayList<>();
-    private static final List<String> technicalNotes = new ArrayList<>();
-
-    private static int totalJavaFiles;
 
     public static void main(String[] args) {
 
-        if (args.length != 2) {
-            System.err.println(
-                    "Usage: AiPatternDetector <source-dir> <report-file>"
-            );
-            System.exit(1);
-            return;
-        }
-
-        Path sourceDir = Path.of(args[0]);
-        Path reportFile = Path.of(args[1]);
-
-        if (!Files.isDirectory(sourceDir)) {
-            System.err.println("Source directory not found: " + sourceDir);
-            System.exit(1);
-            return;
-        }
-
-        initializeCategories();
+        Options options;
 
         try {
-            List<Path> files = scanDirectory(sourceDir);
+            options = Options.parse(args);
+        } catch (RuntimeException e) {
+            System.err.println("ai-detect: " + e.getMessage());
+            printUsage(System.err);
+            System.exit(2);
+            return;
+        }
 
-            totalJavaFiles = files.size();
+        if (options.help) {
+            printUsage(System.out);
+            return;
+        }
 
-            for (Path file : files) {
-                analyzeFile(file);
-            }
+        try {
+            run(options);
+        } catch (Exception e) {
+            System.err.println("ai-detect: " + e.getMessage());
+            System.exit(2);
+        }
+    }
 
-            int percentage = calculateTotalScore();
-            int scoreOutOfTen = (int) Math.round(percentage / 10.0);
+    private static void run(Options options) throws IOException {
 
-            boolean detected = percentage >= DETECTION_THRESHOLD;
+        Selection selection = selectFiles(options);
 
-            generateReport(
-                    reportFile,
-                    percentage,
-                    scoreOutOfTen,
-                    detected
-            );
+        List<AnalysisContext> results = new ArrayList<>();
+        List<String> skipped = new ArrayList<>(selection.skipped);
+        int unreadable = 0;
 
-            System.out.println("Java files analyzed: " + totalJavaFiles);
-            System.out.println(
-                    "AI-like Pattern Score: " + percentage + "/100"
-            );
-            System.out.println(
-                    "Converted Score: " + scoreOutOfTen + "/10"
-            );
+        for (Path file : selection.files) {
 
-            System.out.println(
-                    "Detection Threshold: "
-                            + DETECTION_THRESHOLD + "/100"
-            );
+            String code;
 
-            if (detected) {
-                System.err.println(
-                        "AI-like patterns detected. Build failed."
+            try {
+                code = new String(
+                        Files.readAllBytes(file),
+                        StandardCharsets.UTF_8
                 );
-                System.exit(1);
-                return;
-            }
-
-            System.out.println(
-                    "AI-like patterns not detected. Build passed."
-            );
-
-        } catch (IOException e) {
-            System.err.println(
-                    "AI Detection error: " + e.getMessage()
-            );
-            System.exit(1);
-        }
-    }
-
-    private static void initializeCategories() {
-
-        categories.put("Naming Style", new Category());
-        categories.put("Comment Style", new Category());
-        categories.put("Code Structure", new Category());
-        categories.put("Typical AI Traits", new Category());
-        categories.put("Business Logic Footprints", new Category());
-    }
-
-    private static List<Path> scanDirectory(Path directory)
-            throws IOException {
-
-        try (Stream<Path> files = Files.walk(directory)) {
-            return files
-                    .filter(Files::isRegularFile)
-                    .filter(path -> path.toString().endsWith(".java"))
-                    .sorted()
-                    .collect(Collectors.toList());
-        }
-    }
-
-    private static void analyzeFile(Path file) throws IOException {
-
-        String code = new String(
-                Files.readAllBytes(file),
-                StandardCharsets.UTF_8
-        );
-
-        String normalizedPath = file.toString().replace("\\", "/");
-
-        analyzedFiles.add(normalizedPath);
-
-        analyzeNaming(code, file);
-        analyzeComments(code, file);
-        analyzeStructure(code, file);
-        analyzeAiTraits(code, file);
-        analyzeBusinessLogic(code, file);
-        analyzeTechnicalIssues(code, file);
-    }
-
-
-    private static void analyzeNaming(String code, Path file) {
-
-        Matcher matcher = IDENTIFIER.matcher(code);
-
-        Map<String, Integer> identifierCounts = new LinkedHashMap<>();
-
-        int totalIdentifiers = 0;
-
-        while (matcher.find()) {
-
-            String identifier = matcher.group();
-
-            if (identifier.length() < 3) {
+            } catch (IOException e) {
+                unreadable++;
+                skipped.add(display(file) + " (unreadable: " + e.getMessage() + ")");
                 continue;
             }
 
-            String normalized = identifier.toLowerCase();
-
-            identifierCounts.put(
-                    normalized,
-                    identifierCounts.getOrDefault(normalized, 0) + 1
-            );
-
-            totalIdentifiers++;
-        }
-
-        int genericOccurrences = 0;
-        int repeatedGenericNames = 0;
-
-        for (String genericName : GENERIC_NAMES) {
-
-            int occurrences = identifierCounts.getOrDefault(
-                    genericName,
-                    0
-            );
-
-            if (occurrences >= 3) {
-                genericOccurrences += occurrences;
-                repeatedGenericNames++;
+            if (SourceText.isSuppressed(code)) {
+                skipped.add(display(file)
+                        + " (contains @generated or ai-detect:ignore)");
+                continue;
             }
-        }
 
-        // Score only when multiple generic names are repeatedly used.
-        if (repeatedGenericNames >= 4 && genericOccurrences >= 16) {
-
-            addPoints(
-                    "Naming Style",
-                    10,
-                    file + ": Multiple generic identifiers are repeatedly used."
+            AnalysisContext context = new AnalysisContext(
+                    file,
+                    code,
+                    SourceText.extractComments(code)
             );
 
-        } else if (repeatedGenericNames >= 3
-                && genericOccurrences >= 12) {
-
-            addPoints(
-                    "Naming Style",
-                    7,
-                    file + ": Repeated use of several generic identifiers."
-            );
-        }
-
-        // Detect placeholder-style names.
-        Matcher placeholderMatcher = Pattern.compile(
-                "\\b(test|method|variable|temp|object)[0-9]+\\b",
-                Pattern.CASE_INSENSITIVE
-        ).matcher(code);
-
-        int placeholderCount = 0;
-
-        while (placeholderMatcher.find()) {
-            placeholderCount++;
-        }
-
-        if (placeholderCount >= 4) {
-
-            addPoints(
-                    "Naming Style",
-                    6,
-                    file + ": Multiple numbered placeholder identifiers detected."
-            );
-
-        } else if (placeholderCount >= 2) {
-
-            addPoints(
-                    "Naming Style",
-                    3,
-                    file + ": Numbered placeholder identifiers detected."
-            );
-        }
-
-        // Detect excessive one-letter variable-like identifiers.
-        Matcher shortNameMatcher = Pattern.compile(
-                "\\b(?:int|String|double|float|boolean|long|char)"
-                        + "\\s+([a-zA-Z])\\b"
-        ).matcher(code);
-
-        int shortNameCount = 0;
-
-        while (shortNameMatcher.find()) {
-            shortNameCount++;
-        }
-
-        if (shortNameCount >= 6) {
-
-            addPoints(
-                    "Naming Style",
-                    4,
-                    file + ": Frequent one-letter variable declarations detected."
-            );
-        }
-    }
-
-
-    private static void analyzeComments(String code, Path file) {
-
-        String lower = code.toLowerCase();
-
-        int javadocCount = count(code, "/**");
-        int templateCount = 0;
-
-        for (String phrase : TEMPLATE_PHRASES) {
-            templateCount += count(lower, phrase);
-        }
-
-        if (templateCount >= 4) {
-            addPoints(
-                    "Comment Style",
-                    10,
-                    file + ": Multiple generic documentation phrases detected."
-            );
-
-        } else if (templateCount >= 2) {
-            addPoints(
-                    "Comment Style",
-                    6,
-                    file + ": Repeated template-like comment phrases detected."
-            );
-        }
-
-        int testCount = count(code, "@Test");
-
-        if (testCount >= 8 && javadocCount >= 8) {
-            addPoints(
-                    "Comment Style",
-                    6,
-                    file + ": Extensive repeated Javadoc documentation in test methods."
-            );
-        }
-
-        if (count(lower, "this method") >= 4) {
-            addPoints(
-                    "Comment Style",
-                    4,
-                    file + ": Repeated generic method descriptions."
-            );
-        }
-    }
-
-    private static void analyzeStructure(String code, Path file) {
-
-        int testCount = count(code, "@Test");
-
-        int assertionCount =
-                count(code, "assertEquals")
-                        + count(code, "assertTrue")
-                        + count(code, "assertFalse")
-                        + count(code, "assertNotNull")
-                        + count(code, "assertNull");
-
-        int mockCount =
-                count(code, "when(")
-                        + count(code, "mock(")
-                        + count(code, "mockStatic(");
-
-        int verifyCount = count(code, "verify(");
-
-        if (testCount >= 8) {
-            addPoints(
-                    "Code Structure",
-                    5,
-                    file + ": Large number of test methods in one class."
-            );
-        }
-
-        if (testCount >= 8 && assertionCount >= 12) {
-            addPoints(
-                    "Code Structure",
-                    5,
-                    file + ": Repeated test and assertion structure."
-            );
-        }
-
-        if (testCount >= 8 && mockCount >= 5 && verifyCount >= 5) {
-            addPoints(
-                    "Code Structure",
-                    7,
-                    file + ": Repetitive mocking and verification structure."
-            );
-        }
-
-        if (count(code, "@BeforeEach") > 1
-                || count(code, "@AfterEach") > 1) {
-
-            addPoints(
-                    "Code Structure",
-                    3,
-                    file + ": Repeated test lifecycle annotations."
-            );
-        }
-
-        Matcher testMatcher = TEST_METHOD.matcher(code);
-
-        List<String> methodNames = new ArrayList<>();
-
-        while (testMatcher.find()) {
-            methodNames.add(testMatcher.group(1));
-        }
-
-        if (methodNames.size() >= 6) {
-
-            long filterMethods = methodNames.stream()
-                    .filter(name ->
-                            name.toLowerCase().startsWith("filter"))
-                    .count();
-
-            if (filterMethods >= 6) {
-                addPoints(
-                        "Code Structure",
-                        5,
-                        file + ": Repeated test method naming and structure."
-                );
+            for (CodeAnalyzer analyzer : ANALYZERS) {
+                analyzer.analyze(context);
             }
+
+            results.add(context);
         }
-    }
 
-    private static void analyzeAiTraits(String code, Path file) {
-
-        if (code.contains("Generated by AI")
-                || code.contains("AI-generated")) {
-
-            addPoints(
-                    "Typical AI Traits",
-                    12,
-                    file + ": Explicit AI-generation marker found."
+        // Suppressed or deleted files are a legitimate pass; files that exist
+        // but cannot be read mean the tool itself failed.
+        if (results.isEmpty() && unreadable > 0) {
+            throw new IOException(
+                    "no files could be analyzed; check the source paths and permissions"
             );
         }
 
-        if (code.contains("TODO: implement")) {
-            addPoints(
-                    "Typical AI Traits",
-                    8,
-                    file + ": Implementation placeholder detected."
-            );
+        CrossFileAnalyzer.analyze(results);
+
+        int totalScore = 0;
+        int maxFileScore = 0;
+
+        for (AnalysisContext result : results) {
+            int score = result.getTotalScore();
+            totalScore += score;
+            maxFileScore = Math.max(maxFileScore, score);
         }
 
-        if (code.contains("@ExtendWith(MockitoExtension.class)")
-                && code.contains("@MockitoSettings")
-                && code.contains("Strictness.LENIENT")
-                && code.contains("ArgumentCaptor")
-                && code.contains("mockStatic(")) {
+        int meanFileScore = results.isEmpty()
+                ? 0
+                : (int) Math.round((double) totalScore / results.size());
 
-            addPoints(
-                    "Typical AI Traits",
-                    6,
-                    file + ": Multiple advanced Mockito patterns combined."
-            );
-        }
-
-        if (count(code, "UnsupportedOperationException") >= 2) {
-            addPoints(
-                    "Typical AI Traits",
-                    5,
-                    file + ": Multiple unsupported-operation placeholders."
-            );
-        }
-
-        if (Pattern.compile(
-                "catch\\s*\\([^)]*\\)\\s*\\{\\s*\\}"
-        ).matcher(code).find()) {
-
-            addPoints(
-                    "Typical AI Traits",
-                    5,
-                    file + ": Empty exception-handling block."
-            );
-        }
-    }
-
-    private static void analyzeBusinessLogic(
-            String code, Path file) {
-
-        if (code.contains("catch (SQLException")
-                && (code.contains("return new ArrayList")
-                || code.contains("return Collections.emptyList"))) {
-
-            addPoints(
-                    "Business Logic Footprints",
-                    8,
-                    file + ": SQL errors may be hidden by returning an empty collection."
-            );
-
-            technicalNotes.add(
-                    file + ": Review whether database failures should be propagated or logged."
-            );
-        }
-
-        if (code.contains("UnsupportedOperationException")
-                || code.contains("TODO: implement")) {
-
-            addPoints(
-                    "Business Logic Footprints",
-                    8,
-                    file + ": Placeholder implementation may indicate incomplete business logic."
-            );
-        }
-
-        if (Pattern.compile("return\\s+null\\s*;")
-                .matcher(code).find()) {
-
-            addPoints(
-                    "Business Logic Footprints",
-                    4,
-                    file + ": Method returns null; review its business behavior."
-            );
-        }
-
-        if (code.contains("where 1 = 1")
-                && code.contains("StringBuilder")
-                && code.contains(".append(")) {
-
-            addPoints(
-                    "Business Logic Footprints",
-                    4,
-                    file + ": Generic dynamic SQL construction pattern detected."
-            );
-        }
-    }
-
-    private static void analyzeTechnicalIssues(
-            String code, Path file) {
-
-        if (code.contains("System.out.println")
-                && code.contains("catch")) {
-
-            technicalNotes.add(
-                    file + ": Consider a logging framework instead of console output."
-            );
-        }
-
-        if (code.contains(".toLowerCase()")
-                && !code.contains("Locale.ROOT")) {
-
-            technicalNotes.add(
-                    file + ": Consider Locale.ROOT for consistent text normalization."
-            );
-        }
-    }
-
-    private static void addPoints(
-            String categoryName,
-            int points,
-            String evidence) {
-
-        Category category = categories.get(categoryName);
-
-        int added = Math.min(
-                points,
-                MAX_CATEGORY_SCORE - category.score
+        int aggregateScore = (int) Math.round(
+                MAX_FILE_WEIGHT * maxFileScore
+                        + (1.0 - MAX_FILE_WEIGHT) * meanFileScore
         );
 
-        if (added <= 0) {
-            return;
+        aggregateScore = Math.min(MAX_SCORE, aggregateScore);
+
+        int filesAtOrAboveThreshold = 0;
+
+        for (AnalysisContext result : results) {
+            if (result.getTotalScore() >= options.threshold) {
+                filesAtOrAboveThreshold++;
+            }
         }
 
-        category.score += added;
-        category.evidence.add(evidence);
+        boolean detected = aggregateScore >= options.threshold
+                || filesAtOrAboveThreshold > 0;
+
+        generateReport(
+                options,
+                results,
+                skipped,
+                aggregateScore,
+                meanFileScore,
+                maxFileScore,
+                filesAtOrAboveThreshold,
+                detected
+        );
+
+        writeSummary(
+                options,
+                results.size(),
+                skipped.size(),
+                filesAtOrAboveThreshold,
+                aggregateScore,
+                meanFileScore,
+                maxFileScore,
+                highestFile(results),
+                detected
+        );
+
+        System.out.println("AI Detection: "
+                + (detected ? "FAILED (threshold reached)" : "PASSED"));
+        System.out.println("Files analyzed: " + results.size());
+        System.out.println("Files skipped: " + skipped.size());
+        System.out.println("Aggregate score: " + aggregateScore + "/100"
+                + " (highest file " + maxFileScore
+                + ", mean " + meanFileScore + ")");
+        System.out.println("Threshold: " + options.threshold + "/100");
+        System.out.println("Report: " + options.reportFile);
+
+        if (detected) {
+            System.exit(1);
+        }
     }
 
-    private static int calculateTotalScore() {
+    /**
+     * Collects the files to analyze, either from a directory walk or from a
+     * list produced by CI (for example, {@code git diff --name-only}).
+     */
+    private static Selection selectFiles(Options options) throws IOException {
 
-        int total = 0;
+        Selection selection = new Selection();
 
-        for (Category category : categories.values()) {
-            total += category.score;
+        if (options.filesFrom != null) {
+
+            if (!Files.isRegularFile(options.filesFrom)) {
+                throw new IOException(
+                        "file list not found: " + options.filesFrom
+                );
+            }
+
+            Set<Path> seen = new LinkedHashSet<>();
+
+            for (String line : Files.readAllLines(
+                    options.filesFrom,
+                    StandardCharsets.UTF_8
+            )) {
+
+                String entry = line.trim();
+
+                if (entry.isEmpty() || entry.startsWith("#")) {
+                    continue;
+                }
+
+                // Tolerate a UTF-8 byte-order mark at the start of the list.
+                if (entry.charAt(0) == '\uFEFF') {
+                    entry = entry.substring(1).trim();
+                }
+
+                if (entry.isEmpty() || entry.startsWith("#")) {
+                    continue;
+                }
+
+                Path file = Path.of(entry).normalize();
+
+                if (!entry.endsWith(".java")) {
+                    continue;
+                }
+
+                if (!Files.isRegularFile(file)) {
+                    selection.skipped.add(
+                            entry + " (listed for analysis but not found)"
+                    );
+                    continue;
+                }
+
+                if (seen.add(file)) {
+                    selection.files.add(file);
+                }
+            }
+
+            return selection;
         }
 
-        return Math.min(total, MAX_SCORE);
+        if (!Files.isDirectory(options.sourceDir)) {
+            throw new IOException(
+                    "source directory not found: " + options.sourceDir
+            );
+        }
+
+        try (Stream<Path> files = Files.walk(options.sourceDir)) {
+            selection.files.addAll(
+                    files
+                            .filter(Files::isRegularFile)
+                            .filter(path -> path.toString().endsWith(".java"))
+                            .filter(path -> !isExcluded(options, path))
+                            .sorted()
+                            .collect(Collectors.toList())
+            );
+        }
+
+        return selection;
     }
 
-    private static int count(String text, String target) {
+    private static boolean isExcluded(Options options, Path path) {
 
-        int total = 0;
-        int index = 0;
+        String normalized = path.toString().replace('\\', '/');
 
-        while ((index = text.indexOf(target, index)) != -1) {
-            total++;
-            index += target.length();
+        for (String directory : DEFAULT_EXCLUDES) {
+            if (normalized.contains("/" + directory + "/")
+                    || normalized.startsWith(directory + "/")
+                    || normalized.endsWith("/" + directory)) {
+                return true;
+            }
         }
 
-        return total;
+        for (PathMatcher matcher : options.excludeMatchers) {
+            if (matcher.matches(path)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static void generateReport(
-            Path report,
-            int percentage,
-            int scoreOutOfTen,
+            Options options,
+            List<AnalysisContext> results,
+            List<String> skipped,
+            int score,
+            int meanFileScore,
+            int maxFileScore,
+            int filesAtOrAboveThreshold,
             boolean detected) throws IOException {
+
+        Path report = options.reportFile;
 
         if (report.getParent() != null) {
             Files.createDirectories(report.getParent());
         }
 
+        List<AnalysisContext> ranked = new ArrayList<>(results);
+        ranked.sort(
+                Comparator.comparingInt(AnalysisContext::getTotalScore)
+                        .reversed()
+                        .thenComparing(result -> result.getFile().toString())
+        );
+
         List<String> output = new ArrayList<>();
 
         output.add("# AI Code Pattern Detection Report");
         output.add("");
-
-        output.add("## Detection Result");
+        output.add("- Generated: "
+                + LocalDateTime.now(ZoneOffset.UTC).format(TIMESTAMP));
+        output.add("- Scope: " + describeScope(options, results.size()));
+        output.add("- Threshold: " + options.threshold + "/100");
+        output.add("");
+        output.add("## Result");
+        output.add("");
+        output.add("**" + (detected ? "FAILED" : "PASSED") + "** — "
+                + (detected
+                        ? "the aggregate score or at least one file reached the "
+                                + "configured threshold."
+                        : "neither the aggregate score nor any file reached the "
+                                + "configured threshold."));
+        output.add("");
+        output.add("| Metric | Value |");
+        output.add("| --- | --- |");
+        output.add("| Aggregate score | **" + score + "/100** |");
+        output.add("| Highest file score | " + maxFileScore + "/100"
+                + (highestFile(results) == null
+                        ? ""
+                        : " (`" + highestFile(results) + "`)")
+                + " |");
+        output.add("| Mean file score | " + meanFileScore + "/100 |");
+        output.add("| Files analyzed | " + results.size() + " |");
+        output.add("| Files at/above threshold | "
+                + filesAtOrAboveThreshold + " |");
+        output.add("| Files skipped | " + skipped.size() + " |");
+        output.add("");
+        output.add("Aggregate score = 60% of the highest file score + 40% of the "
+                + "mean file score. Detection also fails when any single file "
+                + "reaches the threshold, so one generated file is not diluted "
+                + "by a large, clean codebase.");
         output.add("");
 
-        output.add(
-                "**AI-like Pattern Score: " + percentage + "%**"
-        );
+        addFileTable(output, ranked);
+        addFileFindings(output, ranked);
+        addCategoryAnalysis(output, ranked);
+        addTechnicalNotes(output, ranked);
+        addSkippedFiles(output, skipped);
+        addAnalyzedFiles(output, ranked);
 
+        output.add("## How the score works");
+        output.add("");
+        output.add("- Five categories are scored 0-20 each; a file can score at "
+                + "most 100.");
+        output.add("- Explicit AI markers (`Generated by ChatGPT`, "
+                + "`Generated with Claude Code`, `Co-authored-by: Copilot`, "
+                + "`@author Gemini`, ...) score 20 on their own.");
+        output.add("- Generated test style is scored too: the same Javadoc "
+                + "sentence repeated across many methods, Javadoc on every "
+                + "field and test method, and sentence-length test names.");
+        output.add("- Exception handlers that only print to the console also "
+                + "score, as does dynamic SQL in DAO code.");
+        output.add("- The check fails when the aggregate score or any single "
+                + "file reaches the threshold.");
+        output.add("- Comments and string literals are stripped before "
+                + "declaration and structure rules run; getters/setters are "
+                + "excluded from duplication checks.");
+        output.add("- To exclude a generated file, add `@generated` or "
+                + "`// ai-detect:ignore` to it.");
+        output.add("");
+        output.add("---");
+        output.add("*Heuristic analysis only. This report identifies configured "
+                + "patterns and does not prove AI authorship. Common coding "
+                + "practices, templates, and project conventions can produce "
+                + "similar patterns.*");
+
+        Files.write(report, output, StandardCharsets.UTF_8);
+    }
+
+    private static void addFileTable(
+            List<String> output,
+            List<AnalysisContext> ranked) {
+
+        output.add("## Files With Detected Patterns");
         output.add("");
 
-        output.add(
-                "**Converted Score: " + scoreOutOfTen + "/10**"
-        );
+        List<AnalysisContext> scored = new ArrayList<>();
 
-        output.add("");
+        for (AnalysisContext result : ranked) {
+            if (result.getTotalScore() > 0) {
+                scored.add(result);
+            }
+        }
 
-        output.add(
-                "**Likelihood of AI Generation: Not established**"
-        );
+        if (scored.isEmpty()) {
+            output.add("No configured indicators were found in any file.");
+            output.add("");
+            return;
+        }
 
-        output.add("");
+        output.add("| File | Score | Strongest category |");
+        output.add("| --- | --- | --- |");
 
-        output.add(
-                "This is a heuristic assessment of coding patterns. "
-                        + "It does not establish whether AI generated the code."
-        );
+        int shown = 0;
 
-        output.add("");
+        for (AnalysisContext result : scored) {
 
-        output.add("## Overall Assessment");
-        output.add("");
+            if (shown == MAX_TABLE_FILES) {
+                output.add("");
+                output.add("_" + (scored.size() - MAX_TABLE_FILES)
+                        + " more file(s) omitted; see the artifact for details._");
+                break;
+            }
 
-        if (percentage >= 70) {
-
-            output.add(
-                    "Several configured AI-associated coding patterns "
-                            + "were detected. Manual review is recommended."
-            );
-
-        } else if (percentage >= 40) {
-
-            output.add(
-                    "Some configured coding patterns were detected. "
-                            + "Review the findings and source code."
-            );
-
-        } else {
-
-            output.add(
-                    "Few configured AI-associated coding patterns "
-                            + "were detected."
-            );
+            output.add("| `" + display(result.getFile()) + "` | "
+                    + result.getTotalScore() + "/100 | "
+                    + result.getDominantCategory() + " |");
+            shown++;
         }
 
         output.add("");
+    }
+
+    /**
+     * Reviewer-style findings for each scored file: score, confidence band and
+     * every reason behind the points. This makes the report explainable per
+     * file instead of only showing a project-wide number.
+     */
+    private static void addFileFindings(
+            List<String> output,
+            List<AnalysisContext> ranked) {
+
+        output.add("## File-by-File Findings");
+        output.add("");
+
+        int shown = 0;
+
+        for (AnalysisContext result : ranked) {
+
+            if (result.getTotalScore() <= 0) {
+                continue;
+            }
+
+            if (shown == MAX_FINDING_FILES) {
+                output.add("_" + (countScored(ranked) - MAX_FINDING_FILES)
+                        + " more scored file(s) omitted; see the file table._");
+                output.add("");
+                break;
+            }
+
+            output.add("### `" + display(result.getFile()) + "`");
+            output.add("");
+            output.add("- Score: **" + result.getTotalScore() + "/100** - "
+                    + verdict(result.getTotalScore()));
+            output.add("- Strongest category: " + result.getDominantCategory());
+
+            for (String category : Categories.ALL) {
+                for (String reason : result.getEvidence().get(category)) {
+                    output.add("- " + reason);
+                }
+            }
+
+            output.add("");
+            shown++;
+        }
+
+        if (shown == 0) {
+            output.add("No file scored above zero.");
+            output.add("");
+        }
+
+        output.add("_Scores are heuristic evidence, not proof of authorship._");
+        output.add("");
+    }
+
+    private static int countScored(List<AnalysisContext> ranked) {
+
+        int scored = 0;
+
+        for (AnalysisContext result : ranked) {
+            if (result.getTotalScore() > 0) {
+                scored++;
+            }
+        }
+
+        return scored;
+    }
+
+    private static String verdict(int score) {
+
+        if (score >= 20) {
+            return "**very likely AI-generated or AI-assisted "
+                    + "(high confidence)**";
+        }
+
+        if (score >= 10) {
+            return "**likely AI-generated or AI-assisted "
+                    + "(medium confidence)**";
+        }
+
+        if (score >= 5) {
+            return "**possible AI-generated or AI-assisted content "
+                    + "(low-to-medium confidence)**";
+        }
+
+        return "**weak AI-style signals only (low confidence)**";
+    }
+
+    private static void addCategoryAnalysis(
+            List<String> output,
+            List<AnalysisContext> ranked) {
+
         output.add("## Category Analysis");
         output.add("");
 
-        for (Map.Entry<String, Category> entry : categories.entrySet()) {
+        for (String category : Categories.ALL) {
 
-            Category category = entry.getValue();
+            int total = 0;
+            int highest = 0;
+            List<String> evidence = new ArrayList<>();
 
-            output.add("### " + entry.getKey());
+            for (AnalysisContext result : ranked) {
+                int categoryScore = result.getScore(category);
+                total += categoryScore;
+                highest = Math.max(highest, categoryScore);
+
+                for (String item : result.getEvidence().get(category)) {
+                    evidence.add("`" + display(result.getFile()) + "`: " + item);
+                }
+            }
+
+            int mean = ranked.isEmpty()
+                    ? 0
+                    : (int) Math.round((double) total / ranked.size());
+
+            output.add("### " + category);
+            output.add("");
+            output.add("Mean: " + mean + "/20 | Highest file: "
+                    + highest + "/20");
             output.add("");
 
-            output.add(
-                    "**Score: " + category.score + "/20**"
-            );
-
-            output.add("");
-
-            if (category.evidence.isEmpty()) {
-
+            if (evidence.isEmpty()) {
                 output.add("- No configured indicators detected.");
-
             } else {
 
-                for (String evidence : category.evidence) {
-                    output.add("- " + evidence);
+                int limit = Math.min(evidence.size(), MAX_EVIDENCE_LINES);
+
+                for (int i = 0; i < limit; i++) {
+                    output.add("- " + evidence.get(i));
+                }
+
+                if (evidence.size() > limit) {
+                    output.add("- _" + (evidence.size() - limit)
+                            + " more indicator(s) omitted._");
                 }
             }
 
             output.add("");
         }
+    }
+
+    private static void addTechnicalNotes(
+            List<String> output,
+            List<AnalysisContext> ranked) {
 
         output.add("## Technical Review Notes");
         output.add("");
 
-        if (technicalNotes.isEmpty()) {
+        boolean hasNotes = false;
 
-            output.add("- No configured technical review notes.");
-
-        } else {
-
-            for (String note : technicalNotes) {
-                output.add("- " + note);
+        for (AnalysisContext result : ranked) {
+            for (String note : result.getTechnicalNotes()) {
+                output.add("- `" + display(result.getFile()) + "`: " + note);
+                hasNotes = true;
             }
         }
 
-        output.add("");
-        output.add("## Analyzed Files");
-        output.add("");
-
-        output.add(
-                "**Total Java files analyzed:** " + totalJavaFiles
-        );
-
-        output.add("");
-
-        for (String file : analyzedFiles) {
-            output.add("- `" + file + "`");
+        if (!hasNotes) {
+            output.add("- No technical review notes.");
         }
 
         output.add("");
-        output.add("## Build Result");
-        output.add("");
-
-        output.add(
-                "**Detection Threshold:** "
-                        + DETECTION_THRESHOLD + "/100"
-        );
-
-        output.add("");
-
-        if (detected) {
-
-            output.add(
-                    "**DETECTED — AI-like patterns found.**"
-            );
-
-            output.add("");
-            output.add("**Build Status: FAILED**");
-
-        } else {
-
-            output.add(
-                    "**NOT DETECTED — Score is below 10/100.**"
-            );
-
-            output.add("");
-            output.add("**Build Status: PASSED**");
-        }
-
-        output.add("");
-        output.add("---");
-
-        output.add(
-                "*A human review is recommended. Common coding practices, "
-                        + "shared templates, project conventions, and manually "
-                        + "written code can produce similar patterns.*"
-        );
-
-        Files.write(
-                report,
-                output,
-                StandardCharsets.UTF_8
-        );
     }
 
-    private static class Category {
+    private static void addSkippedFiles(
+            List<String> output,
+            List<String> skipped) {
 
-        private int score;
+        if (skipped.isEmpty()) {
+            return;
+        }
 
-        private final List<String> evidence =
-                new ArrayList<>();
+        output.add("## Skipped Files");
+        output.add("");
+        output.add("These files were not scored:");
+        output.add("");
+
+        for (String item : skipped) {
+            output.add("- " + item);
+        }
+
+        output.add("");
+    }
+
+    private static void addAnalyzedFiles(
+            List<String> output,
+            List<AnalysisContext> ranked) {
+
+        output.add("## Analyzed Files");
+        output.add("");
+        output.add("**Total Java files analyzed: " + ranked.size() + "**");
+        output.add("");
+
+        int limit = Math.min(ranked.size(), MAX_LISTED_FILES);
+
+        for (int i = 0; i < limit; i++) {
+            output.add("- `" + display(ranked.get(i).getFile()) + "`");
+        }
+
+        if (ranked.size() > limit) {
+            output.add("- _" + (ranked.size() - limit)
+                    + " more file(s) omitted._");
+        }
+
+        output.add("");
+    }
+
+    private static void writeSummary(
+            Options options,
+            int filesAnalyzed,
+            int filesSkipped,
+            int filesAtOrAboveThreshold,
+            int score,
+            int meanFileScore,
+            int maxFileScore,
+            String highestFile,
+            boolean detected) throws IOException {
+
+        Path summary = options.summaryFile();
+
+        if (summary.getParent() != null) {
+            Files.createDirectories(summary.getParent());
+        }
+
+        List<String> lines = new ArrayList<>();
+        lines.add("score=" + score);
+        lines.add("threshold=" + options.threshold);
+        lines.add("detected=" + detected);
+        lines.add("files_analyzed=" + filesAnalyzed);
+        lines.add("files_skipped=" + filesSkipped);
+        lines.add("files_at_or_above_threshold=" + filesAtOrAboveThreshold);
+        lines.add("max_file_score=" + maxFileScore);
+        lines.add("mean_file_score=" + meanFileScore);
+        lines.add("highest_file=" + (highestFile == null ? "" : highestFile));
+        lines.add("scope=" + (options.filesFrom != null ? "changed" : "all"));
+
+        Files.write(summary, lines, StandardCharsets.UTF_8);
+    }
+
+    private static String describeScope(Options options, int fileCount) {
+
+        String label = options.filesFrom != null
+                ? "Java files listed in `" + display(options.filesFrom) + "`"
+                : "Java files under `" + display(options.sourceDir) + "`";
+
+        return label + " (" + fileCount + " analyzed)";
+    }
+
+    private static String highestFile(List<AnalysisContext> results) {
+
+        AnalysisContext highest = null;
+
+        for (AnalysisContext result : results) {
+            if (highest == null
+                    || result.getTotalScore() > highest.getTotalScore()) {
+                highest = result;
+            }
+        }
+
+        if (highest == null || highest.getTotalScore() == 0) {
+            return null;
+        }
+
+        return display(highest.getFile());
+    }
+
+    private static String display(Path path) {
+        return path.toString().replace('\\', '/');
+    }
+
+    private static void printUsage(PrintStream out) {
+        out.println("Usage: AiPatternDetector [options] <source-dir> <report-file>");
+        out.println();
+        out.println("Options:");
+        out.println("  --threshold <0-100>  Score at which the check fails"
+                + " (default: " + DEFAULT_THRESHOLD + ")");
+        out.println("  --files-from <file>   Analyze only paths listed in <file>,");
+        out.println("                        one per line (used by CI diffs)");
+        out.println("  --exclude <glob>      Skip matching paths (repeatable)");
+        out.println("  -h, --help           Show this help");
+        out.println();
+        out.println("A machine-readable summary is written next to the report as");
+        out.println("ai-pattern-summary.properties.");
+        out.println();
+        out.println("Exit codes: 0 = passed, 1 = threshold reached, 2 = tool error.");
+    }
+
+    /**
+     * Parsed command-line configuration.
+     */
+    private static final class Options {
+
+        private int threshold = defaultThreshold();
+        private Path sourceDir;
+        private Path reportFile;
+        private Path filesFrom;
+        private boolean help;
+        private final List<String> excludes = new ArrayList<>();
+        private final List<PathMatcher> excludeMatchers = new ArrayList<>();
+
+        private static Options parse(String[] args) {
+
+            Options options = new Options();
+            List<String> positional = new ArrayList<>();
+
+            for (int i = 0; i < args.length; i++) {
+
+                String argument = args[i];
+
+                switch (argument) {
+                    case "--threshold":
+                        options.threshold = parseThreshold(requireValue(args, ++i, argument));
+                        break;
+                    case "--files-from":
+                        options.filesFrom = Path.of(requireValue(args, ++i, argument));
+                        break;
+                    case "--exclude":
+                        options.excludes.add(requireValue(args, ++i, argument));
+                        break;
+                    case "-h":
+                    case "--help":
+                        options.help = true;
+                        break;
+                    default:
+                        if (argument.startsWith("--")) {
+                            throw new IllegalArgumentException(
+                                    "unknown option: " + argument
+                            );
+                        }
+                        positional.add(argument);
+                }
+            }
+
+            if (options.help) {
+                return options;
+            }
+
+            if (positional.size() != 2) {
+                throw new IllegalArgumentException(
+                        "expected <source-dir> and <report-file>"
+                );
+            }
+
+            options.sourceDir = Path.of(positional.get(0));
+            options.reportFile = Path.of(positional.get(1));
+
+            for (String glob : options.excludes) {
+                options.excludeMatchers.add(
+                        FileSystems.getDefault().getPathMatcher("glob:" + glob)
+                );
+            }
+
+            return options;
+        }
+
+        private Path summaryFile() {
+
+            Path parent = reportFile.getParent();
+
+            if (parent == null) {
+                return Path.of("ai-pattern-summary.properties");
+            }
+
+            return parent.resolve("ai-pattern-summary.properties");
+        }
+
+        private static String requireValue(
+                String[] args,
+                int index,
+                String option) {
+
+            if (index >= args.length) {
+                throw new IllegalArgumentException(
+                        "missing value for " + option
+                );
+            }
+
+            return args[index];
+        }
+
+        private static int parseThreshold(String value) {
+
+            int threshold;
+
+            try {
+                threshold = Integer.parseInt(value.trim());
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException(
+                        "--threshold must be a number between 0 and 100"
+                );
+            }
+
+            if (threshold < 0 || threshold > 100) {
+                throw new IllegalArgumentException(
+                        "--threshold must be between 0 and 100"
+                );
+            }
+
+            return threshold;
+        }
+
+        private static int defaultThreshold() {
+
+            String configured = System.getProperty("slop.threshold");
+
+            if (configured == null || configured.trim().isEmpty()) {
+                return DEFAULT_THRESHOLD;
+            }
+
+            return parseThreshold(configured);
+        }
+    }
+
+    /**
+     * Files chosen for analysis plus anything that was intentionally skipped.
+     */
+    private static final class Selection {
+
+        private final List<Path> files = new ArrayList<>();
+        private final List<String> skipped = new ArrayList<>();
     }
 }

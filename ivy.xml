@@ -24,6 +24,7 @@
 
     <dependencies>
         <!--Database connectivity-->
+        <dependency org="com.mysql" name="mysql-connector-j" rev="8.3.0"/>
         <dependency org="com.oracle.database.jdbc" name="ojdbc11" rev="23.26.3.0.0"/>
         <!--Unit testing-->
         <dependency org="org.junit.jupiter" name="junit-jupiter-api" rev="5.11.4"/>
