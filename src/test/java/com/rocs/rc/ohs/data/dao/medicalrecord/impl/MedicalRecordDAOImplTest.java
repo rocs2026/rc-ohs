@@ -26,40 +26,49 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Tests the medical record search of MedicalRecordDAOImpl using JUnit
- * and Mockito.
+ - Tests the medical record search of MedicalRecordDAOImpl using JUnit
+
+ - and Mockito.
+
  */
 class MedicalRecordDAOImplTest {
 
     /**
-     * Number of parameters used by the search query.
+     - Number of parameters used by the search query.
+
      */
     private static final int SEARCH_PARAMETER_COUNT = 5;
 
     /**
-     * Mocks the static methods of ConnectionHelper.
+     - Mocks the static methods of ConnectionHelper.
+
      */
     private MockedStatic<ConnectionHelper> helper;
 
     /**
-     * Mock SQL prepared statement.
+     - Mock SQL prepared statement.
+
      */
     private PreparedStatement statement;
 
     /**
-     * Mock result set containing query results.
+     - Mock result set containing query results.
+
      */
     private ResultSet resultSet;
 
     /**
-     * DAO instance under test.
+     - DAO instance under test.
+
      */
     private MedicalRecordDAO dao;
 
     /**
-     * Sets up mocked database objects before each test.
+     - Sets up mocked database objects before each test.
+
      *
-     * @throws SQLException when the database operation fails.
+     -
+     @throws SQLException when the database operation fails.
      */
     @BeforeEach
     void setUp() throws SQLException {
@@ -80,7 +89,8 @@ class MedicalRecordDAOImplTest {
     }
 
     /**
-     * Closes the static mock after each test.
+     - Closes the static mock after each test.
+
      */
     @AfterEach
     void tearDown() {
@@ -88,10 +98,13 @@ class MedicalRecordDAOImplTest {
     }
 
     /**
-     * Tests that a matching patient is returned with the medical record
-     * and consultation.
+     - Tests that a matching patient is returned with the medical record
+
+     - and consultation.
+
      *
-     * @throws SQLException only if the database operation fails.
+     -
+     @throws SQLException only if the database operation fails.
      */
     @Test
     void searchReturnsPatientWithMedicalRecord() throws SQLException {
@@ -131,9 +144,11 @@ class MedicalRecordDAOImplTest {
     }
 
     /**
-     * Tests that a patient without a consultation has none.
+     - Tests that a patient without a consultation has none.
+
      *
-     * @throws SQLException when database operation fails.
+     -
+     @throws SQLException when database operation fails.
      */
     @Test
     void searchHandlesMissingConsultation() throws SQLException {
@@ -149,9 +164,11 @@ class MedicalRecordDAOImplTest {
     }
 
     /**
-     * Tests that the trimmed keyword is bound to all parameters.
+     - Tests that the trimmed keyword is bound to all parameters.
+
      *
-     * @throws SQLException only when a database operation fails.
+     -
+     @throws SQLException only when a database operation fails.
      */
     @Test
     void searchBindsTrimmedKeyword() throws SQLException {
@@ -165,9 +182,11 @@ class MedicalRecordDAOImplTest {
     }
 
     /**
-     * Tests that search returns an empty list when no patient matches.
+     - Tests that search returns an empty list when no patient matches.
+
      *
-     * @throws SQLException if a database operation fails.
+     -
+     @throws SQLException if a database operation fails.
      */
     @Test
     void searchReturnsEmptyListWhenNoMatch() throws SQLException {
@@ -177,7 +196,8 @@ class MedicalRecordDAOImplTest {
     }
 
     /**
-     * Tests that blank keywords do not access the database.
+     - Tests that blank keywords do not access the database.
+
      */
     @Test
     void searchSkipsDatabaseWhenKeywordBlank() {
@@ -188,9 +208,11 @@ class MedicalRecordDAOImplTest {
     }
 
     /**
-     * Tests that search throws a runtime exception when the query fails.
+     - Tests that search throws a runtime exception when the query fails.
+
      *
-     * @throws SQLException when the mocked database operation fails.
+     -
+     @throws SQLException when the mocked database operation fails.
      */
     @Test
     void searchThrowsWhenDatabaseFails() throws SQLException {
