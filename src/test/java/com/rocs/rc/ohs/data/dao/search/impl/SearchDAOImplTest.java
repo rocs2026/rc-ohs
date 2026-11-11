@@ -38,10 +38,29 @@ class SearchDAOImplTest {
      */
     private static final int SEARCH_PARAMETER_COUNT = 4;
 
+    /**
+     * Mocks the static methods of ConnectionHelper.
+     */
     private MockedStatic<ConnectionHelper> helper;
+
+    /**
+     * Mock database connection.
+     */
     private Connection connection;
+
+    /**
+     * Mock SQL prepared statement.
+     */
     private PreparedStatement statement;
+
+    /**
+     * Mock result set containing query results.
+     */
     private ResultSet resultSet;
+
+    /**
+     * DAO instance used to test patient search and medical record retrieval.
+     */
     private SearchDAO dao;
 
     /**
