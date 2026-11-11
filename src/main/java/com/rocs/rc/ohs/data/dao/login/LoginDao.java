@@ -8,7 +8,6 @@ import com.rocs.rc.ohs.app.model.login.Login;
  */
 
 public interface LoginDao {
-
     /**
      * Retrieves the login account that matches the given username.
      *
@@ -40,3 +39,4 @@ public interface LoginDao {
     boolean updatePassword(String staffIdOrEmail, String username,
                            String newPassword);
 }
+
