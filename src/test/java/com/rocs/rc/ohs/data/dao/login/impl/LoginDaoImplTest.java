@@ -69,7 +69,7 @@ class LoginDaoImplTest {
                      mockConnectionHelper(connection)) {
             assertFalse(dao.updatePassword(null,
                     "staff", "NewStaff@2026"));
-            assertFalse(dao.updatePassword("   ", "john.doe@example.com",
+            assertFalse(dao.updatePassword("   ","staff",
                     "NewStaff@2026"));
 
             helper.verify(ConnectionHelper::getConnection, never());

@@ -21,7 +21,7 @@ public interface LoginDao {
      * Updates the password only if the email and the
      * username belong to the same account.
      *
-     * @param email The Staff ID or the email address.
+     * @param email The email address.
      * @param username The username entered by the user.
      * @param newPassword The new password.
      * @return True if the password was updated, false if nothing matched.
