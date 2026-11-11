@@ -1,8 +1,6 @@
 package com.rocs.rc.ohs.data.dao.login.impl;
 
 import com.rocs.rc.ohs.data.connection.ConnectionHelper;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
@@ -24,67 +22,82 @@ import static org.mockito.Mockito.when;
  */
 class LoginDaoImplTest {
 
-    /** Static connection helper used in tests. */
-    private MockedStatic<ConnectionHelper> connectionHelper;
-
-    /** Prepared statement for updating the password. */
-    private PreparedStatement updatePassword;
-
     /** DAO instance being tested. */
-    private LoginDaoImpl dao;
+    private final LoginDaoImpl dao = new LoginDaoImpl();
 
-    @BeforeEach
-    void setUp() throws SQLException {
-        Connection connection = mock(Connection.class);
-        updatePassword = mock(PreparedStatement.class);
-
+    /**
+     * Creates a prepared statement mock for the update password query
+     * and links it to the given connection.
+     */
+    private PreparedStatement mockUpdatePassword(Connection connection)
+            throws SQLException {
+        PreparedStatement statement = mock(PreparedStatement.class);
         when(connection.prepareStatement(
                 startsWith("update login set password")))
-                .thenReturn(updatePassword);
+                .thenReturn(statement);
+        return statement;
+    }
 
-        connectionHelper = mockStatic(ConnectionHelper.class);
-        connectionHelper.when(ConnectionHelper::getConnection)
+    /**
+     * Mocks the static ConnectionHelper so it returns the given
+     * connection. Always use it in a try-with-resources block so the
+     * static mock is closed at the end of the test.
+     */
+    private MockedStatic<ConnectionHelper> mockConnectionHelper(
+            Connection connection) {
+        MockedStatic<ConnectionHelper> helper =
+                mockStatic(ConnectionHelper.class);
+        helper.when(ConnectionHelper::getConnection)
                 .thenReturn(connection);
-
-        dao = new LoginDaoImpl();
+        return helper;
     }
 
-    @AfterEach
-    void tearDown() {
-        connectionHelper.close();
-    }
-
-    //AC4:empty Staff ID or email.
+    //Empty email.
     @Test
     void updatePasswordReturnsFalseWithoutConnectingWhenBlank() {
-        assertFalse(dao.updatePassword(null,
-                "ana.corpuz", "NewPass123"));
-        assertFalse(dao.updatePassword("   ", "ana.corpuz",
-                "NewPass123"));
+        Connection connection = mock(Connection.class);
 
-        connectionHelper.verify(ConnectionHelper::getConnection, never());
+        try (MockedStatic<ConnectionHelper> helper =
+                     mockConnectionHelper(connection)) {
+            assertFalse(dao.updatePassword(null,
+                    "ana.corpuz", "NewPass123"));
+            assertFalse(dao.updatePassword("   ", "ana.corpuz",
+                    "NewPass123"));
+
+            helper.verify(ConnectionHelper::getConnection, never());
+        }
     }
 
     //Identity verified (details match), so the password is updated.
     @Test
     void updatePasswordReturnsTrueWhenDetailsMatch() throws SQLException {
+        Connection connection = mock(Connection.class);
+        PreparedStatement updatePassword = mockUpdatePassword(connection);
         when(updatePassword.executeUpdate()).thenReturn(1);
 
-        assertTrue(dao.updatePassword("EMP-001", "ana.corpuz",
-                "NewPass123"));
+        try (MockedStatic<ConnectionHelper> helper =
+                     mockConnectionHelper(connection)) {
+            assertTrue(dao.updatePassword("ana.corpuz@example.com",
+                    "ana.corpuz", "NewPass123"));
+        }
         verify(updatePassword).setString(1, "NewPass123");
         verify(updatePassword).setString(2, "ana.corpuz");
+        verify(updatePassword).setString(3, "ana.corpuz@example.com");
     }
 
     //Identity not verified, so nothing is updated.
     @Test
     void updatePasswordReturnsFalseWhenDetailsDoNotMatch()
             throws SQLException {
+        Connection connection = mock(Connection.class);
+        PreparedStatement updatePassword = mockUpdatePassword(connection);
         when(updatePassword.executeUpdate()).thenReturn(0);
 
-        assertFalse(dao.updatePassword(
-                "EMP-001", "someone.else",
-                "NewPass123"));
+        try (MockedStatic<ConnectionHelper> helper =
+                     mockConnectionHelper(connection)) {
+            assertFalse(dao.updatePassword(
+                    "ana.corpuz@example.com", "someone.else",
+                    "NewPass123"));
+        }
     }
 }
-

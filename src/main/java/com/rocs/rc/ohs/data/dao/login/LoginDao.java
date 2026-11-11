@@ -18,16 +18,16 @@ public interface LoginDao {
     Login login(String username);
 
     /**
-     * Updates the password only if the Staff ID or email and the
+     * Updates the password only if the email and the
      * username belong to the same account.
      *
-     * @param staffIdOrEmail The Staff ID or the email address.
+     * @param email The Staff ID or the email address.
      * @param username The username entered by the user.
      * @param newPassword The new password.
      * @return True if the password was updated, false if nothing matched.
      */
 
-    boolean updatePassword(String staffIdOrEmail, String username,
+    boolean updatePassword(String email, String username,
                            String newPassword);
 }
 
