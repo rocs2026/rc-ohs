@@ -25,10 +25,15 @@ class LoginDaoImplTest {
     /** DAO instance being tested. */
     private final LoginDaoImpl dao = new LoginDaoImpl();
 
+
     /**
      * Creates a prepared statement mock for the update password query
      * and links it to the given connection.
-     */
+     *
+    * @param connection the connection that should return the mocked statement
+    * @return the mocked prepared statement
+    * @throws SQLException if stubbing the connection fails
+    */
     private PreparedStatement mockUpdatePassword(Connection connection)
             throws SQLException {
         PreparedStatement statement = mock(PreparedStatement.class);
@@ -42,6 +47,9 @@ class LoginDaoImplTest {
      * Mocks the static ConnectionHelper so it returns the given
      * connection. Always use it in a try-with-resources block so the
      * static mock is closed at the end of the test.
+     *
+     * @param connection the connection that ConnectionHelper should return
+     * @return the static mock, which must be closed at the end of the test
      */
     private MockedStatic<ConnectionHelper> mockConnectionHelper(
             Connection connection) {
