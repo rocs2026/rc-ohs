@@ -13,10 +13,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class MedicineDaoImplTest {
 
+    /**
+     * ID of the Paracetamol medicine record.
+     */
     private static final String PARACETAMOL_ID =
             "ebb3209c-50ea-4fbd-8b7e-be4540ab5b57";
+
+    /**
+     * ID of the Amoxicillin medicine record.
+     */
     private static final String AMOXICILLIN_ID =
             "36c00788-fcfd-485e-8ad3-de08fd49cb76";
+
+    /**
+     * Dao used for medicine tests.
+     */
 
     private MedicineDaoImpl medicineDao;
 

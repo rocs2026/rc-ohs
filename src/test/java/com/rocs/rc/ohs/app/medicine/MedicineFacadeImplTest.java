@@ -7,17 +7,28 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MedicineFacadeImplTest {
 
+    /**
+     * ID of the Paracetamol medicine record.
+     */
     private static final String PARACETAMOL_ID =
             "ebb3209c-50ea-4fbd-8b7e-be4540ab5b57";
 
+    /**
+     * ID of the Amoxicillin medicine record.
+     */
     private static final String AMOXICILLIN_ID =
             "36c00788-fcfd-485e-8ad3-de08fd49cb76";
 
+    /**
+     * Facade used for medicine tests.
+     */
     private MedicineFacadeImpl facade;
 
     @BeforeEach
