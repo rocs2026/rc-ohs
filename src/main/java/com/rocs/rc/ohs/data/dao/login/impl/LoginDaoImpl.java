@@ -81,7 +81,8 @@ public class LoginDaoImpl implements LoginDao {
     }
 
     @Override
-    public boolean updatePassword(String staffIdOrEmail, String username, String newPassword) {
+    public boolean updatePassword(String staffIdOrEmail,
+                                  String username, String newPassword) {
         if (staffIdOrEmail == null || staffIdOrEmail.trim().isEmpty()
                 || username == null || newPassword == null) {
             return false;
