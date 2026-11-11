@@ -68,9 +68,9 @@ class LoginDaoImplTest {
         try (MockedStatic<ConnectionHelper> helper =
                      mockConnectionHelper(connection)) {
             assertFalse(dao.updatePassword(null,
-                    "ana.corpuz", "NewPass123"));
-            assertFalse(dao.updatePassword("   ", "ana.corpuz",
-                    "NewPass123"));
+                    "staff", "NewStaff@2026"));
+            assertFalse(dao.updatePassword("   ", "john.doe@example.com",
+                    "NewStaff@2026"));
 
             helper.verify(ConnectionHelper::getConnection, never());
         }
@@ -85,12 +85,12 @@ class LoginDaoImplTest {
 
         try (MockedStatic<ConnectionHelper> helper =
                      mockConnectionHelper(connection)) {
-            assertTrue(dao.updatePassword("ana.corpuz@example.com",
-                    "ana.corpuz", "NewPass123"));
+            assertTrue(dao.updatePassword("john.doe@example.com",
+                    "staff", "NewStaff@2026"));
         }
-        verify(updatePassword).setString(1, "NewPass123");
-        verify(updatePassword).setString(2, "ana.corpuz");
-        verify(updatePassword).setString(3, "ana.corpuz@example.com");
+        verify(updatePassword).setString(1, "NewStaff@2026");
+        verify(updatePassword).setString(2, "staff");
+        verify(updatePassword).setString(3, "john.doe@example.com");
     }
 
     //Identity not verified, so nothing is updated.
@@ -104,8 +104,8 @@ class LoginDaoImplTest {
         try (MockedStatic<ConnectionHelper> helper =
                      mockConnectionHelper(connection)) {
             assertFalse(dao.updatePassword(
-                    "ana.corpuz@example.com", "someone.else",
-                    "NewPass123"));
+                    "john.doe@example.com", "staff",
+                    "NewStaff@2026"));
         }
     }
 }
