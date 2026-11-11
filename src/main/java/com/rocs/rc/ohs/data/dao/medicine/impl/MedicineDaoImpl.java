@@ -31,7 +31,7 @@ public class MedicineDaoImpl implements MedicineDao {
                 + "ON medicine.category_id = medicine_category.id "
                 + "ORDER BY medicine.medicine_name;";
 
-        try (Connection connection = ConnectionHelper.mySqlGetConnection();
+        try (Connection connection = ConnectionHelper.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql);
              ResultSet rs = statement.executeQuery()) {
 
@@ -48,14 +48,14 @@ public class MedicineDaoImpl implements MedicineDao {
                 medicines.add(medicine);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to retrieve medicines", e);
         }
 
         return medicines;
     }
 
     /**
-     * Retrieves a specific medicine record by its unique identifier.
+     * It's retrieves a specific medicine record by its unique identifier.
      *
      * @param id the unique identifier of the medicine to look up.
      * @return the Medicine object if found, or null if it does not exist.
@@ -71,7 +71,7 @@ public class MedicineDaoImpl implements MedicineDao {
                 + "ON medicine.category_id = medicine_category.id "
                 + "WHERE medicine.id = ?;";
 
-        try (Connection connection = ConnectionHelper.mySqlGetConnection();
+        try (Connection connection = ConnectionHelper.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, id);
@@ -88,7 +88,7 @@ public class MedicineDaoImpl implements MedicineDao {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to Retrieve medicines");
         }
 
         return medicine;
@@ -112,7 +112,7 @@ public class MedicineDaoImpl implements MedicineDao {
                 + "WHERE medicine.medicine_name LIKE ? "
                 + "ORDER BY medicine.medicine_name;";
 
-        try (Connection connection = ConnectionHelper.mySqlGetConnection();
+        try (Connection connection = ConnectionHelper.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, "%" + keyword + "%");
@@ -132,7 +132,7 @@ public class MedicineDaoImpl implements MedicineDao {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to Retrieve medicines");
         }
 
         return medicines;

@@ -1,8 +1,6 @@
 package com.rocs.rc.ohs.data.connection;
 
-
 import com.rocs.rc.ohs.config.AppConfig;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -10,7 +8,7 @@ import java.sql.SQLException;
 /**
  * Utility class for managing database connections.
  */
-public final class ConnectionHelper extends MySqlConnectionHelper {
+public final class ConnectionHelper {
 
     private ConnectionHelper() {
         // Prevent instantiation
