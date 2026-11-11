@@ -1,11 +1,10 @@
-
-package com.rocs.rc.ohs.data.dao.medicalRecord.impl;
+package com.rocs.rc.ohs.data.dao.medicalrecord.impl;
 
 import com.rocs.rc.ohs.app.model.consultation.Consultation;
 import com.rocs.rc.ohs.app.model.medicalrecord.MedicalRecord;
 import com.rocs.rc.ohs.app.model.person.Person;
 import com.rocs.rc.ohs.data.connection.ConnectionHelper;
-import com.rocs.rc.ohs.data.dao.medicalRecord.MedicalRecordDAO;
+import com.rocs.rc.ohs.data.dao.medicalrecord.MedicalRecordDAO;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,7 +21,7 @@ public class MedicalRecordDAOImpl implements MedicalRecordDAO {
     /**
      * The number of keyword parameters used by the search query.
      */
-    private static final int SEARCH_PARAMETER_COUNT = 4;
+    private static final int SEARCH_PARAMETER_COUNT = 5;
 
     /**
      * Searches for a patient and returns the patient's medical records.
@@ -44,9 +43,10 @@ public class MedicalRecordDAOImpl implements MedicalRecordDAO {
                 + "c.complaint, c.diagnosis, c.treatment "
                 + "FROM person p "
                 + "LEFT JOIN student s ON s.person_id = p.id "
-                + "LEFT JOIN medical_record mr ON mr.patient_id = p.id "
+                + "JOIN medical_record mr ON mr.patient_id = p.id "
                 + "LEFT JOIN consultation c ON c.id = mr.consultation_id "
-                + "WHERE LOWER(p.first_name) LIKE LOWER(?) "
+                + "WHERE LOWER(p.id) LIKE LOWER(?) "
+                + "OR LOWER(p.first_name) LIKE LOWER(?) "
                 + "OR LOWER(p.middle_name) LIKE LOWER(?) "
                 + "OR LOWER(p.last_name) LIKE LOWER(?) "
                 + "OR LOWER(s.student_number) LIKE LOWER(?) "

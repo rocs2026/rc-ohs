@@ -1,5 +1,4 @@
-
-package com.rocs.rc.ohs.data.dao.medicalRecord;
+package com.rocs.rc.ohs.data.dao.medicalrecord;
 
 import com.rocs.rc.ohs.app.model.medicalrecord.MedicalRecord;
 import java.util.List;
@@ -10,7 +9,7 @@ import java.util.List;
 public interface MedicalRecordDAO {
 
     /**
-     * Searches for a patient by name or student number and returns the
+     * Searches for a patient by ID, name or student number and returns the
      * patient's medical records in a single query.
      *
      * @param keyword the text to search for

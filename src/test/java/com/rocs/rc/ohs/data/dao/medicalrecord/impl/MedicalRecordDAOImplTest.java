@@ -1,9 +1,8 @@
-
-package com.rocs.rc.ohs.data.dao.medicalRecord.impl;
+package com.rocs.rc.ohs.data.dao.medicalrecord.impl;
 
 import com.rocs.rc.ohs.app.model.medicalrecord.MedicalRecord;
 import com.rocs.rc.ohs.data.connection.ConnectionHelper;
-import com.rocs.rc.ohs.data.dao.medicalRecord.MedicalRecordDAO;
+import com.rocs.rc.ohs.data.dao.medicalrecord.MedicalRecordDAO;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,7 +26,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Tests MedicalRecordDAOImpl using JUnit
+ * Tests the medical record search of MedicalRecordDAOImpl using JUnit
  * and Mockito.
  */
 class MedicalRecordDAOImplTest {
@@ -35,7 +34,7 @@ class MedicalRecordDAOImplTest {
     /**
      * Number of parameters used by the search query.
      */
-    private static final int SEARCH_PARAMETER_COUNT = 4;
+    private static final int SEARCH_PARAMETER_COUNT = 5;
 
     /**
      * Mocks the static methods of ConnectionHelper.
@@ -60,7 +59,7 @@ class MedicalRecordDAOImplTest {
     /**
      * Sets up mocked database objects before each test.
      *
-     * @throws SQLException if the database operation fails.
+     * @throws SQLException when the database operation fails.
      */
     @BeforeEach
     void setUp() throws SQLException {
@@ -92,7 +91,7 @@ class MedicalRecordDAOImplTest {
      * Tests that a matching patient is returned with the medical record
      * and consultation.
      *
-     * @throws SQLException only when the database operation fails.
+     * @throws SQLException only if the database operation fails.
      */
     @Test
     void searchReturnsPatientWithMedicalRecord() throws SQLException {
@@ -152,7 +151,7 @@ class MedicalRecordDAOImplTest {
     /**
      * Tests that the trimmed keyword is bound to all parameters.
      *
-     * @throws SQLException if the database operation fails.
+     * @throws SQLException only when a database operation fails.
      */
     @Test
     void searchBindsTrimmedKeyword() throws SQLException {
@@ -168,7 +167,7 @@ class MedicalRecordDAOImplTest {
     /**
      * Tests that search returns an empty list when no patient matches.
      *
-     * @throws SQLException only if database operation fails.
+     * @throws SQLException if a database operation fails.
      */
     @Test
     void searchReturnsEmptyListWhenNoMatch() throws SQLException {
