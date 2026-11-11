@@ -23,24 +23,6 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class MedicalRecordDaoImplTest {
 
-    /** The medical record ID of Jowan. */
-    private static final String JOWAN_RECORD_ID =
-            "4e49eb71-3481-476b-b6ba-5662a48df1e5";
-
-    /** The new medical conditions of Jowan. */
-    private static final String JOWAN_NEW_CONDITIONS = "Hypertension";
-
-    /** The record ID of Antonio . */
-    private static final String ANTONIO_RECORD_ID =
-            "669ce09d-4086-4497-a76e-8cb9afe2b635";
-
-    /** New medical conditions of Antonio. */
-    private static final String ANTONIO_NEW_CONDITIONS = "Asthma";
-
-    /** The ID of Allison, has no medical record . */
-    private static final String ALLISON_ID =
-            "ea67a306-d343-4847-b204-c92f2d4cc9e0";
-
     /** mock connection. */
     @Mock
     private Connection connection;
@@ -86,10 +68,13 @@ public class MedicalRecordDaoImplTest {
     @Test
     void updateMedicalRecordWhenIdReturnsNothingReturnsFalse()
             throws SQLException {
+        String allisonId = "ea67a306-d343-4847-b204-c92f2d4cc90";
+        String jowanConditions = "Hypertension";
+
         when(statement.executeUpdate()).thenReturn(0);
 
         boolean result = medicalRecordDao.updateMedicalRecord(
-                buildRecord(ALLISON_ID, JOWAN_NEW_CONDITIONS));
+                buildRecord(allisonId, jowanConditions));
 
         assertFalse(result);
     }
@@ -102,10 +87,12 @@ public class MedicalRecordDaoImplTest {
     @Test
     void updateMedicalRecordWhenNameReturnsNothingReturnsFalse()
             throws SQLException {
+        String allisonId = "ea67a306-d343-4847-b204-c92f2d4cc9e0";
+        String jowanConditions = "Hypertension";
         when(statement.executeUpdate()).thenReturn(0);
 
         boolean result = medicalRecordDao.updateMedicalRecord(
-                buildRecord(ALLISON_ID, JOWAN_NEW_CONDITIONS));
+                buildRecord(allisonId, jowanConditions));
 
         assertFalse(result);
     }
@@ -118,10 +105,12 @@ public class MedicalRecordDaoImplTest {
     @Test
     void updateMedicalRecordWhenIdReturnsSingleResultReturnsTrue()
             throws SQLException {
+        String jowanId = "4e49eb71-3481-476b-b6ba-5662a48df1e5";
+        String jowanConditions = "Hypertension";
         when(statement.executeUpdate()).thenReturn(1);
 
         boolean result = medicalRecordDao.updateMedicalRecord(
-                buildRecord(JOWAN_RECORD_ID, JOWAN_NEW_CONDITIONS));
+                buildRecord(jowanId, jowanConditions));
 
         assertTrue(result);
     }
@@ -134,10 +123,12 @@ public class MedicalRecordDaoImplTest {
     @Test
     void updateMedicalRecordWhenNameReturnsSingleResultReturnsTrue()
             throws SQLException {
+        String antonioId = "669ce09d-4086-4497-a76e-8cb9afe2b635";
+        String antonioConditions = "Asthma";
         when(statement.executeUpdate()).thenReturn(1);
 
         boolean result = medicalRecordDao.updateMedicalRecord(
-                buildRecord(ANTONIO_RECORD_ID, ANTONIO_NEW_CONDITIONS));
+                buildRecord(antonioId, antonioConditions));
 
         assertTrue(result);
     }
@@ -150,10 +141,12 @@ public class MedicalRecordDaoImplTest {
     @Test
     void updateMedicalRecordWhenSelectedFromMultipleResultsReturnsTrue()
             throws SQLException {
+        String jowanId = "4e49b71-3481-476b-b6ba-5662a48df1e5";
+        String jowanConditions = "Hypertension";
         when(statement.executeUpdate()).thenReturn(1);
 
         boolean result = medicalRecordDao.updateMedicalRecord(
-                buildRecord(JOWAN_RECORD_ID, JOWAN_NEW_CONDITIONS));
+                buildRecord(jowanId, jowanConditions));
 
         assertTrue(result);
     }
@@ -166,13 +159,16 @@ public class MedicalRecordDaoImplTest {
     @Test
     void updateMedicalRecordWhenUpdatedSendsNewValuesToDatabase()
             throws SQLException {
+        String jowanId = "4e49eb71-3481-476b-b6ba-5662a48df1e5";
+        String jowanConditions = "Hypertension";
         when(statement.executeUpdate()).thenReturn(1);
 
         medicalRecordDao.updateMedicalRecord(
-                buildRecord(JOWAN_RECORD_ID, JOWAN_NEW_CONDITIONS));
+                buildRecord(jowanId, jowanConditions));
 
-        verify(statement).setString(1, JOWAN_NEW_CONDITIONS);
-        verify(statement).setString(3, JOWAN_RECORD_ID);
+        verify(statement).setString(1, jowanConditions);
+        verify(statement).setString(2, null);
+        verify(statement).setString(3, jowanId);
         verify(statement).executeUpdate();
     }
 }

@@ -2,6 +2,7 @@ package com.rocs.rc.ohs.data.dao.medicalrecord.impl;
 
 import com.rocs.rc.ohs.app.model.medicalrecord.MedicalRecord;
 import com.rocs.rc.ohs.data.dao.medicalrecord.MedicalRecordDao;
+import com.rocs.rc.ohs.data.utils.QueryConstants;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,12 +13,6 @@ import java.sql.SQLException;
  */
 public class MedicalRecordDaoImpl implements MedicalRecordDao {
 
-    /** SQL statement for updating a medical record. */
-    private static final String UPDATE_MEDICAL_RECORD =
-            "UPDATE medical_record "
-                + "SET medical_conditions = ?, allergies = ? "
-                + "WHERE id =?";
-
     /** The database connection. */
     private  final Connection connection;
 
@@ -26,7 +21,6 @@ public class MedicalRecordDaoImpl implements MedicalRecordDao {
      *
      * @param newConnection connection.
      */
-
     public MedicalRecordDaoImpl(Connection newConnection) {
         this.connection = newConnection;
     }
@@ -36,13 +30,11 @@ public class MedicalRecordDaoImpl implements MedicalRecordDao {
     public boolean updateMedicalRecord(
             MedicalRecord medicalRecord) {
         try (PreparedStatement statement = connection
-                .prepareStatement(UPDATE_MEDICAL_RECORD)) {
-            statement.setString(1,
-                    medicalRecord.getMedicalConditions());
-            statement.setString(2,
-                    medicalRecord.getAllergies());
-            statement.setString(3,
-                    medicalRecord.getId());
+                .prepareStatement(QueryConstants.
+                        UPDATE_MEDICAL_RECORD_STATEMENT)) {
+            statement.setString(1, medicalRecord.getMedicalConditions());
+            statement.setString(2, medicalRecord.getAllergies());
+            statement.setString(3, medicalRecord.getId());
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             String id = medicalRecord.getId();
