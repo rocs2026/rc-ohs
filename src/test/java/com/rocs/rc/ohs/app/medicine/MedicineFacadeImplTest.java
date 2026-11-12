@@ -1,4 +1,3 @@
-
 package com.rocs.rc.ohs.app.medicine;
 
 import com.rocs.rc.ohs.app.facade.medicine.impl.MedicineFacadeImpl;
@@ -14,6 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Tests the MedicineFacadeImpl class.
+ */
 public class MedicineFacadeImplTest {
 
     /**
@@ -38,6 +40,9 @@ public class MedicineFacadeImplTest {
         facade = new MedicineFacadeImpl();
     }
 
+    /**
+     * RCISD-5-TC1
+     */
     @Test
     void listAll() {
         List<Medicine> medicines = facade.getAllMedicine();
@@ -46,6 +51,9 @@ public class MedicineFacadeImplTest {
         assertFalse(medicines.isEmpty());
     }
 
+    /**
+     * RCISD-5-TC2
+     */
     @Test
     void listDetails() {
         List<Medicine> medicines = facade.getAllMedicine();
@@ -65,6 +73,9 @@ public class MedicineFacadeImplTest {
                 paracetamol.getCategory().getCategoryName());
     }
 
+    /**
+     * RCISD-5-TC3
+     */
     @Test
     void findById() {
         Medicine result = facade.getMedicineById(
@@ -76,6 +87,9 @@ public class MedicineFacadeImplTest {
         assertEquals("Analgesic", result.getCategory().getCategoryName());
     }
 
+    /**
+     * RCISD-5-TC4
+     */
     @Test
     void listMultiple() {
         List<Medicine> medicines = facade.getAllMedicine();
@@ -96,6 +110,9 @@ public class MedicineFacadeImplTest {
         assertTrue(hasAmoxicillin);
     }
 
+    /**
+     * RCISD-5-TC5 & RCISD-5-TC6
+     */
     @Test
     void searchKeyword() {
         List<Medicine> all = facade.getAllMedicine();
@@ -108,6 +125,9 @@ public class MedicineFacadeImplTest {
         assertEquals(all.size(), byBlank.size());
     }
 
+    /**
+     * RCISD-5-TC7
+     */
     @Test
     void searchNoMatch() {
         List<Medicine> result = facade.searchMedicine("zzzxxyy");

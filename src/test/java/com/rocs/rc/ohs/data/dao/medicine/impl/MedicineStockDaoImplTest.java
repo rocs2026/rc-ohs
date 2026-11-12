@@ -1,4 +1,3 @@
-
 package com.rocs.rc.ohs.data.dao.medicine.impl;
 
 import com.rocs.rc.ohs.app.model.medicine.MedicineStock;
@@ -13,8 +12,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Tests the MedicineStockDaoImpl class.
+ */
 public class MedicineStockDaoImplTest {
 
+    /** The DAO being tested. */
     private MedicineStockDaoImpl stockDao;
 
     @BeforeEach
@@ -22,7 +25,9 @@ public class MedicineStockDaoImplTest {
         stockDao = new MedicineStockDaoImpl();
     }
 
-    // TC1
+    /**
+     * RCISD-5-TC1
+     */
     @Test
     void listStock() {
         List<MedicineStock> stocks = stockDao.getAllStock();
@@ -31,7 +36,9 @@ public class MedicineStockDaoImplTest {
         assertFalse(stocks.isEmpty());
     }
 
-    // TC3
+    /**
+     * RCISD-5-TC3
+     */
     @Test
     void stockDetails() {
         List<MedicineStock> stocks = stockDao.searchStock("Paracetamol");
@@ -45,7 +52,9 @@ public class MedicineStockDaoImplTest {
         assertEquals("Enough", stock.getStatus());
     }
 
-    // TC5
+    /**
+     * RCISD-5-TC5 & RCISD-5-TC6
+     */
     @Test
     void searchKeyword() {
         List<MedicineStock> stocks = stockDao.searchStock("amox");
@@ -55,7 +64,9 @@ public class MedicineStockDaoImplTest {
                 stocks.get(0).getMedicine().getMedicineName());
     }
 
-    // TC6
+    /**
+     * RCISD-5-TC7
+     */
     @Test
     void searchNoMatch() {
         List<MedicineStock> stocks = stockDao.searchStock("zzzxxyy");

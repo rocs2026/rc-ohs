@@ -1,4 +1,3 @@
-
 package com.rocs.rc.ohs.data.dao.medicine.impl;
 
 import com.rocs.rc.ohs.app.model.medicine.Medicine;
@@ -40,6 +39,9 @@ public class MedicineDaoImplTest {
         medicineDao = new MedicineDaoImpl();
     }
 
+    /**
+     * RCISD-5-TC1
+     */
     @Test
     void listAll() {
         List<Medicine> medicines = medicineDao.getAllMedicine();
@@ -48,6 +50,9 @@ public class MedicineDaoImplTest {
         assertFalse(medicines.isEmpty());
     }
 
+    /**
+     * RCISD-5-TC2
+     */
     @Test
     void listDetails() {
         List<Medicine> medicines = medicineDao.getAllMedicine();
@@ -67,6 +72,9 @@ public class MedicineDaoImplTest {
                 paracetamol.getCategory().getCategoryName());
     }
 
+    /**
+     * RCISD-5-TC3
+     */
     @Test
     void findById() {
         Medicine result = medicineDao.getMedicineById(PARACETAMOL_ID);
@@ -77,6 +85,9 @@ public class MedicineDaoImplTest {
         assertEquals("Analgesic", result.getCategory().getCategoryName());
     }
 
+    /**
+     * RCISD-5-TC4
+     */
     @Test
     void listMultiple() {
         List<Medicine> medicines = medicineDao.getAllMedicine();
@@ -98,6 +109,9 @@ public class MedicineDaoImplTest {
         assertTrue(hasAmoxicillin);
     }
 
+    /**
+     * RCISD-5-TC5 & RCISD-5-TC6
+     */
     @Test
     void searchByKeyword() {
         List<Medicine> byName = medicineDao.searchMedicine("Paracetamol");
@@ -110,6 +124,9 @@ public class MedicineDaoImplTest {
         assertEquals(AMOXICILLIN_ID, byKeyword.get(0).getId());
     }
 
+    /**
+     * RCISD-5-TC7
+     */
     @Test
     void searchNoMatch() {
         List<Medicine> result = medicineDao.searchMedicine("zzzxxyy");

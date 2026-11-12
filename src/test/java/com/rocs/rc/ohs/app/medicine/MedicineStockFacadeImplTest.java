@@ -1,4 +1,3 @@
-
 package com.rocs.rc.ohs.app.medicine;
 
 import com.rocs.rc.ohs.app.facade.medicine.impl.MedicineStockFacadeImpl;
@@ -18,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Tests the MedicineStockFacadeImpl class.
  */
 public class MedicineStockFacadeImplTest {
-
+    /** The facade being tested. */
     private MedicineStockFacadeImpl facade;
 
     @BeforeEach
@@ -26,7 +25,9 @@ public class MedicineStockFacadeImplTest {
         facade = new MedicineStockFacadeImpl();
     }
 
-    // TC1
+    /**
+     * RCISD-5-TC1
+     */
     @Test
     void listAll() {
         List<MedicineStock> stocks = facade.getAllStock();
@@ -35,7 +36,9 @@ public class MedicineStockFacadeImplTest {
         assertFalse(stocks.isEmpty());
     }
 
-    // TC2
+    /**
+     * RCISD-5-TC2
+     */
     @Test
     void listDetails() {
         List<MedicineStock> stocks = facade.getAllStock();
@@ -55,7 +58,9 @@ public class MedicineStockFacadeImplTest {
                 paracetamol.getMedicine().getCategory().getCategoryName());
     }
 
-    // TC3
+    /**
+     * RCISD-5-TC3
+     */
     @Test
     void stockDetails() {
         List<MedicineStock> stocks = facade.searchStock("Paracetamol");
@@ -69,7 +74,9 @@ public class MedicineStockFacadeImplTest {
         assertEquals("Enough", stock.getStatus());
     }
 
-    // TC4
+    /**
+     * RCISD-5-TC4
+     */
     @Test
     void listMultiple() {
         List<MedicineStock> stocks = facade.getAllStock();
@@ -93,7 +100,9 @@ public class MedicineStockFacadeImplTest {
         assertTrue(hasAmoxicillin);
     }
 
-    // TC5
+    /**
+     * RCISD-5-TC5 & RCISD-5-TC6
+     */
     @Test
     void searchKeyword() {
         List<MedicineStock> all = facade.getAllStock();
@@ -106,7 +115,9 @@ public class MedicineStockFacadeImplTest {
         assertEquals(all.size(), byBlank.size());
     }
 
-    // TC6
+    /**
+     * RCISD-5-TC7
+     */
     @Test
     void searchNoMatch() {
         List<MedicineStock> stocks = facade.searchStock("zzzxxyy");
