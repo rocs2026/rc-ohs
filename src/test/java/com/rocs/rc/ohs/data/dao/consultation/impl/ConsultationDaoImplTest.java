@@ -58,7 +58,7 @@ class ConsultationDaoImplTest {
     private static final String DIAGNOSIS = "Bacterial throat infection";
 
     /** The treatment of Jowan in the test cases. */
-    private static final String TREATMENT = "Antibiotic and rest";
+    private static final String TREATMENT = "Antibiotic course and rest";
 
     /** The mocked connection helper. */
     private MockedStatic<ConnectionHelper> connectionHelper;
@@ -95,13 +95,13 @@ class ConsultationDaoImplTest {
         connectionHelper.close();
     }
 
-    // Treatment plan is saved as part of the consultation.
+    // The treatment plan is saved as part of the consultation.
     @Test
     void savesTheTreatmentPlan() throws SQLException {
         Consultation consultation = newConsultation(ANTONIO_ID,
                 "Mild dehydration", "Drink plenty of water and rest");
 
-        dao.add(connection, consultation);
+        dao.add(consultation);
 
         verify(statement).setString(2, ANTONIO_ID);
         verify(statement).setString(7, "Mild dehydration");
@@ -111,8 +111,8 @@ class ConsultationDaoImplTest {
 
     // The consultation is saved with all its details.
     @Test
-    void savesTheConsultationWithAllDetails() throws SQLException {
-        Consultation saved = dao.add(connection,
+    void tc6SavesTheConsultationWithAllDetails() throws SQLException {
+        Consultation saved = dao.add(
                 newConsultation(JOWAN_ID, DIAGNOSIS, TREATMENT));
 
         assertEquals(NEW_ID, saved.getId());

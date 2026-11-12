@@ -11,8 +11,8 @@ import java.util.List;
 public interface ConsultationFacade {
 
     /**
-     * Saves a consultation together with its prescriptions as one
-     * transaction. Nothing is saved if one of them fails.
+     * Saves a consultation together with its prescriptions. Everything is
+     * checked first, so nothing is saved when a required value is missing.
      *
      * @param consultation The consultation to save.
      * @param prescriptions The prescriptions of the consultation.

@@ -83,7 +83,7 @@ class PrescriptionDaoImplTest {
     @Test
     void savesThePrescriptionUnderTheConsultation()
             throws SQLException {
-        Prescription saved = dao.add(connection, newPrescription());
+        Prescription saved = dao.add(newPrescription());
 
         assertEquals(NEW_ID, saved.getId());
         verify(statement).setString(1, NEW_ID);

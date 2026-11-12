@@ -2,7 +2,6 @@ package com.rocs.rc.ohs.data.dao.prescription;
 
 import com.rocs.rc.ohs.app.model.prescription.Prescription;
 
-import java.sql.Connection;
 import java.util.List;
 
 /**
@@ -11,14 +10,12 @@ import java.util.List;
 public interface PrescriptionDao {
 
     /**
-     * Saves a new prescription using the given connection, so the caller
-     * can save it together with other records in one transaction.
+     * Saves a new prescription of a consultation.
      *
-     * @param connection The connection to use. It is not closed here.
      * @param prescription The prescription to save. Its ID must be set.
      * @return The saved {@link Prescription}.
      */
-    Prescription add(Connection connection, Prescription prescription);
+    Prescription add(Prescription prescription);
 
     /**
      * Retrieves all prescriptions issued in a consultation, with the name

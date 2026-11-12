@@ -17,55 +17,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implements the data access operations for consultations.
+ * JDBC implementation of {@link ConsultationDao}.
  */
 public class ConsultationDaoImpl implements ConsultationDao {
 
     /**
-     * Saves a new consultation using the given connection.
+     * Saves a new consultation.
      *
-     * @param connection The connection to use. It is not closed here.
      * @param consultation The consultation to save. Its ID must be set.
      * @return The saved {@link Consultation}.
-     * @throws IllegalArgumentException If a required value is missing.
      */
     @Override
-    public Consultation add(Connection connection,
-                            Consultation consultation) {
-        if (consultation == null) {
-            throw new IllegalArgumentException(
-                    "Consultation cannot be null.");
-        }
-
-        if (consultation.getId() == null) {
-            throw new IllegalArgumentException(
-                    "Consultation ID cannot be null.");
-        }
-
-        if (consultation.getConsultationDate() == null) {
-            throw new IllegalArgumentException(
-                    "Consultation date cannot be null.");
-        }
-
-        if (consultation.getPatient() == null
-                || consultation.getPatient().getId() == null) {
-            throw new IllegalArgumentException(
-                    "Patient cannot be null.");
-        }
-
-        if (consultation.getStaff() == null
-                || consultation.getStaff().getId() == null) {
-            throw new IllegalArgumentException(
-                    "Staff cannot be null.");
-        }
-
-        if (consultation.getRecordType() == null) {
-            throw new IllegalArgumentException(
-                    "Record type cannot be null.");
-        }
-
-        try (PreparedStatement statement = connection.prepareStatement(
-                QueryConstants.ADD_CONSULTATION_STATEMENT)) {
+    public Consultation add(Consultation consultation) {
+        try (Connection connection = ConnectionHelper.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     QueryConstants.ADD_CONSULTATION_STATEMENT)) {
             Timestamp date =
                     Timestamp.valueOf(consultation.getConsultationDate());
             statement.setString(1, consultation.getId());
@@ -111,9 +77,9 @@ public class ConsultationDaoImpl implements ConsultationDao {
     }
 
     /**
-     * Builds a consultation from the current row of the result set.
+     * Maps one consultation row to a {@link Consultation}.
      *
-     * @param resultSet The result set positioned on a consultation row.
+     * @param resultSet The query result holding the consultation.
      * @param patientId The UUID of the patient.
      * @return The {@link Consultation} built from the row.
      * @throws SQLException If a column cannot be read.

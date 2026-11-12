@@ -3,14 +3,11 @@ package com.rocs.rc.ohs.app.facade.consultation.impl;
 import com.rocs.rc.ohs.app.facade.consultation.ConsultationFacade;
 import com.rocs.rc.ohs.app.model.consultation.Consultation;
 import com.rocs.rc.ohs.app.model.prescription.Prescription;
-import com.rocs.rc.ohs.data.connection.ConnectionHelper;
 import com.rocs.rc.ohs.data.dao.consultation.ConsultationDao;
 import com.rocs.rc.ohs.data.dao.consultation.impl.ConsultationDaoImpl;
 import com.rocs.rc.ohs.data.dao.prescription.PrescriptionDao;
 import com.rocs.rc.ohs.data.dao.prescription.impl.PrescriptionDaoImpl;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -46,8 +43,8 @@ public class ConsultationFacadeImpl implements ConsultationFacade {
     }
 
     /**
-     * Saves a consultation together with its prescriptions as one
-     * transaction. Nothing is saved if one of them fails.
+     * Saves a consultation together with its prescriptions. Everything is
+     * checked first, so nothing is saved when a required value is missing.
      *
      * @param consultation The consultation to save.
      * @param prescriptions The prescriptions of the consultation.
@@ -59,25 +56,18 @@ public class ConsultationFacadeImpl implements ConsultationFacade {
                                          List<Prescription> prescriptions) {
         List<Prescription> items = prescriptions == null
                 ? new ArrayList<>() : prescriptions;
-        validate(consultation, items);
+        validateConsultation(consultation);
+        for (Prescription prescription : items) {
+            validatePrescription(prescription);
+        }
+
         consultation.setId(newId());
-        try (Connection connection = ConnectionHelper.getConnection()) {
-            connection.setAutoCommit(false);
-            try {
-                consultationDao.add(connection, consultation);
-                for (Prescription prescription : items) {
-                    prescription.setId(newId());
-                    prescription.setConsultation(consultation);
-                    prescription.setPersonnel(consultation.getStaff());
-                    prescriptionDao.add(connection, prescription);
-                }
-                connection.commit();
-            } catch (RuntimeException ex) {
-                connection.rollback();
-                throw ex;
-            }
-        } catch (SQLException ex) {
-            throw new RuntimeException("Error saving the consultation.", ex);
+        consultationDao.add(consultation);
+        for (Prescription prescription : items) {
+            prescription.setId(newId());
+            prescription.setConsultation(consultation);
+            prescription.setPersonnel(consultation.getStaff());
+            prescriptionDao.add(prescription);
         }
         return consultation;
     }
@@ -115,27 +105,85 @@ public class ConsultationFacadeImpl implements ConsultationFacade {
     }
 
     /**
-     * Checks the business rules of a consultation: it needs a diagnosis
-     * and every prescription needs a quantity above zero.
+     * Checks that a consultation has every value the database requires.
      *
      * @param consultation The consultation to check.
-     * @param prescriptions The prescriptions to check.
-     * @throws IllegalArgumentException If a rule is not met.
+     * @throws IllegalArgumentException If the consultation is incomplete.
      */
-    private void validate(Consultation consultation,
-                          List<Prescription> prescriptions) {
-        if (consultation == null || consultation.getDiagnosis() == null
-                || consultation.getDiagnosis().isBlank()) {
+    private void validateConsultation(Consultation consultation) {
+        if (consultation == null) {
             throw new IllegalArgumentException(
-                    "The consultation and its diagnosis are required.");
+                    "Consultation cannot be null.");
         }
-        for (Prescription prescription : prescriptions) {
-            if (prescription == null
-                    || prescription.getQuantityToDispense() <= 0) {
-                throw new IllegalArgumentException(
-                        "Each prescription needs a quantity above zero.");
-            }
+
+        if (consultation.getPatient() == null
+                || consultation.getPatient().getId() == null) {
+            throw new IllegalArgumentException("Patient cannot be null.");
         }
+
+        if (consultation.getStaff() == null
+                || consultation.getStaff().getId() == null) {
+            throw new IllegalArgumentException("Staff cannot be null.");
+        }
+
+        if (consultation.getRecordType() == null) {
+            throw new IllegalArgumentException(
+                    "Record type cannot be null.");
+        }
+
+        if (consultation.getConsultationDate() == null) {
+            throw new IllegalArgumentException(
+                    "Consultation date cannot be null.");
+        }
+
+        if (isBlank(consultation.getDiagnosis())) {
+            throw new IllegalArgumentException("Diagnosis is required.");
+        }
+
+        if (isBlank(consultation.getTreatment())) {
+            throw new IllegalArgumentException(
+                    "Treatment plan is required.");
+        }
+    }
+
+    /**
+     * Checks that a prescription has every value the database requires.
+     *
+     * @param prescription The prescription to check.
+     * @throws IllegalArgumentException If the prescription is incomplete.
+     */
+    private void validatePrescription(Prescription prescription) {
+        if (prescription == null) {
+            throw new IllegalArgumentException(
+                    "Prescription cannot be null.");
+        }
+
+        if (prescription.getMedicineStock() == null
+                || prescription.getMedicineStock().getId() == null) {
+            throw new IllegalArgumentException(
+                    "Medicine stock cannot be null.");
+        }
+
+        if (isBlank(prescription.getDose())
+                || isBlank(prescription.getFrequency())) {
+            throw new IllegalArgumentException(
+                    "Dose and frequency are required.");
+        }
+
+        if (prescription.getQuantityToDispense() <= 0) {
+            throw new IllegalArgumentException(
+                    "Quantity must be above zero.");
+        }
+    }
+
+    /**
+     * Tells whether a text is missing or empty.
+     *
+     * @param text The text to check.
+     * @return True if the text is null or blank.
+     */
+    private boolean isBlank(String text) {
+        return text == null || text.isBlank();
     }
 
     /**

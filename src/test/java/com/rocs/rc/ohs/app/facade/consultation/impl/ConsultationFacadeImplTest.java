@@ -6,24 +6,17 @@ import com.rocs.rc.ohs.app.model.medicine.MedicineStock;
 import com.rocs.rc.ohs.app.model.person.Person;
 import com.rocs.rc.ohs.app.model.personnel.Personnel;
 import com.rocs.rc.ohs.app.model.prescription.Prescription;
-import com.rocs.rc.ohs.data.connection.ConnectionHelper;
 import com.rocs.rc.ohs.data.dao.consultation.ConsultationDao;
 import com.rocs.rc.ohs.data.dao.prescription.PrescriptionDao;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -44,12 +37,6 @@ class ConsultationFacadeImplTest {
     private static final String STOCK_ID =
             "70aaf305-a7f5-41f1-bd0a-6ad73c042be9";
 
-    /** The mocked connection helper. */
-    private MockedStatic<ConnectionHelper> connectionHelper;
-
-    /** The mocked connection. */
-    private Connection connection;
-
     /** The mocked consultation DAO. */
     private ConsultationDao consultationDao;
 
@@ -61,27 +48,16 @@ class ConsultationFacadeImplTest {
 
     @BeforeEach
     void setUp() {
-        connection = mock(Connection.class);
         consultationDao = mock(ConsultationDao.class);
         prescriptionDao = mock(PrescriptionDao.class);
-
-        connectionHelper = mockStatic(ConnectionHelper.class);
-        connectionHelper.when(ConnectionHelper::getConnection)
-                .thenReturn(connection);
 
         facade = new ConsultationFacadeImpl(consultationDao,
                 prescriptionDao);
     }
 
-    @AfterEach
-    void tearDown() {
-        connectionHelper.close();
-    }
-
-    // The consultation and its prescription are saved as one transaction.
+    // The consultation and its prescription are saved.
     @Test
-    void savesTheConsultationWithItsPrescriptions()
-            throws SQLException {
+    void savesTheConsultationWithItsPrescriptions() {
         Consultation consultation = newConsultation();
         Prescription prescription = newPrescription();
 
@@ -91,11 +67,8 @@ class ConsultationFacadeImplTest {
         assertNotNull(saved.getId());
         assertNotNull(prescription.getId());
         assertEquals(saved, prescription.getConsultation());
-        verify(connection).setAutoCommit(false);
-        verify(consultationDao).add(connection, consultation);
-        verify(prescriptionDao).add(connection, prescription);
-        verify(connection).commit();
-        verify(connection, never()).rollback();
+        verify(consultationDao).add(consultation);
+        verify(prescriptionDao).add(prescription);
     }
 
     // The saved consultations of the patient are retrieved.
@@ -122,7 +95,7 @@ class ConsultationFacadeImplTest {
         consultation.setConsultationDate(
                 LocalDateTime.of(2026, 10, 20, 9, 30));
         consultation.setDiagnosis("Bacterial throat infection");
-        consultation.setTreatment("Antibiotic course and rest");
+        consultation.setTreatment("Antibiotic and rest");
         return consultation;
     }
 

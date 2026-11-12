@@ -17,51 +17,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implements the data access operations for prescriptions.
+ * JDBC implementation of {@link PrescriptionDao}.
  */
 public class PrescriptionDaoImpl implements PrescriptionDao {
 
     /**
-     * Saves a new prescription using the given connection.
+     * Saves a new prescription.
      *
-     * @param connection The connection to use. It is not closed here.
      * @param prescription The prescription to save. Its ID must be set.
      * @return The saved {@link Prescription}.
-     * @throws IllegalArgumentException If a required value is missing.
      */
     @Override
-    public Prescription add(Connection connection,
-                            Prescription prescription) {
-        if (prescription == null) {
-            throw new IllegalArgumentException(
-                    "Prescription cannot be null.");
-        }
-
-        if (prescription.getId() == null) {
-            throw new IllegalArgumentException(
-                    "Prescription ID cannot be null.");
-        }
-
-        if (prescription.getConsultation() == null
-                || prescription.getConsultation().getId() == null) {
-            throw new IllegalArgumentException(
-                    "Consultation cannot be null.");
-        }
-
-        if (prescription.getMedicineStock() == null
-                || prescription.getMedicineStock().getId() == null) {
-            throw new IllegalArgumentException(
-                    "Medicine stock cannot be null.");
-        }
-
-        if (prescription.getPersonnel() == null
-                || prescription.getPersonnel().getId() == null) {
-            throw new IllegalArgumentException(
-                    "Personnel cannot be null.");
-        }
-
-        try (PreparedStatement statement = connection.prepareStatement(
-                QueryConstants.ADD_PRESCRIPTION_STATEMENT)) {
+    public Prescription add(Prescription prescription) {
+        try (Connection connection = ConnectionHelper.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     QueryConstants.ADD_PRESCRIPTION_STATEMENT)) {
             statement.setString(1, prescription.getId());
             statement.setString(2, prescription.getConsultation().getId());
             statement.setString(3, prescription.getMedicineStock().getId());
@@ -106,9 +76,9 @@ public class PrescriptionDaoImpl implements PrescriptionDao {
     }
 
     /**
-     * Builds a prescription from the current row of the result set.
+     * Maps one prescription row to a {@link Prescription}.
      *
-     * @param resultSet The result set positioned on a prescription row.
+     * @param resultSet The query result holding the prescription.
      * @param consultationId The UUID of the consultation.
      * @return The {@link Prescription} built from the row.
      * @throws SQLException If a column cannot be read.
