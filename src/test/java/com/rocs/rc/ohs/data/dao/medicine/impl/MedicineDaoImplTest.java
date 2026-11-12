@@ -40,7 +40,7 @@ public class MedicineDaoImplTest {
     }
 
     /**
-     * RCISD-5-TC1
+     * RCISD-5-TC1.
      */
     @Test
     void listAll() {
@@ -51,7 +51,7 @@ public class MedicineDaoImplTest {
     }
 
     /**
-     * RCISD-5-TC2
+     * RCISD-5-TC2.
      */
     @Test
     void listDetails() {
@@ -73,7 +73,7 @@ public class MedicineDaoImplTest {
     }
 
     /**
-     * RCISD-5-TC3
+     * RCISD-5-TC3.
      */
     @Test
     void findById() {
@@ -86,7 +86,7 @@ public class MedicineDaoImplTest {
     }
 
     /**
-     * RCISD-5-TC4
+     * RCISD-5-TC4.
      */
     @Test
     void listMultiple() {
@@ -110,7 +110,7 @@ public class MedicineDaoImplTest {
     }
 
     /**
-     * RCISD-5-TC5 & RCISD-5-TC6
+     * RCISD-5-TC5 & RCISD-5-TC6.
      */
     @Test
     void searchByKeyword() {
@@ -125,7 +125,7 @@ public class MedicineDaoImplTest {
     }
 
     /**
-     * RCISD-5-TC7
+     * RCISD-5-TC7.
      */
     @Test
     void searchNoMatch() {

@@ -41,7 +41,7 @@ public class MedicineFacadeImplTest {
     }
 
     /**
-     * RCISD-5-TC1
+     * RCISD-5-TC1.
      */
     @Test
     void listAll() {
@@ -52,7 +52,7 @@ public class MedicineFacadeImplTest {
     }
 
     /**
-     * RCISD-5-TC2
+     * RCISD-5-TC2.
      */
     @Test
     void listDetails() {
@@ -74,7 +74,7 @@ public class MedicineFacadeImplTest {
     }
 
     /**
-     * RCISD-5-TC3
+     * RCISD-5-TC3.
      */
     @Test
     void findById() {
@@ -88,7 +88,7 @@ public class MedicineFacadeImplTest {
     }
 
     /**
-     * RCISD-5-TC4
+     * RCISD-5-TC4.
      */
     @Test
     void listMultiple() {
@@ -111,7 +111,7 @@ public class MedicineFacadeImplTest {
     }
 
     /**
-     * RCISD-5-TC5 & RCISD-5-TC6
+     * RCISD-5-TC5 & RCISD-5-TC6.
      */
     @Test
     void searchKeyword() {
@@ -126,7 +126,7 @@ public class MedicineFacadeImplTest {
     }
 
     /**
-     * RCISD-5-TC7
+     * RCISD-5-TC7.
      */
     @Test
     void searchNoMatch() {

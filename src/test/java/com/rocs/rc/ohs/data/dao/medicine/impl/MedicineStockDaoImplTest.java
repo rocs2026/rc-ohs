@@ -26,7 +26,7 @@ public class MedicineStockDaoImplTest {
     }
 
     /**
-     * RCISD-5-TC1
+     * RCISD-5-TC1.
      */
     @Test
     void listStock() {
@@ -37,7 +37,7 @@ public class MedicineStockDaoImplTest {
     }
 
     /**
-     * RCISD-5-TC3
+     * RCISD-5-TC3.
      */
     @Test
     void stockDetails() {
@@ -53,7 +53,7 @@ public class MedicineStockDaoImplTest {
     }
 
     /**
-     * RCISD-5-TC5 & RCISD-5-TC6
+     * RCISD-5-TC5 & RCISD-5-TC6.
      */
     @Test
     void searchKeyword() {
@@ -65,7 +65,7 @@ public class MedicineStockDaoImplTest {
     }
 
     /**
-     * RCISD-5-TC7
+     * RCISD-5-TC7.
      */
     @Test
     void searchNoMatch() {
