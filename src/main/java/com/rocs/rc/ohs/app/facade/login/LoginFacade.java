@@ -24,8 +24,10 @@ public interface LoginFacade {
      * @param username The username of the account.
      * @param newPassword The new password.
      * @return True if the password was updated, false otherwise.
+     * @throws IllegalArgumentException If a required value is missing.
      */
     boolean forgotPassword(String email, String username,
-                           String newPassword);
+                           String newPassword)
+            throws IllegalArgumentException;
 }
 

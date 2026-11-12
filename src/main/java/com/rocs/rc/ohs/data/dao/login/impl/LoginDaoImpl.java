@@ -10,6 +10,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static com.rocs.rc.ohs.data.utils.QueryConstants.SELECT_LOGIN_BY_USERNAME;
+import static com.rocs.rc.ohs.data.utils.QueryConstants.UPDATE_LAST_LOGIN_DATE;
+import static com.rocs.rc.ohs.data.utils.QueryConstants.UPDATE_PASSWORD_BY_EMAIL_AND_USERNAME;
 /**
  * Implements the data access operations for login accounts
  * and for resetting a forgotten password.
@@ -17,7 +20,8 @@ import java.sql.SQLException;
 public class LoginDaoImpl implements LoginDao {
 
     /**
-     * Retrieves the login account that matches the given username
+     * Retrieves the login account that
+     * matches the given username
      * and updates its last login date.
      *
      * @param username The username of the account to look up.
@@ -28,8 +32,7 @@ public class LoginDaoImpl implements LoginDao {
 
         Login login = null;
         try (Connection conn = ConnectionHelper.getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement(
-                    "select * from login where username = ?");
+            PreparedStatement stmt = conn.prepareStatement(SELECT_LOGIN_BY_USERNAME);
             stmt.setString(1, username);
 
             ResultSet rs = stmt.executeQuery();
@@ -39,8 +42,7 @@ public class LoginDaoImpl implements LoginDao {
                 login.setPassword(rs.getString("password"));
 
                 String id = rs.getString("id");
-                PreparedStatement stmt2 = conn.prepareStatement(
-                        "update login set last_login_date = ? where id = ?");
+                PreparedStatement stmt2 = conn.prepareStatement(UPDATE_LAST_LOGIN_DATE);
                 stmt2.setDate(1, new Date(System.currentTimeMillis()));
                 stmt2.setString(2, id);
 
@@ -55,7 +57,6 @@ public class LoginDaoImpl implements LoginDao {
         return login;
     }
 
-
     @Override
     public boolean updatePassword(String email,
                                   String username, String newPassword) {
@@ -65,14 +66,9 @@ public class LoginDaoImpl implements LoginDao {
         }
         String value = email.trim();
 
-        String sql = "update login set password = ? "
-                + "where username = ? "
-                + "and person_id in (select pe.id from person pe "
-                + "join personnel p on p.person_id = pe.id "
-                + "where lower(pe.email) = lower(?))";
-
         try (Connection connection = ConnectionHelper.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+             PreparedStatement statement = connection.prepareStatement(
+                     UPDATE_PASSWORD_BY_EMAIL_AND_USERNAME)) {
             statement.setString(1, newPassword);
             statement.setString(2, username.trim());
             statement.setString(3, value);
@@ -83,5 +79,3 @@ public class LoginDaoImpl implements LoginDao {
         }
     }
 }
-
-

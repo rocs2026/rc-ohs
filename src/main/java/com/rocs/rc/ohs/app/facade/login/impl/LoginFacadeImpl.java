@@ -15,7 +15,23 @@ public class LoginFacadeImpl implements LoginFacade {
     /**
      * The data access object used to retrieve login accounts.
      */
-    private final LoginDao loginDao = new LoginDaoImpl();
+    private final LoginDao loginDao;
+
+    /**
+     * Creates a facade that uses the default data access object.
+     */
+    public LoginFacadeImpl() {
+        this(new LoginDaoImpl());
+    }
+
+    /**
+     * Creates a facade that uses the given data access object.
+     *
+     * @param newLoginDao The DAO of the login accounts.
+     */
+    public LoginFacadeImpl(LoginDao newLoginDao) {
+        this.loginDao = newLoginDao;
+    }
 
     /**
      * Authenticates a user using the given credentials.
@@ -29,11 +45,57 @@ public class LoginFacadeImpl implements LoginFacade {
         return this.loginDao.login(username);
     }
 
-
+    /**
+     * Resets the password of an account after checking the given details.
+     *
+     * @param email The email address of the account.
+     * @param username The username of the account.
+     * @param newPassword The new password of the account.
+     * @return True if the password was updated.
+     * @throws IllegalArgumentException If a required value is missing.
+     */
     @Override
     public boolean forgotPassword(String email, String username,
-                                  String newPassword) {
+                                  String newPassword)
+            throws IllegalArgumentException {
+        try {
+            validateForgotPassword(email, username, newPassword);
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalArgumentException(
+                    "Cannot reset the password. " + ex.getMessage(), ex);
+        }
         return loginDao.updatePassword(email, username, newPassword);
     }
-}
 
+    /**
+     * Checks that every value needed to reset a password is present.
+     *
+     * @param email The email address to check.
+     * @param username The username to check.
+     * @param newPassword The new password to check.
+     * @throws IllegalArgumentException If a value is missing.
+     */
+    private void validateForgotPassword(String email, String username,
+                                        String newPassword)
+            throws IllegalArgumentException {
+        if (isBlank(email)) {
+            throw new IllegalArgumentException("Email is required.");
+        }
+        if (isBlank(username)) {
+            throw new IllegalArgumentException("Username is required.");
+        }
+        if (isBlank(newPassword)) {
+            throw new IllegalArgumentException("New password is required.");
+        }
+    }
+
+    /**
+     * Tells whether a text is missing or empty.
+     *
+     * @param text The text to check.
+     * @return True if the text is null or blank.
+     */
+    private boolean isBlank(String text) {
+        return text == null || text.isBlank();
+    }
+}
