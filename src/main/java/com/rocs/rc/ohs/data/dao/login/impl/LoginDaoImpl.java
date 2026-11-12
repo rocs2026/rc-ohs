@@ -1,6 +1,5 @@
 package com.rocs.rc.ohs.data.dao.login.impl;
 
-
 import com.rocs.rc.ohs.app.model.login.Login;
 import com.rocs.rc.ohs.data.connection.ConnectionHelper;
 import com.rocs.rc.ohs.data.dao.login.LoginDao;
@@ -12,7 +11,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Implements the data access operations for login accounts.
+ * Implements the data access operations for login accounts
+ * and for resetting a forgotten password.
  */
 public class LoginDaoImpl implements LoginDao {
 
@@ -53,5 +53,33 @@ public class LoginDaoImpl implements LoginDao {
                             + e.getMessage());
         }
         return login;
+    }
+
+
+    @Override
+    public boolean updatePassword(String email,
+                                  String username, String newPassword) {
+        if (email == null || email.trim().isEmpty()
+                || username == null || newPassword == null) {
+            return false;
+        }
+        String value = email.trim();
+
+        String sql = "update login set password = ? "
+                + "where username = ? "
+                + "and person_id in (select pe.id from person pe "
+                + "join personnel p on p.person_id = pe.id "
+                + "where lower(pe.email) = lower(?))";
+
+        try (Connection connection = ConnectionHelper.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, newPassword);
+            statement.setString(2, username.trim());
+            statement.setString(3, value);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error updating password: " + e.getMessage());
+            return false;
+        }
     }
 }
