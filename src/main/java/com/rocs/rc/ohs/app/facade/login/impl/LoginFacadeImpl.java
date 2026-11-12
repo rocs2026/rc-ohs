@@ -7,7 +7,8 @@ import com.rocs.rc.ohs.data.dao.login.LoginDao;
 import com.rocs.rc.ohs.data.dao.login.impl.LoginDaoImpl;
 
 /**
- * Implements the login operations of the system.
+ * Implements the login
+ * operations of the system.
  */
 public class LoginFacadeImpl implements LoginFacade {
 

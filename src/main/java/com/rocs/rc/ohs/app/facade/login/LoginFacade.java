@@ -17,7 +17,8 @@ public interface LoginFacade {
     Login login(String username, String password);
 
     /**
-     * Resets the password of an account after its details are verified.
+     * Resets the password of an account after
+     * its details are verified.
      *
      * @param email The email address of the account owner.
      * @param username The username of the account.
