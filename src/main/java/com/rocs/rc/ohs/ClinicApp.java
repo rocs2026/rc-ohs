@@ -73,7 +73,6 @@ public final class ClinicApp {
 
     }
 
-
     // private static void consultationMenu(Scanner sc) {
     //     ConsultationFacade facade = new ConsultationFacadeImpl();
     //     String choice = "";
@@ -86,24 +85,37 @@ public final class ClinicApp {
     //             recordConsultation(sc, facade);
     //         } else if ("2".equals(choice)) {
     //             viewConsultations(sc, facade);
+    //         } else if (!"0".equals(choice)) {
+    //             System.out.println("Invalid choice.");
     //         }
     //     }
     // }
     //
     // private static void viewConsultations(Scanner sc,
     //                                       ConsultationFacade facade) {
-    //     List<Consultation> consultations =
-    //             facade.getConsultationsByPatient(ask(sc, "Patient ID"));
-    //     for (Consultation c : consultations) {
-    //         System.out.println(c.getConsultationDate() + " | "
-    //                 + c.getDiagnosis() + " | " + c.getTreatment());
-    //         for (Prescription p
-    //                 : facade.getPrescriptionsByConsultation(c.getId())) {
-    //             System.out.println("    " + p.getMedicineStock()
-    //                     .getMedicine().getMedicineName() + " | "
-    //                     + p.getDose() + " | " + p.getFrequency()
-    //                     + " | qty " + p.getQuantityToDispense());
+    //     try {
+    //         List<Consultation> consultations =
+    //                 facade.getConsultationsByPatient(ask(sc, "Patient ID"));
+    //         if (consultations.isEmpty()) {
+    //             System.out.println("No consultations found.");
     //         }
+    //         for (Consultation c : consultations) {
+    //             System.out.println(c.getConsultationDate() + " | "
+    //                     + c.getDiagnosis() + " | " + c.getTreatment());
+    //             for (Prescription p
+    //                     : facade.getPrescriptionsByConsultation(c.getId())) {
+    //                 String medName = (p.getMedicineStock() != null
+    //                         && p.getMedicineStock().getMedicine() != null)
+    //                         ? p.getMedicineStock().getMedicine()
+    //                                 .getMedicineName()
+    //                         : "Unknown medicine";
+    //                 System.out.println("    " + medName + " | "
+    //                         + p.getDose() + " | " + p.getFrequency()
+    //                         + " | qty " + p.getQuantityToDispense());
+    //             }
+    //         }
+    //     } catch (IllegalArgumentException ex) {
+    //         System.out.println(ex.getMessage());
     //     }
     // }
     //

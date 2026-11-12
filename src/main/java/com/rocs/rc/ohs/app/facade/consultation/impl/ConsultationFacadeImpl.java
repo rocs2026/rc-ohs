@@ -59,6 +59,7 @@ public class ConsultationFacadeImpl implements ConsultationFacade {
             throws IllegalArgumentException {
         List<Prescription> items = prescriptions == null
                 ? new ArrayList<>() : prescriptions;
+        Consultation saved = null;
         try {
             validateConsultation(consultation);
             for (Prescription prescription : items) {
@@ -73,18 +74,19 @@ public class ConsultationFacadeImpl implements ConsultationFacade {
                 prescription.setPersonnel(consultation.getStaff());
                 prescriptionDao.add(prescription);
             }
-            return consultation;
+            saved = consultation;
         } catch (IllegalArgumentException | SQLException ex) {
-            return null;
+            System.out.println("Save consultation failed: " + ex.getMessage());
         }
+        return saved;
     }
 
     /**
      * Retrieves the saved consultations of a patient, latest first.
      *
      * @param patientId The UUID of the patient.
-     * @return A list of consultations of the patient, or null if they
-     *         could not be read.
+     * @return A list of consultations of the patient, or an empty list
+     *         if they could not be read.
      * @throws IllegalArgumentException If the patient ID is missing.
      */
     @Override
@@ -93,19 +95,21 @@ public class ConsultationFacadeImpl implements ConsultationFacade {
         if (patientId == null || patientId.isBlank()) {
             throw new IllegalArgumentException("The patient ID is required.");
         }
+        List<Consultation> consultations = new ArrayList<>();
         try {
-            return consultationDao.findByPatientId(patientId);
+            consultations = consultationDao.findByPatientId(patientId);
         } catch (SQLException ex) {
-            return null;
+            System.out.println("Read consultations failed: " + ex.getMessage());
         }
+        return consultations;
     }
 
     /**
      * Retrieves the prescriptions of a saved consultation.
      *
      * @param consultationId The UUID of the consultation.
-     * @return A list of prescriptions of the consultation, or null if they
-     *         could not be read.
+     * @return A list of prescriptions of the consultation, or an empty
+     *         list if they could not be read.
      * @throws IllegalArgumentException If the consultation ID is missing.
      */
     @Override
@@ -115,11 +119,14 @@ public class ConsultationFacadeImpl implements ConsultationFacade {
             throw new IllegalArgumentException(
                     "The consultation ID is required.");
         }
+        List<Prescription> prescriptions = new ArrayList<>();
         try {
-            return prescriptionDao.findByConsultationId(consultationId);
+            prescriptions =
+                    prescriptionDao.findByConsultationId(consultationId);
         } catch (SQLException ex) {
-            return null;
+            System.out.println("Read prescriptions failed: " + ex.getMessage());
         }
+        return prescriptions;
     }
 
     /**
