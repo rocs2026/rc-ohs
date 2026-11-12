@@ -2,8 +2,9 @@ package com.rocs.rc.ohs.data.dao.medicalrecord.impl;
 
 import com.rocs.rc.ohs.app.dto.MedicalRecordDTO;
 import com.rocs.rc.ohs.data.connection.ConnectionHelper;
-import com.rocs.rc.ohs.data.utils.QueryConstants;
 import com.rocs.rc.ohs.data.dao.medicalrecord.MedicalRecordDAO;
+import com.rocs.rc.ohs.data.utils.QueryConstants;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,21 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implements the medical record search using a single Oracle query
- * and returns the results as DTOs.
+ * JDBC implementation of MedicalRecordDAO for Oracle database.
  */
 public class MedicalRecordDAOImpl implements MedicalRecordDAO {
 
     /**
-     * The number of keyword parameters used by the search query.
-     */
-    private static final int SEARCH_PARAMETER_COUNT = 6;
-
-    /**
-     * Searches for a patient and returns the patient's medical records.
-     *
-     * @param keyword the text to search for
-     * @return the matching medical records
+     * {@inheritDoc}
      */
     @Override
     public List<MedicalRecordDTO> search(String keyword) {
@@ -40,12 +32,14 @@ public class MedicalRecordDAOImpl implements MedicalRecordDAO {
         String pattern = "%" + keyword.trim() + "%";
 
         try (Connection con = ConnectionHelper.getConnection();
-             PreparedStatement ps = con.prepareStatement(
-                     QueryConstants.SEARCH_MEDICAL_RECORD)) {
+             PreparedStatement ps = con.prepareStatement(QueryConstants.SEARCH_MEDICAL_RECORD)) {
 
-            for (int i = 1; i <= SEARCH_PARAMETER_COUNT; i++) {
-                ps.setString(i, pattern);
-            }
+            ps.setString(1, pattern);
+            ps.setString(2, pattern);
+            ps.setString(3, pattern);
+            ps.setString(4, pattern);
+            ps.setString(5, pattern);
+            ps.setString(6, pattern);
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -53,23 +47,21 @@ public class MedicalRecordDAOImpl implements MedicalRecordDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException(
-                    "Failed to search medical records", e);
+            throw new RuntimeException("Failed to search medical records", e);
         }
 
         return records;
     }
 
     /**
-     * Maps the current database row to a medical record DTO.
+     * Maps the current row of the ResultSet to a MedicalRecordDTO.
      *
-     * @param rs the result set positioned at a row
-     * @return the mapped medical record DTO
-     * @throws SQLException if a database column cannot be read
+     * @param rs the ResultSet positioned at the current row
+     * @return the mapped MedicalRecordDTO
+     * @throws SQLException if a database access error occurs
      */
     private MedicalRecordDTO mapToDTO(ResultSet rs) throws SQLException {
         MedicalRecordDTO dto = new MedicalRecordDTO();
-
         dto.setPatientId(rs.getString("p_id"));
         dto.setFirstName(rs.getString("first_name"));
         dto.setMiddleName(rs.getString("middle_name"));
@@ -82,9 +74,7 @@ public class MedicalRecordDAOImpl implements MedicalRecordDAO {
         dto.setTreatment(rs.getString("treatment"));
 
         Timestamp date = rs.getTimestamp("consultation_date");
-
-        dto.setConsultationDate(
-                date == null ? null : date.toLocalDateTime());
+        dto.setConsultationDate(date != null ? date.toLocalDateTime() : null);
 
         return dto;
     }

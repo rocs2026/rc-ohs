@@ -26,40 +26,26 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Tests the medical record search of MedicalRecordDAOImpl using JUnit
- * and Mockito.
+ * Search behavior tests for {@link MedicalRecordDAOImpl}.
  */
 class MedicalRecordDAOImplTest {
 
-    /**
-     * Number of parameters used by the search query.
-     */
-    private static final int SEARCH_PARAMETER_COUNT = 6;
-
-    /**
-     * Mocks the static methods of ConnectionHelper.
-     */
+    /** Static connection factory mock. */
     private MockedStatic<ConnectionHelper> helper;
 
-    /**
-     * Mock SQL prepared statement.
-     */
+    /** Prepared statement stubbed for search queries. */
     private PreparedStatement statement;
 
-    /**
-     * Mock result set containing query results.
-     */
+    /** Result set stubbed with mock patient rows. */
     private ResultSet resultSet;
 
-    /**
-     * DAO instance under test.
-     */
+    /** DAO instance under test. */
     private MedicalRecordDAO dao;
 
     /**
-     * Sets up mocked database objects before each test.
+     * Stubs JDBC objects and static connection lookup before each run.
      *
-     * @throws SQLException when the database operation fails.
+     * @throws SQLException if stubbing fails
      */
     @BeforeEach
     void setUp() throws SQLException {
@@ -67,20 +53,17 @@ class MedicalRecordDAOImplTest {
         statement = mock(PreparedStatement.class);
         resultSet = mock(ResultSet.class);
 
-        when(connection.prepareStatement(anyString()))
-                .thenReturn(statement);
-
+        when(connection.prepareStatement(anyString())).thenReturn(statement);
         when(statement.executeQuery()).thenReturn(resultSet);
 
         helper = mockStatic(ConnectionHelper.class);
-        helper.when(ConnectionHelper::getConnection)
-                .thenReturn(connection);
+        helper.when(ConnectionHelper::getConnection).thenReturn(connection);
 
         dao = new MedicalRecordDAOImpl();
     }
 
     /**
-     * Closes the static mock after each test.
+     * Releases the static connection mock after each run.
      */
     @AfterEach
     void tearDown() {
@@ -88,13 +71,12 @@ class MedicalRecordDAOImplTest {
     }
 
     /**
-     * Tests that a matching patient is returned with the medical record
-     * and consultation.
+     * Maps a full patient row including medical record and consultation fields.
      *
-     * @throws SQLException only when a database operation fails.
+     * @throws SQLException if result set reading fails
      */
     @Test
-    void searchReturnsPatientWithMedicalRecord() throws SQLException {
+    void searchReturnsMatchingRecord() throws SQLException {
         LocalDateTime date = LocalDateTime.of(2026, 10, 20, 9, 30);
 
         when(resultSet.next()).thenReturn(true, false);
@@ -103,10 +85,8 @@ class MedicalRecordDAOImplTest {
         when(resultSet.getString("middle_name")).thenReturn("A");
         when(resultSet.getString("last_name")).thenReturn("Quirona");
         when(resultSet.getString("mr_id")).thenReturn("mr1");
-        when(resultSet.getString("medical_conditions"))
-                .thenReturn("Asthma");
-        when(resultSet.getString("allergies"))
-                .thenReturn("Peanut allergy");
+        when(resultSet.getString("medical_conditions")).thenReturn("Asthma");
+        when(resultSet.getString("allergies")).thenReturn("Peanut allergy");
         when(resultSet.getString("c_id")).thenReturn("c1");
         when(resultSet.getTimestamp("consultation_date"))
                 .thenReturn(Timestamp.valueOf(date));
@@ -130,9 +110,9 @@ class MedicalRecordDAOImplTest {
     }
 
     /**
-     * Tests that a patient without a consultation has no consultation date.
+     * Leaves consultation date null when no consultation ID is present.
      *
-     * @throws SQLException when a database operation fails.
+     * @throws SQLException if result set reading fails
      */
     @Test
     void searchHandlesMissingConsultation() throws SQLException {
@@ -148,9 +128,9 @@ class MedicalRecordDAOImplTest {
     }
 
     /**
-     * Tests that the trimmed keyword is bound to all parameters.
+     * Strips leading and trailing spaces before binding wildcard parameters.
      *
-     * @throws SQLException only if database operation fails.
+     * @throws SQLException if parameter binding fails
      */
     @Test
     void searchBindsTrimmedKeyword() throws SQLException {
@@ -158,28 +138,29 @@ class MedicalRecordDAOImplTest {
 
         dao.search("  Quirona  ");
 
-        for (int i = 1; i <= SEARCH_PARAMETER_COUNT; i++) {
+        int parameterCount = 6;
+        for (int i = 1; i <= parameterCount; i++) {
             verify(statement).setString(i, "%Quirona%");
         }
     }
 
     /**
-     * Tests that search returns an empty list when no patient matches.
+     * Returns an empty list when the query matches zero rows.
      *
-     * @throws SQLException if a database operation fails.
+     * @throws SQLException if query execution fails
      */
     @Test
-    void searchReturnsEmptyListWhenNoMatch() throws SQLException {
+    void searchReturnsEmptyWhenNoMatch() throws SQLException {
         when(resultSet.next()).thenReturn(false);
 
         assertEquals(0, dao.search("Unknown").size());
     }
 
     /**
-     * Tests that blank keywords do not access the database.
+     * Exits early without opening a connection on null or whitespace input.
      */
     @Test
-    void searchSkipsDatabaseWhenKeywordBlank() {
+    void searchSkipsBlankKeyword() {
         assertEquals(0, dao.search(null).size());
         assertEquals(0, dao.search("   ").size());
 
@@ -187,12 +168,12 @@ class MedicalRecordDAOImplTest {
     }
 
     /**
-     * Tests that search throws a runtime exception when the query fails.
+     * Propagates SQL failures as a runtimeexception}.
      *
-     * @throws SQLException when the mocked database operation fails.
+     * @throws SQLException when stubbing query execution failure
      */
     @Test
-    void searchThrowsWhenDatabaseFails() throws SQLException {
+    void searchThrowsOnDatabaseError() throws SQLException {
         when(statement.executeQuery())
                 .thenThrow(new SQLException("Database error"));
 
