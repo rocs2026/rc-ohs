@@ -1,6 +1,6 @@
 package com.rocs.rc.ohs.data.dao.medicalrecord.impl;
 
-import com.rocs.rc.ohs.app.model.medicalrecord.MedicalRecord;
+import com.rocs.rc.ohs.app.dto.MedicalRecordDTO;
 import com.rocs.rc.ohs.data.connection.ConnectionHelper;
 import com.rocs.rc.ohs.data.dao.medicalrecord.MedicalRecordDAO;
 import java.sql.Connection;
@@ -26,49 +26,40 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- - Tests the medical record search of MedicalRecordDAOImpl using JUnit
-
- - and Mockito.
-
+ * Tests the medical record search of MedicalRecordDAOImpl using JUnit
+ * and Mockito.
  */
 class MedicalRecordDAOImplTest {
 
     /**
-     - Number of parameters used by the search query.
-
+     * Number of parameters used by the search query.
      */
-    private static final int SEARCH_PARAMETER_COUNT = 5;
+    private static final int SEARCH_PARAMETER_COUNT = 6;
 
     /**
-     - Mocks the static methods of ConnectionHelper.
-
+     * Mocks the static methods of ConnectionHelper.
      */
     private MockedStatic<ConnectionHelper> helper;
 
     /**
-     - Mock SQL prepared statement.
-
+     * Mock SQL prepared statement.
      */
     private PreparedStatement statement;
 
     /**
-     - Mock result set containing query results.
-
+     * Mock result set containing query results.
      */
     private ResultSet resultSet;
 
     /**
-     - DAO instance under test.
-
+     * DAO instance under test.
      */
     private MedicalRecordDAO dao;
 
     /**
-     - Sets up mocked database objects before each test.
-
+     * Sets up mocked database objects before each test.
      *
-     -
-     @throws SQLException when the database operation fails.
+     * @throws SQLException when the database operation fails.
      */
     @BeforeEach
     void setUp() throws SQLException {
@@ -89,8 +80,7 @@ class MedicalRecordDAOImplTest {
     }
 
     /**
-     - Closes the static mock after each test.
-
+     * Closes the static mock after each test.
      */
     @AfterEach
     void tearDown() {
@@ -98,13 +88,10 @@ class MedicalRecordDAOImplTest {
     }
 
     /**
-     - Tests that a matching patient is returned with the medical record
-
-     - and consultation.
-
+     * Tests that a matching patient is returned with the medical record
+     * and consultation.
      *
-     -
-     @throws SQLException only if the database operation fails.
+     * @throws SQLException only when a database operation fails.
      */
     @Test
     void searchReturnsPatientWithMedicalRecord() throws SQLException {
@@ -127,28 +114,25 @@ class MedicalRecordDAOImplTest {
         when(resultSet.getString("diagnosis")).thenReturn("Infection");
         when(resultSet.getString("treatment")).thenReturn("Antibiotics");
 
-        List<MedicalRecord> records = dao.search("Jowan");
+        List<MedicalRecordDTO> records = dao.search("Jowan");
 
         assertEquals(1, records.size());
-        assertEquals("p1", records.get(0).getPatient().getId());
-        assertEquals("Jowan", records.get(0).getPatient().getFirstName());
-        assertEquals("Quirona", records.get(0).getPatient().getLastName());
-        assertEquals("mr1", records.get(0).getId());
+        assertEquals("p1", records.get(0).getPatientId());
+        assertEquals("Jowan", records.get(0).getFirstName());
+        assertEquals("Quirona", records.get(0).getLastName());
+        assertEquals("mr1", records.get(0).getMedicalRecordId());
         assertEquals("Asthma", records.get(0).getMedicalConditions());
         assertEquals("Peanut allergy", records.get(0).getAllergies());
-        assertEquals("c1", records.get(0).getConsultation().getId());
-        assertEquals("Cough",
-                records.get(0).getConsultation().getComplaint());
-        assertEquals(date,
-                records.get(0).getConsultation().getConsultationDate());
+        assertEquals("Cough", records.get(0).getComplaint());
+        assertEquals("Infection", records.get(0).getDiagnosis());
+        assertEquals("Antibiotics", records.get(0).getTreatment());
+        assertEquals(date, records.get(0).getConsultationDate());
     }
 
     /**
-     - Tests that a patient without a consultation has none.
-
+     * Tests that a patient without a consultation has no consultation date.
      *
-     -
-     @throws SQLException when database operation fails.
+     * @throws SQLException when a database operation fails.
      */
     @Test
     void searchHandlesMissingConsultation() throws SQLException {
@@ -157,18 +141,16 @@ class MedicalRecordDAOImplTest {
         when(resultSet.getString("mr_id")).thenReturn("mr1");
         when(resultSet.getString("c_id")).thenReturn(null);
 
-        List<MedicalRecord> records = dao.search("Jowan");
+        List<MedicalRecordDTO> records = dao.search("Jowan");
 
         assertEquals(1, records.size());
-        assertNull(records.get(0).getConsultation());
+        assertNull(records.get(0).getConsultationDate());
     }
 
     /**
-     - Tests that the trimmed keyword is bound to all parameters.
-
+     * Tests that the trimmed keyword is bound to all parameters.
      *
-     -
-     @throws SQLException only when a database operation fails.
+     * @throws SQLException only if database operation fails.
      */
     @Test
     void searchBindsTrimmedKeyword() throws SQLException {
@@ -182,11 +164,9 @@ class MedicalRecordDAOImplTest {
     }
 
     /**
-     - Tests that search returns an empty list when no patient matches.
-
+     * Tests that search returns an empty list when no patient matches.
      *
-     -
-     @throws SQLException if a database operation fails.
+     * @throws SQLException if a database operation fails.
      */
     @Test
     void searchReturnsEmptyListWhenNoMatch() throws SQLException {
@@ -196,8 +176,7 @@ class MedicalRecordDAOImplTest {
     }
 
     /**
-     - Tests that blank keywords do not access the database.
-
+     * Tests that blank keywords do not access the database.
      */
     @Test
     void searchSkipsDatabaseWhenKeywordBlank() {
@@ -208,11 +187,9 @@ class MedicalRecordDAOImplTest {
     }
 
     /**
-     - Tests that search throws a runtime exception when the query fails.
-
+     * Tests that search throws a runtime exception when the query fails.
      *
-     -
-     @throws SQLException when the mocked database operation fails.
+     * @throws SQLException when the mocked database operation fails.
      */
     @Test
     void searchThrowsWhenDatabaseFails() throws SQLException {

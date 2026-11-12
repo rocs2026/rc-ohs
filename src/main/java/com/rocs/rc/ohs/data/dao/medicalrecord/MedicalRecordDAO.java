@@ -1,6 +1,6 @@
 package com.rocs.rc.ohs.data.dao.medicalrecord;
 
-import com.rocs.rc.ohs.app.model.medicalrecord.MedicalRecord;
+import com.rocs.rc.ohs.app.dto.MedicalRecordDTO;
 import java.util.List;
 
 /**
@@ -9,12 +9,12 @@ import java.util.List;
 public interface MedicalRecordDAO {
 
     /**
-     * Searches for a patient by ID, name or student number and returns the
-     * patient's medical records in a single query.
+     * Searches for a patient by ID, name, student number or employee ID
+     * and returns the patient's medical records in a single query.
      *
      * @param keyword the text to search for
-     * @return the matching medical records, each with its patient and
-     *         consultation, or an empty list if no patient matches
+     * @return the matching results, each with the patient, medical record
+     *         and consultation details, or an empty list if none match
      */
-    List<MedicalRecord> search(String keyword);
+    List<MedicalRecordDTO> search(String keyword);
 }
