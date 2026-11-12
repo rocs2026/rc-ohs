@@ -1,3 +1,4 @@
+
 package com.rocs.rc.ohs.data.dao.person.impl;
 
 import com.rocs.rc.ohs.app.model.enums.gender.Gender;
@@ -13,137 +14,125 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * Implements the data access operations for persons.
+ * Provides database access for person records.
  */
-
 public class PersonDaoImpl implements PersonDao {
 
-    /** The columns selected for a person. */
-    private static final String COLUMNS =
-            "select id, first_name, middle_name, last_name, email, "
-                    + "date_of_birth, gender, address, contact_number "
-                    + "from person ";
+    private static final Logger LOGGER =
+            Logger.getLogger(PersonDaoImpl.class.getName());
 
-    /** The SQL statement that selects a person by ID. */
     private static final String SELECT_BY_ID_SQL =
-            COLUMNS + "where id = ?";
+            "SELECT id, first_name, middle_name, last_name, email, "
+                    + "date_of_birth, gender, address, contact_number "
+                    + "FROM person WHERE id = ?";
 
-    /** The SQL statement that selects persons by name. */
     private static final String SELECT_BY_NAME_SQL =
-            COLUMNS + "where lower(first_name || ' ' || last_name) like ? "
-                    + "or lower(first_name || ' ' || middle_name || ' ' "
-                    + "|| last_name) like ?";
+            "SELECT id, first_name, middle_name, last_name, email, "
+                    + "date_of_birth, gender, address, contact_number "
+                    + "FROM person "
+                    + "WHERE LOWER(first_name || ' ' || last_name) LIKE ? "
+                    + "OR LOWER(first_name || ' ' || middle_name || ' ' "
+                    + "|| last_name) LIKE ?";
 
-    /**
-     * Retrieves the person that matches the given ID.
-     *
-     * @param id The ID of the person to look up.
-     * @return The {@link Person}, or null if it is not found.
-     */
     @Override
     public Person findById(String id) {
+        try (Connection connection = ConnectionHelper.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(SELECT_BY_ID_SQL)) {
 
-        Person person = null;
-        try (Connection conn = ConnectionHelper.getConnection();
-             PreparedStatement stmt =
-                     conn.prepareStatement(SELECT_BY_ID_SQL)) {
+            statement.setString(1, id);
 
-            stmt.setString(1, id);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    person = toPerson(rs);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return mapPerson(resultSet);
                 }
             }
+
         } catch (SQLException e) {
-            System.out.println(
-                    "An exception was thrown while finding a person. "
-                            + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Unable to retrieve person by ID.", e);
         }
-        return person;
+
+        return null;
     }
 
-    /**
-     * Retrieves the persons whose name contains the given text. The
-     * search is not case sensitive.
-     *
-     * @param name The full or partial name to look up.
-     * @return The list of matching {@link Person}, or an empty list if
-     *         there is no match.
-     */
     @Override
     public List<Person> findByName(String name) {
+        List<Person> matchingPersons = new ArrayList<>();
 
-        List<Person> persons = new ArrayList<>();
         if (name == null || name.trim().isEmpty()) {
-            return persons;
+            return matchingPersons;
         }
 
-        String pattern =
-                "%" + name.trim().toLowerCase(Locale.ROOT) + "%";
+        String searchValue = createSearchPattern(name);
 
-        try (Connection conn = ConnectionHelper.getConnection();
-             PreparedStatement stmt =
-                     conn.prepareStatement(SELECT_BY_NAME_SQL)) {
+        try (Connection connection = ConnectionHelper.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(SELECT_BY_NAME_SQL)) {
 
-            stmt.setString(1, pattern);
-            stmt.setString(2, pattern);
+            applyNameSearch(statement, searchValue);
 
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    persons.add(toPerson(rs));
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    matchingPersons.add(mapPerson(resultSet));
                 }
             }
+
         } catch (SQLException e) {
-            System.out.println(
-                    "An exception was thrown while finding persons. "
-                            + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Unable to search for persons.", e);
         }
-        return persons;
+
+        return matchingPersons;
     }
 
-    /**
-     * Maps the current row of the result set to a person.
-     *
-     * @param rs The result set positioned at a person row.
-     * @return The mapped {@link Person}.
-     * @throws SQLException If a column cannot be read.
-     */
-    private Person toPerson(ResultSet rs) throws SQLException {
+    private String createSearchPattern(String name) {
+        return "%" + name.trim().toLowerCase(Locale.ROOT) + "%";
+    }
 
+    private void applyNameSearch(
+            PreparedStatement statement, String searchValue)
+            throws SQLException {
+
+        statement.setString(1, searchValue);
+        statement.setString(2, searchValue);
+    }
+
+    private Person mapPerson(ResultSet resultSet) throws SQLException {
         Person person = new Person();
-        person.setId(rs.getString("id"));
-        person.setFirstName(rs.getString("first_name"));
-        person.setMiddleName(rs.getString("middle_name"));
-        person.setLastName(rs.getString("last_name"));
-        person.setEmail(rs.getString("email"));
 
-        Timestamp dateOfBirth = rs.getTimestamp("date_of_birth");
-        if (dateOfBirth != null) {
-            person.setDateOfBirth(dateOfBirth.toLocalDateTime());
+        person.setId(resultSet.getString("id"));
+        person.setFirstName(resultSet.getString("first_name"));
+        person.setMiddleName(resultSet.getString("middle_name"));
+        person.setLastName(resultSet.getString("last_name"));
+        person.setEmail(resultSet.getString("email"));
+
+        Timestamp birthDate = resultSet.getTimestamp("date_of_birth");
+
+        if (birthDate != null) {
+            person.setDateOfBirth(birthDate.toLocalDateTime());
         }
 
-        person.setGender(toGender(rs.getString("gender")));
-        person.setAddress(rs.getString("address"));
-        person.setContactNumber(rs.getString("contact_number"));
+        person.setGender(findGender(resultSet.getString("gender")));
+        person.setAddress(resultSet.getString("address"));
+        person.setContactNumber(resultSet.getString("contact_number"));
+
         return person;
     }
 
-    /**
-     * Converts a database value to its gender.
-     *
-     * @param value The database value of the gender.
-     * @return The matching {@link Gender}, or null if there is none.
-     */
-    private Gender toGender(String value) {
+    private Gender findGender(String databaseValue) {
+        if (databaseValue == null) {
+            return null;
+        }
 
         for (Gender gender : Gender.values()) {
-            if (gender.getValue().equals(value)) {
+            if (databaseValue.equals(gender.getValue())) {
                 return gender;
             }
         }
+
         return null;
     }
 }

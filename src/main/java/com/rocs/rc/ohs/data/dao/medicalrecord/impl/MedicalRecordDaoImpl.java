@@ -1,3 +1,4 @@
+
 package com.rocs.rc.ohs.data.dao.medicalrecord.impl;
 
 import com.rocs.rc.ohs.app.model.consultation.Consultation;
@@ -13,168 +14,152 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * Implements the data access operations for medical records.
+ * Handles database operations for medical records.
  */
 public class MedicalRecordDaoImpl implements MedicalRecordDao {
 
-    /** The columns selected for a medical record. */
-    private static final String COLUMNS =
+    private static final Logger LOGGER =
+            Logger.getLogger(MedicalRecordDaoImpl.class.getName());
+
+    private static final String SELECT_BY_ID =
             "select id, patient_id, consultation_id, medical_conditions, "
-                    + "allergies from medical_record ";
+                    + "allergies from medical_record where id = ?";
 
-    /** The SQL statement that selects a medical record by ID. */
-    private static final String SELECT_BY_ID_SQL =
-            COLUMNS + "where id = ?";
+    private static final String SELECT_BY_PATIENT =
+            "select id, patient_id, consultation_id, medical_conditions, "
+                    + "allergies from medical_record where patient_id = ?";
 
-    /** The SQL statement that selects the medical records of a patient. */
-    private static final String SELECT_BY_PATIENT_SQL =
-            COLUMNS + "where patient_id = ?";
-
-    /** The SQL statement that inserts a medical record. */
-    private static final String INSERT_SQL =
+    private static final String INSERT_RECORD =
             "insert into medical_record (id, patient_id, consultation_id, "
                     + "medical_conditions, allergies) values (?, ?, ?, ?, ?)";
 
     /**
-     * Retrieves a medical record by ID.
+     * Finds a medical record using its ID.
      *
-     * @param id the ID of the medical record.
-     * @return the medical record if found, otherwise null.
+     * @param id the medical record ID
+     * @return the matching record, or null if not found
      */
     @Override
     public MedicalRecord findById(String id) {
-
-        MedicalRecord medicalRecord = null;
         try (Connection conn = ConnectionHelper.getConnection();
-             PreparedStatement stmt =
-                     conn.prepareStatement(SELECT_BY_ID_SQL)) {
+             PreparedStatement stmt = conn.prepareStatement(SELECT_BY_ID)) {
 
             stmt.setString(1, id);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    medicalRecord = toMedicalRecord(rs);
+                    return toMedicalRecord(rs);
                 }
             }
+
         } catch (SQLException e) {
-            System.out.println(
-                    "An exception was thrown while finding a medical record. "
-                            + e.getMessage());
+            LOGGER.log(Level.SEVERE,
+                    "Could not retrieve medical record with ID: " + id, e);
         }
-        return medicalRecord;
+
+        return null;
     }
 
     /**
-     * Retrieves all medical records of a patient.
+     * Gets all medical records linked to a patient.
      *
-     * @param patientId the ID of the patient.
-     * @return the medical records of the patient, or an empty list if
-     *         the patient has none.
+     * @param patientId the patient's ID
+     * @return a list of the patient's medical records
      */
     @Override
     public List<MedicalRecord> findByPatientId(String patientId) {
+        List<MedicalRecord> records = new ArrayList<>();
 
-        List<MedicalRecord> medicalRecords = new ArrayList<>();
         try (Connection conn = ConnectionHelper.getConnection();
              PreparedStatement stmt =
-                     conn.prepareStatement(SELECT_BY_PATIENT_SQL)) {
+                     conn.prepareStatement(SELECT_BY_PATIENT)) {
 
             stmt.setString(1, patientId);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    medicalRecords.add(toMedicalRecord(rs));
+                    records.add(toMedicalRecord(rs));
                 }
             }
+
         } catch (SQLException e) {
-            System.out.println(
-                    "An exception was thrown while finding medical records. "
-                            + e.getMessage());
+            LOGGER.log(Level.SEVERE,
+                    "Could not retrieve records for patient: " + patientId, e);
         }
-        return medicalRecords;
+
+        return records;
     }
 
     /**
-     * Adds a medical record. A unique ID is generated when the medical
-     * record does not have one yet.
+     * Saves a medical record in the database.
      *
-     * @param medicalRecord the medical record to add.
-     * @return true if successful, otherwise false.
+     * @param medicalRecord the record to save
+     * @return true if one record was inserted, otherwise false
      */
     @Override
     public boolean addMedicalRecord(MedicalRecord medicalRecord) {
-
-        if (medicalRecord == null || medicalRecord.getPatient() == null
+        if (medicalRecord == null
+                || medicalRecord.getPatient() == null
                 || medicalRecord.getPatient().getId() == null) {
             return false;
         }
 
-        if (medicalRecord.getId() == null) {
-            medicalRecord.setId(UUID.randomUUID().toString());
-        }
-
         try (Connection conn = ConnectionHelper.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(INSERT_SQL)) {
+             PreparedStatement stmt = conn.prepareStatement(INSERT_RECORD)) {
 
-            int index = 1;
+            stmt.setString(1, medicalRecord.getId());
+            stmt.setString(2, medicalRecord.getPatient().getId());
 
-            stmt.setString(index, medicalRecord.getId());
-            index++;
+            Consultation consultation = medicalRecord.getConsultation();
 
-            stmt.setString(index, medicalRecord.getPatient().getId());
-            index++;
-
-            if (medicalRecord.getConsultation() == null) {
-                stmt.setNull(index, Types.VARCHAR);
+            if (consultation == null) {
+                stmt.setNull(3, Types.VARCHAR);
             } else {
-                stmt.setString(index,
-                        medicalRecord.getConsultation().getId());
+                stmt.setString(3, consultation.getId());
             }
-            index++;
 
-            stmt.setString(index, medicalRecord.getMedicalConditions());
-            index++;
-
-            stmt.setString(index, medicalRecord.getAllergies());
+            stmt.setString(4, medicalRecord.getMedicalConditions());
+            stmt.setString(5, medicalRecord.getAllergies());
 
             return stmt.executeUpdate() == 1;
+
         } catch (SQLException e) {
-            System.out.println(
-                    "An exception was thrown while adding a medical record. "
-                            + e.getMessage());
+            LOGGER.log(Level.SEVERE,
+                    "Failed to save the medical record.", e);
             return false;
         }
     }
 
     /**
-     * Maps the current row of the result set to a medical record.
+     * Converts a database row into a MedicalRecord object.
      *
-     * @param rs the result set positioned at a medical record row.
-     * @return the mapped medical record.
-     * @throws SQLException if a column cannot be read.
+     * @param rs the current result set row
+     * @return the mapped medical record
+     * @throws SQLException if a database column cannot be read
      */
     private MedicalRecord toMedicalRecord(ResultSet rs) throws SQLException {
-
-        MedicalRecord medicalRecord = new MedicalRecord();
-        medicalRecord.setId(rs.getString("id"));
+        MedicalRecord record = new MedicalRecord();
+        record.setId(rs.getString("id"));
 
         Person patient = new Person();
         patient.setId(rs.getString("patient_id"));
-        medicalRecord.setPatient(patient);
+        record.setPatient(patient);
 
         String consultationId = rs.getString("consultation_id");
+
         if (consultationId != null) {
             Consultation consultation = new Consultation();
             consultation.setId(consultationId);
-            medicalRecord.setConsultation(consultation);
+            record.setConsultation(consultation);
         }
 
-        medicalRecord.setMedicalConditions(
-                rs.getString("medical_conditions"));
-        medicalRecord.setAllergies(rs.getString("allergies"));
-        return medicalRecord;
+        record.setMedicalConditions(rs.getString("medical_conditions"));
+        record.setAllergies(rs.getString("allergies"));
+
+        return record;
     }
 }
