@@ -53,12 +53,18 @@ public class ConsultationFacadeImpl implements ConsultationFacade {
      */
     @Override
     public Consultation saveConsultation(Consultation consultation,
-                                         List<Prescription> prescriptions) {
+                                         List<Prescription> prescriptions)
+            throws IllegalArgumentException {
         List<Prescription> items = prescriptions == null
                 ? new ArrayList<>() : prescriptions;
-        validateConsultation(consultation);
-        for (Prescription prescription : items) {
-            validatePrescription(prescription);
+        try {
+            validateConsultation(consultation);
+            for (Prescription prescription : items) {
+                validatePrescription(prescription);
+            }
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalArgumentException(
+                    "Cannot save the consultation. " + ex.getMessage(), ex);
         }
 
         consultation.setId(newId());
@@ -110,7 +116,8 @@ public class ConsultationFacadeImpl implements ConsultationFacade {
      * @param consultation The consultation to check.
      * @throws IllegalArgumentException If the consultation is incomplete.
      */
-    private void validateConsultation(Consultation consultation) {
+    private void validateConsultation(Consultation consultation)
+            throws IllegalArgumentException {
         if (consultation == null) {
             throw new IllegalArgumentException(
                     "Consultation cannot be null.");
@@ -152,7 +159,8 @@ public class ConsultationFacadeImpl implements ConsultationFacade {
      * @param prescription The prescription to check.
      * @throws IllegalArgumentException If the prescription is incomplete.
      */
-    private void validatePrescription(Prescription prescription) {
+    private void validatePrescription(Prescription prescription)
+            throws IllegalArgumentException {
         if (prescription == null) {
             throw new IllegalArgumentException(
                     "Prescription cannot be null.");

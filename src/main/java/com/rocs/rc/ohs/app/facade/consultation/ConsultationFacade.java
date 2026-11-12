@@ -17,9 +17,11 @@ public interface ConsultationFacade {
      * @param consultation The consultation to save.
      * @param prescriptions The prescriptions of the consultation.
      * @return The saved {@link Consultation} with its generated ID.
+     * @throws IllegalArgumentException If a required value is missing.
      */
     Consultation saveConsultation(Consultation consultation,
-                                  List<Prescription> prescriptions);
+                                  List<Prescription> prescriptions)
+            throws IllegalArgumentException;
 
     /**
      * Retrieves the saved consultations of a patient, latest first.
