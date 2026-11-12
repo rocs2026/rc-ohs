@@ -3,10 +3,12 @@ package com.rocs.rc.ohs.app.medicine;
 
 import com.rocs.rc.ohs.app.facade.medicine.impl.MedicineFacadeImpl;
 import com.rocs.rc.ohs.app.model.medicine.Medicine;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -47,11 +49,14 @@ public class MedicineFacadeImplTest {
     @Test
     void listDetails() {
         List<Medicine> medicines = facade.getAllMedicine();
+        Medicine paracetamol = null;
 
-        Medicine paracetamol = medicines.stream()
-                .filter(m -> m.getId().equals(PARACETAMOL_ID))
-                .findFirst()
-                .orElse(null);
+        for (Medicine medicine : medicines) {
+            if (medicine.getId().equals(PARACETAMOL_ID)) {
+                paracetamol = medicine;
+                break;
+            }
+        }
 
         assertNotNull(paracetamol);
         assertEquals("Paracetamol 500mg", paracetamol.getMedicineName());
@@ -74,11 +79,21 @@ public class MedicineFacadeImplTest {
     @Test
     void listMultiple() {
         List<Medicine> medicines = facade.getAllMedicine();
+        boolean hasParacetamol = false;
+        boolean hasAmoxicillin = false;
 
-        assertTrue(medicines.stream()
-                .anyMatch(m -> m.getId().equals(PARACETAMOL_ID)));
-        assertTrue(medicines.stream()
-                .anyMatch(m -> m.getId().equals(AMOXICILLIN_ID)));
+        for (Medicine medicine : medicines) {
+            if (medicine.getId().equals(PARACETAMOL_ID)) {
+                hasParacetamol = true;
+            }
+
+            if (medicine.getId().equals(AMOXICILLIN_ID)) {
+                hasAmoxicillin = true;
+            }
+        }
+
+        assertTrue(hasParacetamol);
+        assertTrue(hasAmoxicillin);
     }
 
     @Test

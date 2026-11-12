@@ -1,8 +1,11 @@
+
 package com.rocs.rc.ohs.data.dao.medicine.impl;
+
 import com.rocs.rc.ohs.app.model.medicine.Medicine;
 import com.rocs.rc.ohs.app.model.medicine.MedicineCategory;
 import com.rocs.rc.ohs.data.connection.ConnectionHelper;
 import com.rocs.rc.ohs.data.dao.medicine.MedicineDao;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,13 +19,31 @@ import java.util.List;
 public class MedicineDaoImpl implements MedicineDao {
 
     /**
+     * Connection used for all database operations.
+     */
+    private Connection connection;
+
+    /**
+     * Establishes the database connection.
+     */
+    public MedicineDaoImpl() {
+        try {
+            connection = ConnectionHelper.getConnection();
+        } catch (SQLException e) {
+            throw new RuntimeException(
+                    "Failed to establish database connection", e);
+        }
+    }
+
+    /**
      * Retrieves all medicine records from the database.
      *
      * @return a list of all recorded medicines, or an empty list if none exist.
      */
     @Override
     public List<Medicine> getAllMedicine() {
-        List<Medicine> medicines = new ArrayList<>();
+        List<Medicine> medicineList = new ArrayList<>();
+
         String sql = "SELECT medicine.id, medicine.medicine_name, "
                 + "medicine.unit, medicine.category_id, "
                 + "medicine_category.category_name "
@@ -31,38 +52,46 @@ public class MedicineDaoImpl implements MedicineDao {
                 + "ON medicine.category_id = medicine_category.id "
                 + "ORDER BY medicine.medicine_name;";
 
-        try (Connection connection = ConnectionHelper.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet rs = statement.executeQuery()) {
+        try (PreparedStatement statement =
+                     connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
 
-            while (rs.next()) {
-                Medicine medicine = new Medicine();
-                medicine.setId(rs.getString("id"));
-                medicine.setMedicineName(rs.getString("medicine_name"));
-                medicine.setUnit(rs.getString("unit"));
-                MedicineCategory category = new MedicineCategory();
-                category.setId(rs.getString("category_id"));
-                category.setCategoryName(rs.getString("category_name"));
-                medicine.setCategory(category);
+            while (resultSet.next()) {
+                Medicine newMedicine = new Medicine();
+                newMedicine.setId(resultSet.getString("id"));
+                newMedicine.setMedicineName(
+                        resultSet.getString("medicine_name"));
+                newMedicine.setUnit(resultSet.getString("unit"));
 
-                medicines.add(medicine);
+                MedicineCategory medicineCategory =
+                        new MedicineCategory();
+                medicineCategory.setId(
+                        resultSet.getString("category_id"));
+                medicineCategory.setCategoryName(
+                        resultSet.getString("category_name"));
+
+                newMedicine.setCategory(medicineCategory);
+                medicineList.add(newMedicine);
             }
+
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to retrieve medicines", e);
+            throw new RuntimeException(
+                    "Failed to retrieve medicines", e);
         }
 
-        return medicines;
+        return medicineList;
     }
 
     /**
-     * It's retrieves a specific medicine record by its unique identifier.
+     * Retrieves a specific medicine record by its unique identifier.
      *
      * @param id the unique identifier of the medicine to look up.
      * @return the Medicine object if found, or null if it does not exist.
      */
     @Override
     public Medicine getMedicineById(String id) {
-        Medicine medicine = null;
+        Medicine foundMedicine = null;
+
         String sql = "SELECT medicine.id, medicine.medicine_name, "
                 + "medicine.unit, medicine.category_id, "
                 + "medicine_category.category_name "
@@ -71,27 +100,37 @@ public class MedicineDaoImpl implements MedicineDao {
                 + "ON medicine.category_id = medicine_category.id "
                 + "WHERE medicine.id = ?;";
 
-        try (Connection connection = ConnectionHelper.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
 
             statement.setString(1, id);
-            try (ResultSet rs = statement.executeQuery()) {
-                if (rs.next()) {
-                    medicine = new Medicine();
-                    medicine.setId(rs.getString("id"));
-                    medicine.setMedicineName(rs.getString("medicine_name"));
-                    medicine.setUnit(rs.getString("unit"));
-                    MedicineCategory category = new MedicineCategory();
-                    category.setId(rs.getString("category_id"));
-                    category.setCategoryName(rs.getString("category_name"));
-                    medicine.setCategory(category);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    foundMedicine = new Medicine();
+                    foundMedicine.setId(resultSet.getString("id"));
+                    foundMedicine.setMedicineName(
+                            resultSet.getString("medicine_name"));
+                    foundMedicine.setUnit(
+                            resultSet.getString("unit"));
+
+                    MedicineCategory medicineCategory =
+                            new MedicineCategory();
+                    medicineCategory.setId(
+                            resultSet.getString("category_id"));
+                    medicineCategory.setCategoryName(
+                            resultSet.getString("category_name"));
+
+                    foundMedicine.setCategory(medicineCategory);
                 }
             }
+
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to Retrieve medicines");
+            throw new RuntimeException(
+                    "Failed to retrieve medicine by ID", e);
         }
 
-        return medicine;
+        return foundMedicine;
     }
 
     /**
@@ -102,7 +141,8 @@ public class MedicineDaoImpl implements MedicineDao {
      */
     @Override
     public List<Medicine> searchMedicine(String keyword) {
-        List<Medicine> medicines = new ArrayList<>();
+        List<Medicine> searchResults = new ArrayList<>();
+
         String sql = "SELECT medicine.id, medicine.medicine_name, "
                 + "medicine.unit, medicine.category_id, "
                 + "medicine_category.category_name "
@@ -112,29 +152,38 @@ public class MedicineDaoImpl implements MedicineDao {
                 + "WHERE medicine.medicine_name LIKE ? "
                 + "ORDER BY medicine.medicine_name;";
 
-        try (Connection connection = ConnectionHelper.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
 
             statement.setString(1, "%" + keyword + "%");
-            try (ResultSet rs = statement.executeQuery()) {
-                while (rs.next()) {
-                    Medicine medicine = new Medicine();
-                    medicine.setId(rs.getString("id"));
-                    medicine.setMedicineName(rs.getString("medicine_name"));
-                    medicine.setUnit(rs.getString("unit"));
 
-                    MedicineCategory category = new MedicineCategory();
-                    category.setId(rs.getString("category_id"));
-                    category.setCategoryName(rs.getString("category_name"));
-                    medicine.setCategory(category);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Medicine searchedMedicine = new Medicine();
+                    searchedMedicine.setId(
+                            resultSet.getString("id"));
+                    searchedMedicine.setMedicineName(
+                            resultSet.getString("medicine_name"));
+                    searchedMedicine.setUnit(
+                            resultSet.getString("unit"));
 
-                    medicines.add(medicine);
+                    MedicineCategory medicineCategory =
+                            new MedicineCategory();
+                    medicineCategory.setId(
+                            resultSet.getString("category_id"));
+                    medicineCategory.setCategoryName(
+                            resultSet.getString("category_name"));
+
+                    searchedMedicine.setCategory(medicineCategory);
+                    searchResults.add(searchedMedicine);
                 }
             }
+
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to Retrieve medicines");
+            throw new RuntimeException(
+                    "Failed to search medicines", e);
         }
 
-        return medicines;
+        return searchResults;
     }
 }

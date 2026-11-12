@@ -1,15 +1,20 @@
+
 package com.rocs.rc.ohs.data.dao.medicine.impl;
+
 import com.rocs.rc.ohs.app.model.medicine.Medicine;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Tests the {@link MedicineDaoImpl} class.
+ * Tests the MedicineDaoImpl class.
  */
 public class MedicineDaoImplTest {
 
@@ -26,9 +31,8 @@ public class MedicineDaoImplTest {
             "36c00788-fcfd-485e-8ad3-de08fd49cb76";
 
     /**
-     * Dao used for medicine tests.
+     * DAO used for medicine tests.
      */
-
     private MedicineDaoImpl medicineDao;
 
     @BeforeEach
@@ -47,11 +51,14 @@ public class MedicineDaoImplTest {
     @Test
     void listDetails() {
         List<Medicine> medicines = medicineDao.getAllMedicine();
+        Medicine paracetamol = null;
 
-        Medicine paracetamol = medicines.stream()
-                .filter(m -> m.getId().equals(PARACETAMOL_ID))
-                .findFirst()
-                .orElse(null);
+        for (Medicine medicine : medicines) {
+            if (medicine.getId().equals(PARACETAMOL_ID)) {
+                paracetamol = medicine;
+                break;
+            }
+        }
 
         assertNotNull(paracetamol);
         assertEquals("Paracetamol 500mg", paracetamol.getMedicineName());
@@ -74,10 +81,21 @@ public class MedicineDaoImplTest {
     void listMultiple() {
         List<Medicine> medicines = medicineDao.getAllMedicine();
 
-        assertTrue(medicines.stream()
-                .anyMatch(m -> m.getId().equals(PARACETAMOL_ID)));
-        assertTrue(medicines.stream()
-                .anyMatch(m -> m.getId().equals(AMOXICILLIN_ID)));
+        boolean hasParacetamol = false;
+        boolean hasAmoxicillin = false;
+
+        for (Medicine medicine : medicines) {
+            if (medicine.getId().equals(PARACETAMOL_ID)) {
+                hasParacetamol = true;
+            }
+
+            if (medicine.getId().equals(AMOXICILLIN_ID)) {
+                hasAmoxicillin = true;
+            }
+        }
+
+        assertTrue(hasParacetamol);
+        assertTrue(hasAmoxicillin);
     }
 
     @Test
@@ -87,6 +105,7 @@ public class MedicineDaoImplTest {
 
         assertEquals(1, byName.size());
         assertEquals(PARACETAMOL_ID, byName.get(0).getId());
+
         assertEquals(1, byKeyword.size());
         assertEquals(AMOXICILLIN_ID, byKeyword.get(0).getId());
     }

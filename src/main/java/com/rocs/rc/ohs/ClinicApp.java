@@ -1,132 +1,169 @@
 package com.rocs.rc.ohs;
-import com.rocs.rc.ohs.app.model.medicine.Medicine;
-import com.rocs.rc.ohs.data.dao.medicine.impl.MedicineDaoImpl;
+
+import com.rocs.rc.ohs.app.facade.medicine.MedicineStockFacade;
+import com.rocs.rc.ohs.app.facade.medicine.impl.MedicineStockFacadeImpl;
+import com.rocs.rc.ohs.app.model.medicine.MedicineStock;
+
 import java.util.List;
 import java.util.Scanner;
 
 /**
- * Displays medicine records using MedicineDaoImpl.
+ * It is the console menu where the clinic staff checks the medicine
+ * inventory.
  */
 public final class ClinicApp {
 
-    /**
-     * It is the scanner used to read user input.
-     */
-    private final Scanner scanner;
+    /** It reads whatever the staff types in the console. */
+    private static final Scanner SCANNER = new Scanner(System.in);
+
+    /** It gets the medicine stock records from the database. */
+    private static final MedicineStockFacade FACADE =
+            new MedicineStockFacadeImpl();
 
     /**
-     * It is the DAO used to access medicine records.
-     */
-    private final MedicineDaoImpl medicineDao;
-
-    /**
-     * It is used to initialize the scanner and medicine DAO.
+     * It stops anyone from creating an object of this class, since the
+     * menu only uses static methods.
      */
     private ClinicApp() {
-        scanner = new Scanner(System.in);
-        medicineDao = new MedicineDaoImpl();
     }
 
     /**
-     * It is the starting point of the application.
+     * It opens the inventory menu when the program runs.
      *
-     * @param args the command-line arguments
+     * @param args not used.
      */
     public static void main(String[] args) {
-        ClinicApp app = new ClinicApp();
-        app.showMenu();
+        showMenu();
     }
 
     /**
-     * It is used to display the medicine inventory menu.
+     * It keeps showing the menu until the staff chooses 0 to exit.
      */
+    private static void showMenu() {
+        boolean running = true;
 
-    public void showMenu() {
-        int choice;
-
-        do {
-            System.out.println("\nMEDICINE INVENTORY");
-            System.out.println("1. View All Medicines");
-            System.out.println("2. Search Medicine");
-            System.out.println("3. View Medicine Details");
+        while (running) {
+            System.out.println();
+            System.out.println("=== Medicine Inventory ===");
+            System.out.println("1. View inventory");
+            System.out.println("2. Search medicine");
             System.out.println("0. Exit");
-            System.out.print("Enter choice: ");
+            System.out.print("Choose: ");
 
-            choice = scanner.nextInt();
-            scanner.nextLine();
-            switch (choice) {
-                case 1:
-                    displayAllMedicines();
-                    break;
-                case 2:
-                    searchMedicine();
-                    break;
-                case 3:
-                    displayMedicineDetails();
-                    break;
-                case 0:
-                    System.out.println("Exiting Medicine Inventory");
-                    break;
-                default:
-                    System.out.println("Invalid choice. Please try again.");
-                    break;
+            String choice = SCANNER.nextLine();
+
+            if (choice.equals("1")) {
+                viewInventory();
+            } else if (choice.equals("2")) {
+                searchMedicine();
+            } else if (choice.equals("0")) {
+                running = false;
+            } else {
+                System.out.println("Invalid choice.");
             }
-        } while (choice != 0);
-    }
-
-    private void displayAllMedicines() {
-        List<Medicine> medicines = medicineDao.getAllMedicine();
-
-        if (medicines.isEmpty()) {
-            System.out.println("No medicine records found.");
-            return;
-        }
-
-        for (Medicine medicine : medicines) {
-            System.out.println("\nMedicine ID: " + medicine.getId());
-            System.out.println("Medicine Name: " + medicine.getMedicineName());
-            System.out.println("Category: "
-                    + medicine.getCategory().getCategoryName());
-            System.out.println("Unit: " + medicine.getUnit());
         }
     }
 
-    private void searchMedicine() {
-        System.out.print("Enter medicine name: ");
-        String keyword = scanner.nextLine();
+    /**
+     * It lists every stock record, or says that the inventory is empty.
+     */
+    private static void viewInventory() {
+        List<MedicineStock> stocks = FACADE.getAllStock();
 
-        List<Medicine> medicines = medicineDao.searchMedicine(keyword);
+        if (stocks.isEmpty()) {
+            System.out.println("No medicine records are available.");
+        } else {
+            showTable(stocks);
+            chooseMedicine(stocks);
+        }
+    }
 
-        if (medicines.isEmpty()) {
+    /**
+     * It asks for a keyword, then lists the stock records of the medicines
+     * whose name or category matches it.
+     */
+    private static void searchMedicine() {
+        System.out.print("Enter medicine name or keyword: ");
+        String keyword = SCANNER.nextLine();
+
+        List<MedicineStock> stocks = FACADE.searchStock(keyword);
+
+        if (stocks.isEmpty()) {
             System.out.println("No matching medicine found.");
-            return;
-        }
-
-        for (Medicine medicine : medicines) {
-            System.out.println("\nMedicine ID: " + medicine.getId());
-            System.out.println("Medicine Name: " + medicine.getMedicineName());
-            System.out.println("Category: "
-                    + medicine.getCategory().getCategoryName());
-            System.out.println("Unit: " + medicine.getUnit());
+        } else {
+            showTable(stocks);
         }
     }
 
-    private void displayMedicineDetails() {
-        System.out.print("Enter Medicine ID: ");
-        String id = scanner.nextLine();
+    /**
+     * It prints one row for each stock record with its quantity, batch,
+     * expiry date and status.
+     *
+     * @param stocks the records to list, from the inventory or the search.
+     */
+    private static void showTable(List<MedicineStock> stocks) {
+        System.out.println();
+        System.out.println("No.\tName\t\t\tCategory\tQty\tUnit\t"
+                + "Batch\tExpiry\t\tStatus");
 
-        Medicine medicine = medicineDao.getMedicineById(id);
+        for (int i = 0; i < stocks.size(); i++) {
+            MedicineStock stock = stocks.get(i);
+            System.out.println((i + 1) + "\t"
+                    + stock.getMedicine().getMedicineName() + "\t"
+                    + stock.getMedicine().getCategory().getCategoryName()
+                    + "\t"
+                    + stock.getQuantityReceived() + "\t"
+                    + stock.getMedicine().getUnit() + "\t"
+                    + stock.getBatchNumber() + "\t"
+                    + stock.getExpirationDate().toLocalDate() + "\t"
+                    + stock.getStatus());
+        }
+    }
 
-        if (medicine == null) {
-            System.out.println("Medicine not found.");
+    /**
+     * It asks for a row number and shows the details of that record.
+     * Pressing Enter goes back to the menu without choosing.
+     *
+     * @param stocks the records that were just listed in the table.
+     */
+    private static void chooseMedicine(List<MedicineStock> stocks) {
+        System.out.print("Enter the number to view details (Enter to skip): ");
+        String input = SCANNER.nextLine();
+
+        if (input.isEmpty()) {
             return;
         }
 
-        System.out.println("\nMEDICINE DETAILS");
-        System.out.println("Medicine ID: " + medicine.getId());
-        System.out.println("Medicine Name: " + medicine.getMedicineName());
-        System.out.println("Category: "
-                + medicine.getCategory().getCategoryName());
-        System.out.println("Unit: " + medicine.getUnit());
+        try {
+            int number = Integer.parseInt(input);
+
+            if (number < 1 || number > stocks.size()) {
+                System.out.println("Invalid number.");
+            } else {
+                showDetails(stocks.get(number - 1));
+            }
+        } catch (NumberFormatException ex) {
+            System.out.println("Invalid number.");
+        }
+    }
+
+    /**
+     * It prints each field of the chosen stock record on its own line.
+     *
+     * @param stock the record the staff picked from the table.
+     */
+    private static void showDetails(MedicineStock stock) {
+        System.out.println();
+        System.out.println("Medicine Details");
+        System.out.println("Name     : "
+                + stock.getMedicine().getMedicineName());
+        System.out.println("Category : "
+                + stock.getMedicine().getCategory().getCategoryName());
+        System.out.println("Quantity : " + stock.getQuantityReceived());
+        System.out.println("Unit     : " + stock.getMedicine().getUnit());
+        System.out.println("Batch    : " + stock.getBatchNumber());
+        System.out.println("Expiry   : "
+                + stock.getExpirationDate().toLocalDate());
+        System.out.println("Status   : " + stock.getStatus());
     }
 }
