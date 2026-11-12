@@ -36,3 +36,4 @@ public class LoginFacadeImpl implements LoginFacade {
         return loginDao.updatePassword(email, username, newPassword);
     }
 }
+

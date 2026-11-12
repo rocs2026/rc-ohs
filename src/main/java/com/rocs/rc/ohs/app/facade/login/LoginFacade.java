@@ -28,3 +28,4 @@ public interface LoginFacade {
     boolean forgotPassword(String email, String username,
                            String newPassword);
 }
+
