@@ -32,8 +32,8 @@ public class LoginDaoImpl implements LoginDao {
 
         Login login = null;
         try (Connection conn = ConnectionHelper.getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement
-                    (SELECT_LOGIN_BY_USERNAME);
+            PreparedStatement stmt = conn.prepareStatement(
+                            SELECT_LOGIN_BY_USERNAME);
             stmt.setString(1, username);
 
             ResultSet rs = stmt.executeQuery();
@@ -43,8 +43,8 @@ public class LoginDaoImpl implements LoginDao {
                 login.setPassword(rs.getString("password"));
 
                 String id = rs.getString("id");
-                PreparedStatement stmt2 = conn.prepareStatement
-                        (UPDATE_LAST_LOGIN_DATE);
+                PreparedStatement stmt2 = conn.prepareStatement(
+                        UPDATE_LAST_LOGIN_DATE);
                 stmt2.setDate(1, new Date(System.currentTimeMillis()));
                 stmt2.setString(2, id);
 
