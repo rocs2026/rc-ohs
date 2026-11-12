@@ -3,7 +3,7 @@ package com.rocs.rc.ohs.data.dao.medicalrecord.impl;
 import com.rocs.rc.ohs.app.dto.MedicalRecordDTO;
 import com.rocs.rc.ohs.data.connection.ConnectionHelper;
 import com.rocs.rc.ohs.data.dao.medicalrecord.MedicalRecordDAO;
-import com.rocs.rc.ohs.data.utils.QueryConstants;
+import com.rocs.rc.ohs.data.utils.MedRecordQueryConstants;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -32,7 +32,7 @@ public class MedicalRecordDAOImpl implements MedicalRecordDAO {
         String pattern = "%" + keyword.trim() + "%";
 
         try (Connection con = ConnectionHelper.getConnection();
-             PreparedStatement ps = con.prepareStatement(QueryConstants.SEARCH_MEDICAL_RECORD)) {
+             PreparedStatement ps = con.prepareStatement(MedRecordQueryConstants.SEARCH_MEDICAL_RECORD)) {
 
             ps.setString(1, pattern);
             ps.setString(2, pattern);

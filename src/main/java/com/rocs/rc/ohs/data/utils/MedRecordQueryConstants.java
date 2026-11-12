@@ -3,7 +3,7 @@ package com.rocs.rc.ohs.data.utils;
 /**
  * Holds the SQL statements used by the data access objects.
  */
-public final class QueryConstants {
+public final class MedRecordQueryConstants {
 
     /**
      * Searches a patient (student or personnel) by ID, name, student number
@@ -41,7 +41,7 @@ public final class QueryConstants {
     /**
      * Prevents instantiation of this class.
      */
-    private QueryConstants() {
+    private MedRecordQueryConstants() {
     }
 }
 
