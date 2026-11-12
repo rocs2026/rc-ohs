@@ -26,9 +26,11 @@ public class PrescriptionDaoImpl implements PrescriptionDao {
      *
      * @param prescription The prescription to save. Its ID must be set.
      * @return The saved {@link Prescription}.
+     * @throws SQLException If the prescription cannot be saved.
      */
     @Override
-    public Prescription add(Prescription prescription) {
+    public Prescription add(Prescription prescription)
+            throws SQLException {
         try (Connection connection = ConnectionHelper.getConnection();
              PreparedStatement statement = connection.prepareStatement(
                      QueryConstants.ADD_PRESCRIPTION_STATEMENT)) {
@@ -42,8 +44,6 @@ public class PrescriptionDaoImpl implements PrescriptionDao {
             statement.setString(8, prescription.getInstructions());
             statement.executeUpdate();
             return prescription;
-        } catch (SQLException ex) {
-            throw new RuntimeException("Error saving the prescription.", ex);
         }
     }
 
@@ -53,9 +53,11 @@ public class PrescriptionDaoImpl implements PrescriptionDao {
      *
      * @param consultationId The UUID of the consultation.
      * @return A list of prescriptions of the consultation.
+     * @throws SQLException If the prescriptions cannot be read.
      */
     @Override
-    public List<Prescription> findByConsultationId(String consultationId) {
+    public List<Prescription> findByConsultationId(String consultationId)
+            throws SQLException {
         List<Prescription> prescriptions = new ArrayList<>();
         try (Connection connection = ConnectionHelper.getConnection();
              PreparedStatement statement = connection.prepareStatement(
@@ -68,9 +70,6 @@ public class PrescriptionDaoImpl implements PrescriptionDao {
                             toPrescription(resultSet, consultationId));
                 }
             }
-        } catch (SQLException ex) {
-            throw new RuntimeException(
-                    "Error retrieving the prescriptions.", ex);
         }
         return prescriptions;
     }

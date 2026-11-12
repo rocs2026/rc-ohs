@@ -2,6 +2,7 @@ package com.rocs.rc.ohs.data.dao.consultation;
 
 import com.rocs.rc.ohs.app.model.consultation.Consultation;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -15,8 +16,9 @@ public interface ConsultationDao {
      *
      * @param consultation The consultation to save. Its ID must be set.
      * @return The saved {@link Consultation}.
+     * @throws SQLException If the consultation cannot be saved.
      */
-    Consultation add(Consultation consultation);
+    Consultation add(Consultation consultation) throws SQLException;
 
     /**
      * Retrieves the consultations of a patient, latest first, so they
@@ -24,6 +26,8 @@ public interface ConsultationDao {
      *
      * @param patientId The UUID of the patient.
      * @return A list of consultations of the patient.
+     * @throws SQLException If the consultations cannot be read.
      */
-    List<Consultation> findByPatientId(String patientId);
+    List<Consultation> findByPatientId(String patientId)
+            throws SQLException;
 }

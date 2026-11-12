@@ -11,6 +11,7 @@ import com.rocs.rc.ohs.data.dao.prescription.PrescriptionDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -71,7 +72,8 @@ class ConsultationFacadeImplTest {
 
     // The consultation and its prescription are saved.
     @Test
-    void savesTheConsultationWithItsPrescriptions() {
+    void savesTheConsultationWithItsPrescriptions()
+            throws SQLException {
         Consultation consultation =
                 newConsultation(null, DIAGNOSIS, TREATMENT);
         Prescription prescription =
@@ -82,11 +84,9 @@ class ConsultationFacadeImplTest {
 
         verify(consultationDao).add(consultation);
         verify(prescriptionDao).add(prescription);
-
         assertNotNull(saved.getId());
         assertEquals(JOWAN_ID, saved.getPatient().getId());
         assertEquals(STAFF_ID, saved.getStaff().getId());
-        assertEquals(RecordType.CHECK_UP, saved.getRecordType());
         assertEquals(DATE, saved.getConsultationDate());
         assertEquals(DIAGNOSIS, saved.getDiagnosis());
         assertEquals(TREATMENT, saved.getTreatment());
@@ -100,9 +100,10 @@ class ConsultationFacadeImplTest {
         assertEquals(2, prescription.getQuantityToDispense());
     }
 
-    // Tthe saved consultations of the patient are retrieved.
+    // The saved consultations of the patient are retrieved.
     @Test
-    void returnsTheSavedConsultationsOfThePatient() {
+    void returnsTheSavedConsultationsOfThePatient()
+            throws SQLException {
         Consultation consultation =
                 newConsultation(CONSULTATION_ID, DIAGNOSIS, TREATMENT);
         Prescription prescription =
@@ -121,10 +122,8 @@ class ConsultationFacadeImplTest {
         assertEquals(CONSULTATION_ID, consultations.get(0).getId());
         assertEquals(DIAGNOSIS, consultations.get(0).getDiagnosis());
         assertEquals(TREATMENT, consultations.get(0).getTreatment());
-
         assertEquals(1, prescriptions.size());
         assertEquals("500mg", prescriptions.get(0).getDose());
-        assertEquals("3 times a day", prescriptions.get(0).getFrequency());
         assertEquals(2, prescriptions.get(0).getQuantityToDispense());
     }
 

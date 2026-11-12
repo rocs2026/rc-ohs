@@ -2,6 +2,7 @@ package com.rocs.rc.ohs.data.dao.prescription;
 
 import com.rocs.rc.ohs.app.model.prescription.Prescription;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -14,8 +15,9 @@ public interface PrescriptionDao {
      *
      * @param prescription The prescription to save. Its ID must be set.
      * @return The saved {@link Prescription}.
+     * @throws SQLException If the prescription cannot be saved.
      */
-    Prescription add(Prescription prescription);
+    Prescription add(Prescription prescription) throws SQLException;
 
     /**
      * Retrieves all prescriptions issued in a consultation, with the name
@@ -24,6 +26,8 @@ public interface PrescriptionDao {
      *
      * @param consultationId The UUID of the consultation.
      * @return A list of prescriptions of the consultation.
+     * @throws SQLException If the prescriptions cannot be read.
      */
-    List<Prescription> findByConsultationId(String consultationId);
+    List<Prescription> findByConsultationId(String consultationId)
+            throws SQLException;
 }

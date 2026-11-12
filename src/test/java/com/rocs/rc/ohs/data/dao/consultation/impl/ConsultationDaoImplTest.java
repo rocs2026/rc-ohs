@@ -111,7 +111,7 @@ class ConsultationDaoImplTest {
 
     // The consultation is saved with all its details.
     @Test
-    void tc6SavesTheConsultationWithAllDetails() throws SQLException {
+    void savesTheConsultationWithAllDetails() throws SQLException {
         Consultation saved = dao.add(
                 newConsultation(JOWAN_ID, DIAGNOSIS, TREATMENT));
 

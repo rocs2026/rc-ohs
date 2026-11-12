@@ -26,9 +26,11 @@ public class ConsultationDaoImpl implements ConsultationDao {
      *
      * @param consultation The consultation to save. Its ID must be set.
      * @return The saved {@link Consultation}.
+     * @throws SQLException If the consultation cannot be saved.
      */
     @Override
-    public Consultation add(Consultation consultation) {
+    public Consultation add(Consultation consultation)
+            throws SQLException {
         try (Connection connection = ConnectionHelper.getConnection();
              PreparedStatement statement = connection.prepareStatement(
                      QueryConstants.ADD_CONSULTATION_STATEMENT)) {
@@ -46,8 +48,6 @@ public class ConsultationDaoImpl implements ConsultationDao {
             statement.setString(10, consultation.getRemarks());
             statement.executeUpdate();
             return consultation;
-        } catch (SQLException ex) {
-            throw new RuntimeException("Error saving the consultation.", ex);
         }
     }
 
@@ -56,9 +56,11 @@ public class ConsultationDaoImpl implements ConsultationDao {
      *
      * @param patientId The UUID of the patient.
      * @return A list of consultations of the patient.
+     * @throws SQLException If the consultations cannot be read.
      */
     @Override
-    public List<Consultation> findByPatientId(String patientId) {
+    public List<Consultation> findByPatientId(String patientId)
+            throws SQLException {
         List<Consultation> consultations = new ArrayList<>();
         try (Connection connection = ConnectionHelper.getConnection();
              PreparedStatement statement = connection.prepareStatement(
@@ -69,9 +71,6 @@ public class ConsultationDaoImpl implements ConsultationDao {
                     consultations.add(toConsultation(resultSet, patientId));
                 }
             }
-        } catch (SQLException ex) {
-            throw new RuntimeException(
-                    "Error retrieving the consultations.", ex);
         }
         return consultations;
     }

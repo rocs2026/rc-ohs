@@ -8,6 +8,7 @@ import com.rocs.rc.ohs.data.dao.consultation.impl.ConsultationDaoImpl;
 import com.rocs.rc.ohs.data.dao.prescription.PrescriptionDao;
 import com.rocs.rc.ohs.data.dao.prescription.impl.PrescriptionDaoImpl;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -48,7 +49,8 @@ public class ConsultationFacadeImpl implements ConsultationFacade {
      *
      * @param consultation The consultation to save.
      * @param prescriptions The prescriptions of the consultation.
-     * @return The saved {@link Consultation} with its generated ID.
+     * @return The saved {@link Consultation} with its generated ID, or
+     *         null if it could not be saved.
      * @throws IllegalArgumentException If a required value is missing.
      */
     @Override
@@ -62,52 +64,62 @@ public class ConsultationFacadeImpl implements ConsultationFacade {
             for (Prescription prescription : items) {
                 validatePrescription(prescription);
             }
-        } catch (IllegalArgumentException ex) {
-            throw new IllegalArgumentException(
-                    "Cannot save the consultation. " + ex.getMessage(), ex);
-        }
 
-        consultation.setId(newId());
-        consultationDao.add(consultation);
-        for (Prescription prescription : items) {
-            prescription.setId(newId());
-            prescription.setConsultation(consultation);
-            prescription.setPersonnel(consultation.getStaff());
-            prescriptionDao.add(prescription);
+            consultation.setId(newId());
+            consultationDao.add(consultation);
+            for (Prescription prescription : items) {
+                prescription.setId(newId());
+                prescription.setConsultation(consultation);
+                prescription.setPersonnel(consultation.getStaff());
+                prescriptionDao.add(prescription);
+            }
+            return consultation;
+        } catch (IllegalArgumentException | SQLException ex) {
+            return null;
         }
-        return consultation;
     }
 
     /**
      * Retrieves the saved consultations of a patient, latest first.
      *
      * @param patientId The UUID of the patient.
-     * @return A list of consultations of the patient.
+     * @return A list of consultations of the patient, or null if they
+     *         could not be read.
      * @throws IllegalArgumentException If the patient ID is missing.
      */
     @Override
-    public List<Consultation> getConsultationsByPatient(String patientId) {
+    public List<Consultation> getConsultationsByPatient(String patientId)
+            throws IllegalArgumentException {
         if (patientId == null || patientId.isBlank()) {
             throw new IllegalArgumentException("The patient ID is required.");
         }
-        return consultationDao.findByPatientId(patientId);
+        try {
+            return consultationDao.findByPatientId(patientId);
+        } catch (SQLException ex) {
+            return null;
+        }
     }
 
     /**
      * Retrieves the prescriptions of a saved consultation.
      *
      * @param consultationId The UUID of the consultation.
-     * @return A list of prescriptions of the consultation.
+     * @return A list of prescriptions of the consultation, or null if they
+     *         could not be read.
      * @throws IllegalArgumentException If the consultation ID is missing.
      */
     @Override
     public List<Prescription> getPrescriptionsByConsultation(
-            String consultationId) {
+            String consultationId) throws IllegalArgumentException {
         if (consultationId == null || consultationId.isBlank()) {
             throw new IllegalArgumentException(
                     "The consultation ID is required.");
         }
-        return prescriptionDao.findByConsultationId(consultationId);
+        try {
+            return prescriptionDao.findByConsultationId(consultationId);
+        } catch (SQLException ex) {
+            return null;
+        }
     }
 
     /**
