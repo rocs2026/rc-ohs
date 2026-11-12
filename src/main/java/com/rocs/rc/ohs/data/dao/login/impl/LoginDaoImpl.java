@@ -38,11 +38,11 @@ public class LoginDaoImpl implements LoginDao {
                 login.setUsername(rs.getString("username"));
                 login.setPassword(rs.getString("password"));
 
-                Long id = rs.getLong("id");
+                String id = rs.getString("id");
                 PreparedStatement stmt2 = conn.prepareStatement(
                         "update login set last_login_date = ? where id = ?");
                 stmt2.setDate(1, new Date(System.currentTimeMillis()));
-                stmt2.setLong(2, id);
+                stmt2.setString(2, id);
 
                 stmt2.executeUpdate();
             }

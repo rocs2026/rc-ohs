@@ -15,4 +15,15 @@ public interface LoginFacade {
      * @return The {@link Login} account of the authenticated user.
      */
     Login login(String username, String password);
+
+    /**
+     * Resets the password of an account after its details are verified.
+     *
+     * @param email The email address of the account owner.
+     * @param username The username of the account.
+     * @param newPassword The new password.
+     * @return True if the password was updated, false otherwise.
+     */
+    boolean forgotPassword(String email, String username,
+                           String newPassword);
 }

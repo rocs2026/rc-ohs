@@ -11,7 +11,9 @@ import com.rocs.rc.ohs.data.dao.login.impl.LoginDaoImpl;
  */
 public class LoginFacadeImpl implements LoginFacade {
 
-    /** The data access object used to retrieve login accounts. */
+    /**
+     * The data access object used to retrieve login accounts.
+     */
     private final LoginDao loginDao = new LoginDaoImpl();
 
     /**
@@ -24,5 +26,12 @@ public class LoginFacadeImpl implements LoginFacade {
     @Override
     public Login login(String username, String password) {
         return this.loginDao.login(username);
+    }
+
+
+    @Override
+    public boolean forgotPassword(String email, String username,
+                                  String newPassword) {
+        return loginDao.updatePassword(email, username, newPassword);
     }
 }
