@@ -18,10 +18,12 @@ public class Referral {
     /** The consultation of the referral, null if there is none. */
     private Consultation consultation;
 
-    /** The personnel who issued the referral*/
+    /** The personnel who issued the referral. */
     private Personnel personnel;
 
-    /** The hospital or facility the patient is referred to., null if there is none.*/
+    /** The hospital or facility the patient is referred to,
+     * null if there is none.
+     * */
     private String referredTo;
 
     /** The reason for the referral. */
