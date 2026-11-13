@@ -70,7 +70,7 @@ public final class ClinicApp {
     /**
      * Logs in the user.
      *
-     * @param sc The scanner used to read input.
+     * @param sc          The scanner used to read input.
      * @param loginFacade The facade used for login operations.
      */
     private static void login(Scanner sc, LoginFacade loginFacade) {
@@ -231,10 +231,11 @@ public final class ClinicApp {
     //     System.out.print(label + ": ");
     //     return sc.nextLine();
     // }
+
 //    /**
 //     * Opens the options for managing patient medical records.
 //     *
-//     * @param sc scanner for menu input
+//     * @param sc     scanner for menu input
 //     * @param facade medical record operations
 //     */
 //    private static void medicalRecordMenu(
@@ -263,17 +264,17 @@ public final class ClinicApp {
 //    /**
 //     * Saves a medical record using the entered patient details.
 //     *
-//     * @param sc input scanner
+//     * @param sc     input scanner
 //     * @param facade medical record operations
 //     */
 //    private static void addMedicalRecord(
 //            Scanner sc, MedicalRecordFacade facade) {
 //
-//        String patientId = ask(sc, "Patient ID");
+//        String patientName = ask(sc, "Patient Name");
 //        String conditions = ask(sc, "Medical Conditions");
 //        String allergies = ask(sc, "Allergies");
 //
-//        if (patientId.trim().isEmpty()
+//        if (patientName.trim().isEmpty()
 //                || conditions.trim().isEmpty()
 //                || allergies.trim().isEmpty()) {
 //            System.out.println("Please complete all fields");
@@ -281,31 +282,33 @@ public final class ClinicApp {
 //        }
 //
 //        if (facade.addMedicalRecord(
-//                patientId, conditions, allergies)) {
+//                patientName, conditions, allergies)) {
 //            System.out.println("Medical record added successfully");
 //        } else {
-//            System.out.println("Unable to add medical record");
+//            System.out.println(
+//                    "Unable to add medical record. "
+//                            + "Check the patient name and information.");
 //        }
 //    }
 //
 //    /**
 //     * Displays the medical records associated with a patient.
 //     *
-//     * @param sc scanner for patient ID input
+//     * @param sc     scanner for patient name input
 //     * @param facade medical record operations
 //     */
 //    private static void viewMedicalRecords(
 //            Scanner sc, MedicalRecordFacade facade) {
 //
-//        String patientId = ask(sc, "Patient ID");
+//        String patientName = ask(sc, "Patient Name");
 //
-//        if (patientId.trim().isEmpty()) {
-//            System.out.println("Please enter patient ID");
+//        if (patientName.trim().isEmpty()) {
+//            System.out.println("Please enter patient name");
 //            return;
 //        }
 //
 //        List<MedicalRecord> records =
-//                facade.findMedicalRecords(patientId);
+//                facade.findMedicalRecords(patientName);
 //
 //        if (records.isEmpty()) {
 //            System.out.println("No medical records found");
@@ -325,7 +328,7 @@ public final class ClinicApp {
 //    /**
 //     * Reads a value entered by the user.
 //     *
-//     * @param sc scanner receiving the input
+//     * @param sc    scanner receiving the input
 //     * @param label prompt displayed to the user
 //     * @return entered text
 //     */
