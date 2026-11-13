@@ -20,12 +20,22 @@ public final class QueryConstants {
                     + "SET medical_conditions = ?, allergies = ? "
                     + "WHERE id =?";
 
+    /**
+     * Selects the login account that has the given username.
+     */
     public static final String SELECT_LOGIN_BY_USERNAME =
             "select * from login where username = ?";
 
+    /**
+     * Updates the last login date of a login account.
+     */
     public static final String UPDATE_LAST_LOGIN_DATE =
             "update login set last_login_date = ? where id = ?";
 
+    /**
+     * Updates the password of the login account that matches the
+     * given username and the email of its personnel.
+     */
     public static final String UPDATE_PASSWORD_BY_EMAIL_AND_USERNAME =
             "update login set password = ? "
                     + "where username = ? "

@@ -4,7 +4,7 @@ import com.rocs.rc.ohs.app.model.login.Login;
 import com.rocs.rc.ohs.data.dao.login.LoginDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -13,8 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
@@ -23,14 +21,34 @@ import static org.mockito.Mockito.when;
  */
 class LoginFacadeImplTest {
 
+    /**
+     * The email address used in the tests.
+     */
     private static final String EMAIL = "john.doe@example.com";
+
+    /**
+     * The username used in the tests.
+     */
     private static final String USERNAME = "staff";
+
+    /**
+     * The new password used in the tests.
+     */
     private static final String NEW_PASSWORD = "NewPass123!";
+
+    /**
+     * The start of every message of a rejected password reset.
+     */
     private static final String PREFIX = "Cannot reset the password. ";
 
-    @Mock
+    /**
+     * The mocked data access object of the login accounts.
+     */
     private LoginDao loginDao;
 
+    /**
+     * The facade being tested.
+     */
     private LoginFacadeImpl loginFacade;
 
     /**
@@ -38,6 +56,7 @@ class LoginFacadeImplTest {
      */
     @BeforeEach
     void setUp() {
+        loginDao = Mockito.mock(LoginDao.class);
         loginFacade = new LoginFacadeImpl(loginDao);
     }
 
@@ -47,7 +66,7 @@ class LoginFacadeImplTest {
      */
     @Test
     void loginReturnsAccountFromDao() {
-        Login account = org.mockito.Mockito.mock(Login.class);
+        Login account = Mockito.mock(Login.class);
         when(loginDao.login(USERNAME)).thenReturn(account);
         when(loginDao.login("unknown")).thenReturn(null);
 
@@ -91,17 +110,17 @@ class LoginFacadeImplTest {
                     "New password is required.");
         }
 
-        verify(loginDao, never())
-                .updatePassword(
-                        org.mockito.ArgumentMatchers.anyString(),
-                        org.mockito.ArgumentMatchers.anyString(),
-                        org.mockito.ArgumentMatchers.anyString());
         verifyNoInteractions(loginDao);
     }
 
     /**
      * Checks that the given values are rejected with the expected message
      * and that the original exception is kept as the cause.
+     *
+     * @param email The email address to reset the password of.
+     * @param username The username of the account.
+     * @param password The new password.
+     * @param message The expected reason of the rejection.
      */
     private void assertRejected(String email, String username,
                                 String password, String message) {
