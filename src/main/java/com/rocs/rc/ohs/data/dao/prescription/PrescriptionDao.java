@@ -16,8 +16,10 @@ public interface PrescriptionDao {
      * @param prescription The prescription to save. Its ID must be set.
      * @return The saved {@link Prescription}.
      * @throws SQLException If the prescription cannot be saved.
+     * @throws IllegalArgumentException If a required value is null.
      */
-    Prescription add(Prescription prescription) throws SQLException;
+    Prescription add(Prescription prescription)
+            throws SQLException, IllegalArgumentException;
 
     /**
      * Retrieves all prescriptions issued in a consultation, with the name
@@ -27,7 +29,8 @@ public interface PrescriptionDao {
      * @param consultationId The UUID of the consultation.
      * @return A list of prescriptions of the consultation.
      * @throws SQLException If the prescriptions cannot be read.
+     * @throws IllegalArgumentException If the consultation ID is null.
      */
     List<Prescription> findByConsultationId(String consultationId)
-            throws SQLException;
+            throws SQLException, IllegalArgumentException;
 }

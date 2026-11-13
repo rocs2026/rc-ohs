@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -82,6 +83,7 @@ class ConsultationDaoImplTest {
         resultSet = mock(ResultSet.class);
         when(connection.prepareStatement(anyString())).thenReturn(statement);
         when(statement.executeQuery()).thenReturn(resultSet);
+        when(statement.executeUpdate()).thenReturn(1);
 
         connectionHelper = mockStatic(ConnectionHelper.class);
         connectionHelper.when(ConnectionHelper::getConnection)
@@ -124,6 +126,32 @@ class ConsultationDaoImplTest {
         verify(statement).setString(7, DIAGNOSIS);
         verify(statement).setString(8, TREATMENT);
         verify(statement).executeUpdate();
+    }
+
+    // A consultation that was not inserted is reported as an error.
+    @Test
+    void throwsWhenNoRowIsSaved() throws SQLException {
+        when(statement.executeUpdate()).thenReturn(0);
+        Consultation consultation =
+                newConsultation(JOWAN_ID, DIAGNOSIS, TREATMENT);
+
+        SQLException error =
+                assertThrows(SQLException.class,
+                        () -> dao.add(consultation));
+
+        assertEquals("Could not save consultation: "
+                + "No consultation row was saved.", error.getMessage());
+    }
+
+    // A consultation without a patient is rejected, not saved.
+    @Test
+    void rejectsAConsultationWithoutPatient() {
+        Consultation consultation =
+                newConsultation(JOWAN_ID, DIAGNOSIS, TREATMENT);
+        consultation.setPatient(null);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> dao.add(consultation));
     }
 
     // The saved consultation details are retrieved for the patient.

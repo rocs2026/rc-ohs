@@ -27,10 +27,19 @@ public class ConsultationDaoImpl implements ConsultationDao {
      * @param consultation The consultation to save. Its ID must be set.
      * @return The saved {@link Consultation}.
      * @throws SQLException If the consultation cannot be saved.
+     * @throws IllegalArgumentException If a required value is null.
      */
     @Override
     public Consultation add(Consultation consultation)
-            throws SQLException {
+            throws SQLException, IllegalArgumentException {
+        if (consultation == null
+                || consultation.getPatient() == null
+                || consultation.getStaff() == null
+                || consultation.getRecordType() == null
+                || consultation.getConsultationDate() == null) {
+            throw new IllegalArgumentException(
+                    "Patient, staff, record type and date are required.");
+        }
         try (Connection connection = ConnectionHelper.getConnection();
              PreparedStatement statement = connection.prepareStatement(
                      QueryConstants.ADD_CONSULTATION_STATEMENT)) {
@@ -46,8 +55,14 @@ public class ConsultationDaoImpl implements ConsultationDao {
             statement.setString(8, consultation.getTreatment());
             statement.setString(9, consultation.getActionTaken());
             statement.setString(10, consultation.getRemarks());
-            statement.executeUpdate();
+            int rows = statement.executeUpdate();
+            if (rows != 1) {
+                throw new SQLException("No consultation row was saved.");
+            }
             return consultation;
+        } catch (SQLException ex) {
+            throw new SQLException(
+                    "Could not save consultation: " + ex.getMessage(), ex);
         }
     }
 
@@ -57,10 +72,14 @@ public class ConsultationDaoImpl implements ConsultationDao {
      * @param patientId The UUID of the patient.
      * @return A list of consultations of the patient.
      * @throws SQLException If the consultations cannot be read.
+     * @throws IllegalArgumentException If the patient ID is null.
      */
     @Override
     public List<Consultation> findByPatientId(String patientId)
-            throws SQLException {
+            throws SQLException, IllegalArgumentException {
+        if (patientId == null) {
+            throw new IllegalArgumentException("Patient ID is required.");
+        }
         List<Consultation> consultations = new ArrayList<>();
         try (Connection connection = ConnectionHelper.getConnection();
              PreparedStatement statement = connection.prepareStatement(
@@ -71,6 +90,9 @@ public class ConsultationDaoImpl implements ConsultationDao {
                     consultations.add(toConsultation(resultSet, patientId));
                 }
             }
+        } catch (SQLException ex) {
+            throw new SQLException(
+                    "Could not read consultations: " + ex.getMessage(), ex);
         }
         return consultations;
     }
@@ -95,8 +117,10 @@ public class ConsultationDaoImpl implements ConsultationDao {
         consultation.setStaff(staff);
         consultation.setRecordType(
                 toRecordType(resultSet.getString("record_type")));
-        consultation.setConsultationDate(
-                resultSet.getTimestamp("consultation_date").toLocalDateTime());
+        Timestamp date = resultSet.getTimestamp("consultation_date");
+        if (date != null) {
+            consultation.setConsultationDate(date.toLocalDateTime());
+        }
         consultation.setComplaint(resultSet.getString("complaint"));
         consultation.setDiagnosis(resultSet.getString("diagnosis"));
         consultation.setTreatment(resultSet.getString("treatment"));

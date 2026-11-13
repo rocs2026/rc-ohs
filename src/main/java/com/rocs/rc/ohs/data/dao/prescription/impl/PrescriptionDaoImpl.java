@@ -27,10 +27,18 @@ public class PrescriptionDaoImpl implements PrescriptionDao {
      * @param prescription The prescription to save. Its ID must be set.
      * @return The saved {@link Prescription}.
      * @throws SQLException If the prescription cannot be saved.
+     * @throws IllegalArgumentException If a required value is null.
      */
     @Override
     public Prescription add(Prescription prescription)
-            throws SQLException {
+            throws SQLException, IllegalArgumentException {
+        if (prescription == null
+                || prescription.getConsultation() == null
+                || prescription.getMedicineStock() == null
+                || prescription.getPersonnel() == null) {
+            throw new IllegalArgumentException(
+                    "Consultation, medicine stock and staff are required.");
+        }
         try (Connection connection = ConnectionHelper.getConnection();
              PreparedStatement statement = connection.prepareStatement(
                      QueryConstants.ADD_PRESCRIPTION_STATEMENT)) {
@@ -42,8 +50,14 @@ public class PrescriptionDaoImpl implements PrescriptionDao {
             statement.setString(6, prescription.getDose());
             statement.setString(7, prescription.getFrequency());
             statement.setString(8, prescription.getInstructions());
-            statement.executeUpdate();
+            int rows = statement.executeUpdate();
+            if (rows != 1) {
+                throw new SQLException("No prescription row was saved.");
+            }
             return prescription;
+        } catch (SQLException ex) {
+            throw new SQLException(
+                    "Could not save prescription: " + ex.getMessage(), ex);
         }
     }
 
@@ -54,10 +68,15 @@ public class PrescriptionDaoImpl implements PrescriptionDao {
      * @param consultationId The UUID of the consultation.
      * @return A list of prescriptions of the consultation.
      * @throws SQLException If the prescriptions cannot be read.
+     * @throws IllegalArgumentException If the consultation ID is null.
      */
     @Override
     public List<Prescription> findByConsultationId(String consultationId)
-            throws SQLException {
+            throws SQLException, IllegalArgumentException {
+        if (consultationId == null) {
+            throw new IllegalArgumentException(
+                    "Consultation ID is required.");
+        }
         List<Prescription> prescriptions = new ArrayList<>();
         try (Connection connection = ConnectionHelper.getConnection();
              PreparedStatement statement = connection.prepareStatement(
@@ -70,9 +89,13 @@ public class PrescriptionDaoImpl implements PrescriptionDao {
                             toPrescription(resultSet, consultationId));
                 }
             }
+        } catch (SQLException ex) {
+            throw new SQLException(
+                    "Could not read prescriptions: " + ex.getMessage(), ex);
         }
         return prescriptions;
     }
+
 
     /**
      * Maps one prescription row to a {@link Prescription}.

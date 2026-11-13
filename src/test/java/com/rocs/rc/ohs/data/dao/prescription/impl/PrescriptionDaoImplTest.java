@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -66,6 +67,7 @@ class PrescriptionDaoImplTest {
         resultSet = mock(ResultSet.class);
         when(connection.prepareStatement(anyString())).thenReturn(statement);
         when(statement.executeQuery()).thenReturn(resultSet);
+        when(statement.executeUpdate()).thenReturn(1);
 
         connectionHelper = mockStatic(ConnectionHelper.class);
         connectionHelper.when(ConnectionHelper::getConnection)
@@ -94,6 +96,30 @@ class PrescriptionDaoImplTest {
         verify(statement).setString(6, "500mg");
         verify(statement).setString(7, "3 times a day");
         verify(statement).executeUpdate();
+    }
+
+    // A rescription that was not inserted is reported as an error.
+    @Test
+    void throwsWhenNoRowIsSaved() throws SQLException {
+        when(statement.executeUpdate()).thenReturn(0);
+        Prescription prescription = newPrescription();
+
+        SQLException error =
+                assertThrows(SQLException.class,
+                        () -> dao.add(prescription));
+
+        assertEquals("Could not save prescription: "
+                + "No prescription row was saved.", error.getMessage());
+    }
+
+    // A prescription without a consultation is rejected, not saved.
+    @Test
+    void rejectsAPrescriptionWithoutConsultation() {
+        Prescription prescription = newPrescription();
+        prescription.setConsultation(null);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> dao.add(prescription));
     }
 
     // The saved prescription details are retrieved for the consultation.

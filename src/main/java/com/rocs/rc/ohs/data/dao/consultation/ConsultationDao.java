@@ -17,8 +17,10 @@ public interface ConsultationDao {
      * @param consultation The consultation to save. Its ID must be set.
      * @return The saved {@link Consultation}.
      * @throws SQLException If the consultation cannot be saved.
+     * @throws IllegalArgumentException If a required value is null.
      */
-    Consultation add(Consultation consultation) throws SQLException;
+    Consultation add(Consultation consultation)
+            throws SQLException, IllegalArgumentException;
 
     /**
      * Retrieves the consultations of a patient, latest first, so they
@@ -27,7 +29,8 @@ public interface ConsultationDao {
      * @param patientId The UUID of the patient.
      * @return A list of consultations of the patient.
      * @throws SQLException If the consultations cannot be read.
+     * @throws IllegalArgumentException If the patient ID is null.
      */
     List<Consultation> findByPatientId(String patientId)
-            throws SQLException;
+            throws SQLException, IllegalArgumentException;
 }

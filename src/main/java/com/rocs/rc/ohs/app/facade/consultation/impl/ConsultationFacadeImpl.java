@@ -99,7 +99,8 @@ public class ConsultationFacadeImpl implements ConsultationFacade {
         try {
             consultations = consultationDao.findByPatientId(patientId);
         } catch (SQLException ex) {
-            System.out.println("Read consultations failed: " + ex.getMessage());
+            System.out.println(
+                    "Read consultations failed: " + ex.getMessage());
         }
         return consultations;
     }
@@ -124,7 +125,8 @@ public class ConsultationFacadeImpl implements ConsultationFacade {
             prescriptions =
                     prescriptionDao.findByConsultationId(consultationId);
         } catch (SQLException ex) {
-            System.out.println("Read prescriptions failed: " + ex.getMessage());
+            System.out.println(
+                    "Read prescriptions failed: " + ex.getMessage());
         }
         return prescriptions;
     }
