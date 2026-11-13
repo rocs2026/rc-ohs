@@ -1,4 +1,3 @@
-
 package com.rocs.rc.ohs.data.dao.logout.impl;
 
 import com.rocs.rc.ohs.app.model.usersession.UserSession;
@@ -20,8 +19,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
+/**
+ * Unit tests for {@link LogoutDaoImpl}.
+ */
 class LogoutDaoImplTest {
 
+    /** The DAO under test. */
     private final LogoutDaoImpl dao = new LogoutDaoImpl();
 
     // Creates a mock prepared statement for the given SQL query.
