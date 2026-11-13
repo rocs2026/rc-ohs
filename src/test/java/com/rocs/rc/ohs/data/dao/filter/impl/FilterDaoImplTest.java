@@ -166,7 +166,7 @@ class FilterDaoImplTest {
                 filterDao.filterMedicalRecords("jowan", null, null);
 
         assertEquals(1, records.size());
-        MedicalRecord record = records.getFirst();
+        MedicalRecord record = records.get(0);
         assertEquals("record-1", record.getId());
         assertEquals("patient-1", record.getPatient().getId());
         assertEquals("Jowan", record.getPatient().getFirstName());
