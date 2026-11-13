@@ -12,11 +12,10 @@ public interface FilterDao {
     /**
      * Retrieves the medical records that match the given criteria.
      * A null or blank criterion is ignored.
-     *
-     * @param patientName      The first or last name of the patient.
-     * @param medicalCondition The medical condition of the patient.
-     * @param allergy          The allergy of the patient.
-     * @return The list of matching {@link MedicalRecord} records.
+     * @param patientName first or last name of the patient.
+     * @param medicalCondition medical condition of the patient.
+     * @param allergy allergy of the patient.
+     * @return list of matching {@link MedicalRecord} records.
      */
     List<MedicalRecord> filterMedicalRecords(String patientName,
                                              String medicalCondition,
