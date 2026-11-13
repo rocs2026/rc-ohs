@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 /**
-*implementation of the {@link LogoutDao} to end user sessions
+*implementation of the {@link LogoutDao} to end user sessions.
 */
 public class LogoutDaoImpl implements LogoutDao {
     private static final String ACTIVE = "ACTIVE";
