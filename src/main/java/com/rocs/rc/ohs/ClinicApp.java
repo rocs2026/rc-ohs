@@ -99,49 +99,49 @@ public final class ClinicApp {
 
     }
 
-    /**
-     * Resets a forgotten password after
-     * verifying the email and username.
-     *
-     * @param sc The scanner used to read input.
-     * @param loginFacade The facade used for login operations.
-     */
-    private static void forgotPassword(Scanner sc,
-                                       LoginFacade loginFacade) {
-        System.out.print("EMAIL: ");
-        String email = sc.nextLine().trim();
-        if (email.isEmpty()) {
-            System.out.println("Please enter email");
-            return;
-        }
-
-        System.out.print("USERNAME: ");
-        String username = sc.nextLine().trim();
-        if (username.isEmpty()) {
-            System.out.println("Please enter username");
-            return;
-        }
-
-        System.out.print("NEW PASSWORD: ");
-        String newPassword = sc.nextLine();
-        if (newPassword.isEmpty()) {
-            System.out.println("Please enter new password");
-            return;
-        }
-
-        System.out.print("CONFIRM PASSWORD: ");
-        String confirm = sc.nextLine();
-        if (!newPassword.equals(confirm)) {
-            System.out.println("Passwords do not match");
-            return;
-        }
-
-        if (loginFacade.forgotPassword(email, username, newPassword)) {
-            System.out.println("Password updated successfully");
-        } else {
-            System.out.println("Email and username do not match any account");
-        }
-    }
+    // /**
+    //  * Resets a forgotten password after
+    //  * verifying the email and username.
+    //  *
+    //  * @param sc The scanner used to read input.
+    //  * @param loginFacade The facade used for login operations.
+    //  */
+    // private static void forgotPassword(Scanner sc,
+    //                                    LoginFacade loginFacade) {
+    //     System.out.print("EMAIL: ");
+    //     String email = sc.nextLine().trim();
+    //     if (email.isEmpty()) {
+    //         System.out.println("Please enter email");
+    //         return;
+    //     }
+    //
+    //     System.out.print("USERNAME: ");
+    //     String username = sc.nextLine().trim();
+    //     if (username.isEmpty()) {
+    //         System.out.println("Please enter username");
+    //         return;
+    //     }
+    //
+    //     System.out.print("NEW PASSWORD: ");
+    //     String newPassword = sc.nextLine();
+    //     if (newPassword.isEmpty()) {
+    //         System.out.println("Please enter new password");
+    //         return;
+    //     }
+    //
+    //     System.out.print("CONFIRM PASSWORD: ");
+    //     String confirm = sc.nextLine();
+    //     if (!newPassword.equals(confirm)) {
+    //         System.out.println("Passwords do not match");
+    //         return;
+    //     }
+    //
+    //     if (loginFacade.forgotPassword(email, username, newPassword)) {
+    //         System.out.println("Password updated successfully");
+    //     } else {
+    //         System.out.println("Email and username do not match any account");
+    //     }
+    // }
 
     // private static void consultationMenu(Scanner sc) {
     //     ConsultationFacade facade = new ConsultationFacadeImpl();
