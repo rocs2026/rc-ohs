@@ -60,9 +60,6 @@ public class ConsultationDaoImpl implements ConsultationDao {
                 throw new SQLException("No consultation row was saved.");
             }
             return consultation;
-        } catch (SQLException ex) {
-            throw new SQLException(
-                    "Could not save consultation: " + ex.getMessage(), ex);
         }
     }
 
@@ -90,7 +87,7 @@ public class ConsultationDaoImpl implements ConsultationDao {
                     consultations.add(toConsultation(resultSet, patientId));
                 }
             }
-        } catch (SQLException ex) {
+        } catch (IllegalStateException ex) {
             throw new SQLException(
                     "Could not read consultations: " + ex.getMessage(), ex);
         }
@@ -104,9 +101,10 @@ public class ConsultationDaoImpl implements ConsultationDao {
      * @param patientId The UUID of the patient.
      * @return The {@link Consultation} built from the row.
      * @throws SQLException If a column cannot be read.
+     * @throws IllegalStateException If the record type is unknown.
      */
     private Consultation toConsultation(ResultSet resultSet, String patientId)
-            throws SQLException {
+            throws SQLException, IllegalStateException {
         Person patient = new Person();
         patient.setId(patientId);
         Personnel staff = new Personnel();
@@ -134,8 +132,10 @@ public class ConsultationDaoImpl implements ConsultationDao {
      *
      * @param value The database value of the record type.
      * @return The matching {@link RecordType}.
+     * @throws IllegalStateException If the record type is unknown.
      */
-    private RecordType toRecordType(String value) {
+    private RecordType toRecordType(String value)
+            throws IllegalStateException {
         for (RecordType type : RecordType.values()) {
             if (type.getValue().equals(value)) {
                 return type;

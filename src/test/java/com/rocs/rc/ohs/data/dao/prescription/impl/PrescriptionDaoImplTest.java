@@ -98,7 +98,7 @@ class PrescriptionDaoImplTest {
         verify(statement).executeUpdate();
     }
 
-    // A rescription that was not inserted is reported as an error.
+    // A prescription that was not inserted is reported as an error.
     @Test
     void throwsWhenNoRowIsSaved() throws SQLException {
         when(statement.executeUpdate()).thenReturn(0);
@@ -108,8 +108,7 @@ class PrescriptionDaoImplTest {
                 assertThrows(SQLException.class,
                         () -> dao.add(prescription));
 
-        assertEquals("Could not save prescription: "
-                + "No prescription row was saved.", error.getMessage());
+        assertEquals("No prescription row was saved.", error.getMessage());
     }
 
     // A prescription without a consultation is rejected, not saved.

@@ -51,12 +51,10 @@ public class ConsultationFacadeImpl implements ConsultationFacade {
      * @param prescriptions The prescriptions of the consultation.
      * @return The saved {@link Consultation} with its generated ID, or
      *         null if it could not be saved.
-     * @throws IllegalArgumentException If a required value is missing.
      */
     @Override
     public Consultation saveConsultation(Consultation consultation,
-                                         List<Prescription> prescriptions)
-            throws IllegalArgumentException {
+                                         List<Prescription> prescriptions) {
         List<Prescription> items = prescriptions == null
                 ? new ArrayList<>() : prescriptions;
         Consultation saved = null;
@@ -98,7 +96,7 @@ public class ConsultationFacadeImpl implements ConsultationFacade {
         List<Consultation> consultations = new ArrayList<>();
         try {
             consultations = consultationDao.findByPatientId(patientId);
-        } catch (SQLException ex) {
+        } catch (SQLException | IllegalArgumentException ex) {
             System.out.println(
                     "Read consultations failed: " + ex.getMessage());
         }
@@ -124,7 +122,7 @@ public class ConsultationFacadeImpl implements ConsultationFacade {
         try {
             prescriptions =
                     prescriptionDao.findByConsultationId(consultationId);
-        } catch (SQLException ex) {
+        } catch (SQLException | IllegalArgumentException ex) {
             System.out.println(
                     "Read prescriptions failed: " + ex.getMessage());
         }

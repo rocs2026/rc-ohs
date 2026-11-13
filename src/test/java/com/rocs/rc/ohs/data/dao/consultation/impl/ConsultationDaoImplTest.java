@@ -139,8 +139,7 @@ class ConsultationDaoImplTest {
                 assertThrows(SQLException.class,
                         () -> dao.add(consultation));
 
-        assertEquals("Could not save consultation: "
-                + "No consultation row was saved.", error.getMessage());
+        assertEquals("No consultation row was saved.", error.getMessage());
     }
 
     // A consultation without a patient is rejected, not saved.

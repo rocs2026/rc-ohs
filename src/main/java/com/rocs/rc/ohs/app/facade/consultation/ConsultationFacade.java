@@ -18,18 +18,16 @@ public interface ConsultationFacade {
      * @param prescriptions The prescriptions of the consultation.
      * @return The saved {@link Consultation} with its generated ID, or
      *         null if it could not be saved.
-     * @throws IllegalArgumentException If a required value is missing.
      */
     Consultation saveConsultation(Consultation consultation,
-                                  List<Prescription> prescriptions)
-            throws IllegalArgumentException;
+                                  List<Prescription> prescriptions);
 
     /**
      * Retrieves the saved consultations of a patient, latest first.
      *
      * @param patientId The UUID of the patient.
-     * @return A list of consultations of the patient, or null if they
-     *         could not be read.
+     * @return A list of consultations of the patient, or an empty list
+     *         if they could not be read.
      * @throws IllegalArgumentException If the patient ID is missing.
      */
     List<Consultation> getConsultationsByPatient(String patientId)
@@ -39,8 +37,8 @@ public interface ConsultationFacade {
      * Retrieves the prescriptions of a saved consultation.
      *
      * @param consultationId The UUID of the consultation.
-     * @return A list of prescriptions of the consultation, or null if
-     *         they could not be read.
+     * @return A list of prescriptions of the consultation, or an empty
+     *         list if they could not be read.
      * @throws IllegalArgumentException If the consultation ID is missing.
      */
     List<Prescription> getPrescriptionsByConsultation(

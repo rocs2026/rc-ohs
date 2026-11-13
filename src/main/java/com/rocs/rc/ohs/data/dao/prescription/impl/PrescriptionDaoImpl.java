@@ -55,9 +55,6 @@ public class PrescriptionDaoImpl implements PrescriptionDao {
                 throw new SQLException("No prescription row was saved.");
             }
             return prescription;
-        } catch (SQLException ex) {
-            throw new SQLException(
-                    "Could not save prescription: " + ex.getMessage(), ex);
         }
     }
 
@@ -89,13 +86,9 @@ public class PrescriptionDaoImpl implements PrescriptionDao {
                             toPrescription(resultSet, consultationId));
                 }
             }
-        } catch (SQLException ex) {
-            throw new SQLException(
-                    "Could not read prescriptions: " + ex.getMessage(), ex);
         }
         return prescriptions;
     }
-
 
     /**
      * Maps one prescription row to a {@link Prescription}.
