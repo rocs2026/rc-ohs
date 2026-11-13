@@ -76,7 +76,7 @@ public class MedicineStockDaoImplTest {
     }
 
     /**
-     * RCISD-5-TC8.
+     * Testing Remaining Stock.
      */
 
     @Test
