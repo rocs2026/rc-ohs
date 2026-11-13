@@ -149,7 +149,6 @@ create table referral (
     id  varchar2(36) not null
     ,consultation_id      varchar2(36) null
     ,personnel_id         varchar2(36) not null
-    ,referred_to          varchar2(255) not null
     ,reason_for           varchar2(4000) not null
 );
 -- create table constraints
@@ -504,10 +503,10 @@ insert into prescription (id, consultation_id, medicine_stock_id, personnel_id, 
 values ('71525039-9ceb-4b7b-b295-ce151a53678d', 'a451a504-a3d4-4721-bf8d-a18b8c199356', '70aaf305-a7f5-41f1-bd0a-6ad73c042be9', '64ffaffe-79b5-4690-bbd4-587507b6859c', 2, '500mg', '3 times a day', 'Finish all capsules');
 
 
-insert into referral (id, consultation_id, personnel_id, referred_to, reason_for)
-values ('e72e373a-dfce-4718-b2b7-de3c38c4f17b', 'a451a504-a3d4-4721-bf8d-a18b8c199356', '64ffaffe-79b5-4690-bbd4-587507b6859c', 'Ospital ng Tagaytay', 'Persistent cough and fever');
-insert into referral (id, consultation_id, personnel_id, referred_to, reason_for)
-values ('b5ec3096-3fce-4735-89d9-c96e6ea7317c', null, '64ffaffe-79b5-4690-bbd4-587507b6859c', 'Ospital ng Tagaytay', 'For further Medical Evaluation');
+insert into referral (id, consultation_id, personnel_id, reason_for)
+values ('e72e373a-dfce-4718-b2b7-de3c38c4f17b', 'a451a504-a3d4-4721-bf8d-a18b8c199356', '64ffaffe-79b5-4690-bbd4-587507b6859c', 'Persistent cough and fever');
+insert into referral (id, consultation_id, personnel_id, reason_for)
+values ('b5ec3096-3fce-4735-89d9-c96e6ea7317c', null, '64ffaffe-79b5-4690-bbd4-587507b6859c', 'For further Medical Evaluation');
 
 -- create join, view, index, procedure, function
 create function fn_remaining_stock (p_medicine_stock_id in varchar2)
