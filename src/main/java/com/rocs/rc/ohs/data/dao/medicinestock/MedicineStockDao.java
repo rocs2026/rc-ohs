@@ -5,38 +5,47 @@ import com.rocs.rc.ohs.app.model.medicine.MedicineStock;
 import java.util.List;
 
 /**
- * Defines the data access operations for the medicine stock inventory.
+ * Handles data access operations for medicine stock inventory.
  */
 public interface MedicineStockDao {
 
     /**
-     * Retrieves all medicine stocks with their current quantities.
+     * Gets all medicine stocks with their details.
      *
-     * @return The list of {@link MedicineStock}, or an empty list if none.
+     * @return The list of medicine stocks, or an empty list if none exist.
      */
     List<MedicineStock> findAll();
 
     /**
-     * Retrieves the medicine stock with the given id.
+     * Gets a medicine stock using its id.
      *
      * @param id The id of the medicine stock.
-     * @return The {@link MedicineStock}, or null if it is not found.
+     * @return The medicine stock, or null if not found.
      */
     MedicineStock findById(String id);
 
     /**
-     * Retrieves the medicine stocks that reached their minimum stock level.
+     * Gets medicine stocks that reached the minimum stock level.
      *
-     * @return The list of low stock {@link MedicineStock}.
+     * @return The list of low stock medicine items.
      */
     List<MedicineStock> findLowStock();
 
     /**
-     * Updates the received quantity of a medicine stock.
+     * Searches medicine stocks by name, ignoring uppercase and lowercase.
+     * Returns all stocks if the keyword is empty or null.
+     *
+     * @param keyword The medicine name or part of it.
+     * @return The matching medicine stocks, or an empty list if none match.
+     */
+    List<MedicineStock> search(String keyword);
+
+    /**
+     * Updates the quantity of a medicine stock.
      *
      * @param id The id of the medicine stock.
      * @param quantity The new quantity, which must not be negative.
-     * @return true if the quantity was saved.
+     * @return true if the update was successful.
      * @throws IllegalArgumentException if the quantity is negative or lower
      *         than the quantity already dispensed.
      */
