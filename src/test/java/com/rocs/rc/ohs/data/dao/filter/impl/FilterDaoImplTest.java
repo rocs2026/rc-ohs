@@ -37,30 +37,30 @@ import static org.mockito.Mockito.when;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class FilterDaoImplTest {
 
-    /*
+    /**
      * database connection.
      */
     @Mock
     private Connection connection;
 
-    /*
+    /**
      * prepared statement.
      */
     @Mock
     private PreparedStatement statement;
 
-    /*
+    /**
      * result set.
      */
     @Mock
     private ResultSet resultSet;
 
-    /*
+    /**
      * static connection helper.
      */
     private MockedStatic<ConnectionHelper> connectionHelper;
 
-    /*
+    /**
      * Data access layer of test
      */
     private FilterDaoImpl filterDao;
