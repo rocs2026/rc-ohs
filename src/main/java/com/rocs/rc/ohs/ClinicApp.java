@@ -105,7 +105,65 @@ public final class ClinicApp {
         // consultationMenu(sc);
 
     }
-
+//    /**
+//     * Opens a db connection and starts the update
+//     * med record flow.
+//     *
+//     * @param scanner the scanner used to read input.
+//     */
+//    private static void runUpdateMedicalRecord(Scanner scanner) {
+//        try (Connection connection = ConnectionHelper.getConnection()) {
+//            MedicalRecordDao dao = new MedicalRecordDaoImpl(connection);
+//            MedicalRecordFacade facade = new MedicalRecordFacadeImpl(dao);
+//            updateMedicalRecord(scanner, facade);
+//        } catch (SQLException e) {
+//            System.out.println("Unable to connect to the database. ");
+//        }
+//    }
+//
+//    /**
+//     * User input and updates med record if confirmed.
+//     *
+//     * @param scanner input scanner.
+//     *
+//     * @param medicalRecordFacade facade for updating records.
+//     */
+//    private static void updateMedicalRecord(
+//            Scanner scanner, MedicalRecordFacade medicalRecordFacade) {
+//
+//        System.out.print("MEDICAL RECORD ID: ");
+//        String id = scanner.nextLine();
+//        if (id.isBlank()) {
+//            System.out.println("Please enter medical record id");
+//            return;
+//        }
+//
+//
+//        System.out.print("MEDICAL CONDITION: ");
+//        String medicalConditions = scanner.nextLine();
+//        System.out.print("ALLERGIES: ");
+//        String allergies = scanner.nextLine();
+//
+//        System.out.print("Save changes? (Yes/No): ");
+//        String choice = scanner.nextLine();
+//        if (!choice.equalsIgnoreCase("Yes")) {
+//            System.out.println("Changes discarded. ");
+//            return;
+//        }
+//
+//        MedicalRecord medicalRecord = new MedicalRecord();
+//        medicalRecord.setId(id);
+//        medicalRecord.setMedicalConditions(medicalConditions);
+//        medicalRecord.setAllergies(allergies);
+//
+//        if (medicalRecordFacade.updateMedicalRecord(medicalRecord)) {
+//            System.out.println("Medical record updated.");
+//        } else {
+//            System.out.println("No medical record found. ");
+//        }
+//
+//    }
+//
     // /**
     //  * Resets a forgotten password after
     //  * verifying the email and username.
