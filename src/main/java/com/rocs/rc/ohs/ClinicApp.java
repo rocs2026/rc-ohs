@@ -67,118 +67,87 @@
             String username = sc.nextLine();
             System.out.print("PASSWORD: ");
             String password = sc.nextLine();
-    
+
             if (username.isEmpty()) {
                 System.out.println("Please enter username ");
                 return;
             }
-    
+
             if (password.isEmpty()) {
                 System.out.println("Please enter password");
                 return;
             }
-    
+
             Login login = loginFacade.login(username, password);
             if (login == null) {
                 System.out.println("Invalid username");
                 return;
             }
-    
+
             if (!password.equals(login.getPassword())) {
                 System.out.println("Invalid password");
                 return;
             }
-    
+
             System.out.println("Login successful");
-    
+
 //            searchMedicalRecords(sc);
         }
-    
+
 //        /**
-//         * Asks for a patient ID or name, searches, and shows the results until
-//         * the user types exit.
+//         * Searches for medical records and prints the results.
 //         *
-//         * @param sc the scanner used to read the user's input
+//         * @param sc the scanner used to read input
 //         */
 //        private static void searchMedicalRecords(Scanner sc) {
-//            MedicalRecordFacade facade = new MedicalRecordFacadeImpl();
-//            boolean running = true;
+//            System.out.print("Enter patient ID or name: ");
+//            String keyword = sc.nextLine().trim();
 //
-//            while (running) {
-//                System.out.print(
-//                        "Enter patient ID or name (type exit to quit): ");
-//                String input = sc.nextLine().trim();
-//
-//                if (EXIT_COMMAND.equalsIgnoreCase(input)) {
-//                    running = false;
-//                } else if (!input.isEmpty()) {
-//                    showResults(facade, input);
-//                }
+//            if (keyword.isEmpty()) {
+//                return;
 //            }
-//        }
 //
-//        /**
-//         * Searches for the keyword and prints the results, or a message when
-//         * nothing is found.
-//         *
-//         * @param facade the facade used to search
-//         * @param keyword the text to search for
-//         */
-//        private static void showResults(
-//                MedicalRecordFacade facade, String keyword) {
 //            try {
+//                MedicalRecordFacade facade = new MedicalRecordFacadeImpl();
 //                List<MedicalRecordDTO> records = facade.search(keyword);
 //
 //                if (records.isEmpty()) {
 //                    System.out.println("No record found");
-//                } else {
-//                    System.out.println(records.size() + " result(s) found");
-//                    for (MedicalRecordDTO record : records) {
-//                        printRecord(record);
-//                    }
+//                    return;
+//                }
+//
+//                System.out.println(records.size() + " result(s) found");
+//                for (MedicalRecordDTO r : records) {
+//                    String pId = r.getPatientId();
+//                    System.out.println("Patient ID         : "
+//                            + (pId == null ? "N/A" : pId));
+//                    String name = (r.getFirstName() == null ? "N/A"
+//                            : r.getFirstName()) + " "
+//                            + (r.getLastName() == null ? "N/A"
+//                            : r.getLastName());
+//                    System.out.println("Name               : " + name);
+//                    String cond = r.getMedicalConditions();
+//                    System.out.println("Medical conditions : "
+//                            + (cond == null ? "N/A" : cond));
+//                    String alg = r.getAllergies();
+//                    System.out.println("Allergies          : "
+//                            + (alg == null ? "N/A" : alg));
+//                    Object date = r.getConsultationDate();
+//                    System.out.println("Consultation date  : "
+//                            + (date == null ? "N/A" : date));
+//                    String diag = r.getDiagnosis();
+//                    System.out.println("Diagnosis          : "
+//                            + (diag == null ? "N/A" : diag));
+//                    String treat = r.getTreatment();
+//                    System.out.println("Treatment          : "
+//                            + (treat == null ? "N/A" : treat));
 //                }
 //            } catch (RuntimeException e) {
 //                System.out.println("Unable to search right now: "
 //                        + e.getMessage());
 //            }
 //        }
-//
-//        /**
-//         * Prints one patient with the medical record and consultation details.
-//         *
-//         * @param record the record to print
-//         */
-//        private static void printRecord(MedicalRecordDTO record) {
-//            System.out.println("----------------------------------------");
-//            System.out.println("Patient ID         : "
-//                    + show(record.getPatientId()));
-//            System.out.println("Name               : "
-//                    + show(record.getFirstName()) + " "
-//                    + show(record.getMiddleName()) + " "
-//                    + show(record.getLastName()));
-//            System.out.println("Medical conditions : "
-//                    + show(record.getMedicalConditions()));
-//            System.out.println("Allergies          : "
-//                    + show(record.getAllergies()));
-//            System.out.println("Consultation date  : "
-//                    + show(record.getConsultationDate()));
-//            System.out.println("Complaint          : "
-//                    + show(record.getComplaint()));
-//            System.out.println("Diagnosis          : "
-//                    + show(record.getDiagnosis()));
-//            System.out.println("Treatment          : "
-//                    + show(record.getTreatment()));
-//        }
-//
-//        /**
-//         * Converts a value to text, using a placeholder when it is missing.
-//         *
-//         * @param value the value to show
-//         * @return the value as text, or a placeholder if it is null
-//         */
-//        private static String show(Object value) {
-//            return value == null ? NOT_AVAILABLE : value.toString();
-            // consultationMenu(sc);
+
     
         }
     
