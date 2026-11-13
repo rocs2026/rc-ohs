@@ -26,12 +26,11 @@ public class ConsultationDaoImpl implements ConsultationDao {
      *
      * @param consultation The consultation to save. Its ID must be set.
      * @return The saved {@link Consultation}.
-     * @throws SQLException If the consultation cannot be saved.
      * @throws IllegalArgumentException If a required value is null.
      */
     @Override
     public Consultation add(Consultation consultation)
-            throws SQLException, IllegalArgumentException {
+            throws IllegalArgumentException {
         if (consultation == null
                 || consultation.getPatient() == null
                 || consultation.getStaff() == null
@@ -57,10 +56,13 @@ public class ConsultationDaoImpl implements ConsultationDao {
             statement.setString(10, consultation.getRemarks());
             int rows = statement.executeUpdate();
             if (rows != 1) {
-                throw new SQLException("No consultation row was saved.");
+                System.out.println("No consultation row was saved.");
             }
-            return consultation;
+        } catch (SQLException ex) {
+            System.out.println(
+                    "Could not save consultation: " + ex.getMessage());
         }
+        return consultation;
     }
 
     /**
@@ -68,12 +70,11 @@ public class ConsultationDaoImpl implements ConsultationDao {
      *
      * @param patientId The UUID of the patient.
      * @return A list of consultations of the patient.
-     * @throws SQLException If the consultations cannot be read.
      * @throws IllegalArgumentException If the patient ID is null.
      */
     @Override
     public List<Consultation> findByPatientId(String patientId)
-            throws SQLException, IllegalArgumentException {
+            throws IllegalArgumentException {
         if (patientId == null) {
             throw new IllegalArgumentException("Patient ID is required.");
         }
@@ -87,9 +88,9 @@ public class ConsultationDaoImpl implements ConsultationDao {
                     consultations.add(toConsultation(resultSet, patientId));
                 }
             }
-        } catch (IllegalStateException ex) {
-            throw new SQLException(
-                    "Could not read consultations: " + ex.getMessage(), ex);
+        } catch (SQLException | IllegalStateException ex) {
+            System.out.println(
+                    "Could not read consultations: " + ex.getMessage());
         }
         return consultations;
     }

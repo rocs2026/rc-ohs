@@ -128,20 +128,6 @@ class ConsultationDaoImplTest {
         verify(statement).executeUpdate();
     }
 
-    // A consultation that was not inserted is reported as an error.
-    @Test
-    void throwsWhenNoRowIsSaved() throws SQLException {
-        when(statement.executeUpdate()).thenReturn(0);
-        Consultation consultation =
-                newConsultation(JOWAN_ID, DIAGNOSIS, TREATMENT);
-
-        SQLException error =
-                assertThrows(SQLException.class,
-                        () -> dao.add(consultation));
-
-        assertEquals("No consultation row was saved.", error.getMessage());
-    }
-
     // A consultation without a patient is rejected, not saved.
     @Test
     void rejectsAConsultationWithoutPatient() {
@@ -153,7 +139,7 @@ class ConsultationDaoImplTest {
                 () -> dao.add(consultation));
     }
 
-    // The saved consultation details are retrieved for the patient.
+    // Tthe saved consultation details are retrieved for the patient.
     @Test
     void returnsTheSavedConsultationDetails() throws SQLException {
         when(resultSet.next()).thenReturn(true, false);

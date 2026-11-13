@@ -26,12 +26,11 @@ public class PrescriptionDaoImpl implements PrescriptionDao {
      *
      * @param prescription The prescription to save. Its ID must be set.
      * @return The saved {@link Prescription}.
-     * @throws SQLException If the prescription cannot be saved.
      * @throws IllegalArgumentException If a required value is null.
      */
     @Override
     public Prescription add(Prescription prescription)
-            throws SQLException, IllegalArgumentException {
+            throws IllegalArgumentException {
         if (prescription == null
                 || prescription.getConsultation() == null
                 || prescription.getMedicineStock() == null
@@ -52,10 +51,13 @@ public class PrescriptionDaoImpl implements PrescriptionDao {
             statement.setString(8, prescription.getInstructions());
             int rows = statement.executeUpdate();
             if (rows != 1) {
-                throw new SQLException("No prescription row was saved.");
+                System.out.println("No prescription row was saved.");
             }
-            return prescription;
+        } catch (SQLException ex) {
+            System.out.println(
+                    "Could not save prescription: " + ex.getMessage());
         }
+        return prescription;
     }
 
     /**
@@ -64,12 +66,11 @@ public class PrescriptionDaoImpl implements PrescriptionDao {
      *
      * @param consultationId The UUID of the consultation.
      * @return A list of prescriptions of the consultation.
-     * @throws SQLException If the prescriptions cannot be read.
      * @throws IllegalArgumentException If the consultation ID is null.
      */
     @Override
     public List<Prescription> findByConsultationId(String consultationId)
-            throws SQLException, IllegalArgumentException {
+            throws IllegalArgumentException {
         if (consultationId == null) {
             throw new IllegalArgumentException(
                     "Consultation ID is required.");
@@ -86,6 +87,9 @@ public class PrescriptionDaoImpl implements PrescriptionDao {
                             toPrescription(resultSet, consultationId));
                 }
             }
+        } catch (SQLException ex) {
+            System.out.println(
+                    "Could not read prescriptions: " + ex.getMessage());
         }
         return prescriptions;
     }

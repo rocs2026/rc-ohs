@@ -11,7 +11,6 @@ import com.rocs.rc.ohs.data.dao.prescription.PrescriptionDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -72,8 +71,7 @@ class ConsultationFacadeImplTest {
 
     // The consultation and its prescription are saved.
     @Test
-    void savesTheConsultationWithItsPrescriptions()
-            throws SQLException {
+    void savesTheConsultationWithItsPrescriptions() {
         Consultation consultation =
                 newConsultation(null, DIAGNOSIS, TREATMENT);
         Prescription prescription =
@@ -102,8 +100,7 @@ class ConsultationFacadeImplTest {
 
     // The saved consultations of the patient are retrieved.
     @Test
-    void returnsTheSavedConsultationsOfThePatient()
-            throws SQLException {
+    void returnsTheSavedConsultationsOfThePatient() {
         Consultation consultation =
                 newConsultation(CONSULTATION_ID, DIAGNOSIS, TREATMENT);
         Prescription prescription =

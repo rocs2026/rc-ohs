@@ -17,7 +17,8 @@ public interface ConsultationFacade {
      * @param consultation The consultation to save.
      * @param prescriptions The prescriptions of the consultation.
      * @return The saved {@link Consultation} with its generated ID, or
-     *         null if it could not be saved.
+     *         null if a required value is missing or it could not be
+     *         saved.
      */
     Consultation saveConsultation(Consultation consultation,
                                   List<Prescription> prescriptions);

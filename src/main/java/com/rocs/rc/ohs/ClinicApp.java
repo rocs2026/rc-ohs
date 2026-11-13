@@ -85,8 +85,6 @@ public final class ClinicApp {
     //             recordConsultation(sc, facade);
     //         } else if ("2".equals(choice)) {
     //             viewConsultations(sc, facade);
-    //         } else if (!"0".equals(choice)) {
-    //             System.out.println("Invalid choice.");
     //         }
     //     }
     // }
@@ -94,28 +92,21 @@ public final class ClinicApp {
     // private static void viewConsultations(Scanner sc,
     //                                       ConsultationFacade facade) {
     //     try {
-    //         List<Consultation> consultations =
-    //                 facade.getConsultationsByPatient(ask(sc, "Patient ID"));
-    //         if (consultations.isEmpty()) {
-    //             System.out.println("No consultations found.");
-    //         }
+    //         List<Consultation> consultations = facade
+    //                 .getConsultationsByPatient(ask(sc, "Patient ID"));
     //         for (Consultation c : consultations) {
     //             System.out.println(c.getConsultationDate() + " | "
     //                     + c.getDiagnosis() + " | " + c.getTreatment());
     //             for (Prescription p
     //                     : facade.getPrescriptionsByConsultation(c.getId())) {
-    //                 String medName = (p.getMedicineStock() != null
-    //                         && p.getMedicineStock().getMedicine() != null)
-    //                         ? p.getMedicineStock().getMedicine()
-    //                                 .getMedicineName()
-    //                         : "Unknown medicine";
-    //                 System.out.println("    " + medName + " | "
+    //                 System.out.println("    " + p.getMedicineStock()
+    //                         .getMedicine().getMedicineName() + " | "
     //                         + p.getDose() + " | " + p.getFrequency()
     //                         + " | qty " + p.getQuantityToDispense());
     //             }
     //         }
     //     } catch (IllegalArgumentException ex) {
-    //         System.out.println(ex.getMessage());
+    //         System.out.println("Cannot show records: " + ex.getMessage());
     //     }
     // }
     //
@@ -148,14 +139,14 @@ public final class ClinicApp {
     //                     Integer.parseInt(ask(sc, "Quantity to dispense")));
     //             prescriptions.add(prescription);
     //         }
-    //     } catch (DateTimeParseException | NumberFormatException ex) {
-    //         System.out.println("Invalid date or quantity.");
-    //         return;
-    //     }
-    //     if (facade.saveConsultation(consultation, prescriptions) == null) {
-    //         System.out.println("Could not save. Check the IDs and details.");
-    //     } else {
-    //         System.out.println("Consultation saved.");
+    //         if (facade.saveConsultation(consultation, prescriptions)
+    //                 == null) {
+    //             System.out.println("Could not save. Check the IDs.");
+    //         } else {
+    //             System.out.println("Consultation saved.");
+    //         }
+    //     } catch (DateTimeParseException | IllegalArgumentException ex) {
+    //         System.out.println("Invalid input: " + ex.getMessage());
     //     }
     // }
     //

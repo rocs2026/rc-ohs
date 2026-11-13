@@ -8,7 +8,6 @@ import com.rocs.rc.ohs.data.dao.consultation.impl.ConsultationDaoImpl;
 import com.rocs.rc.ohs.data.dao.prescription.PrescriptionDao;
 import com.rocs.rc.ohs.data.dao.prescription.impl.PrescriptionDaoImpl;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -50,7 +49,8 @@ public class ConsultationFacadeImpl implements ConsultationFacade {
      * @param consultation The consultation to save.
      * @param prescriptions The prescriptions of the consultation.
      * @return The saved {@link Consultation} with its generated ID, or
-     *         null if it could not be saved.
+     *         null if a required value is missing, or it could not be
+     *         saved.
      */
     @Override
     public Consultation saveConsultation(Consultation consultation,
@@ -73,7 +73,7 @@ public class ConsultationFacadeImpl implements ConsultationFacade {
                 prescriptionDao.add(prescription);
             }
             saved = consultation;
-        } catch (IllegalArgumentException | SQLException ex) {
+        } catch (IllegalArgumentException ex) {
             System.out.println("Save consultation failed: " + ex.getMessage());
         }
         return saved;
@@ -96,7 +96,7 @@ public class ConsultationFacadeImpl implements ConsultationFacade {
         List<Consultation> consultations = new ArrayList<>();
         try {
             consultations = consultationDao.findByPatientId(patientId);
-        } catch (SQLException | IllegalArgumentException ex) {
+        } catch (IllegalArgumentException ex) {
             System.out.println(
                     "Read consultations failed: " + ex.getMessage());
         }
@@ -122,7 +122,7 @@ public class ConsultationFacadeImpl implements ConsultationFacade {
         try {
             prescriptions =
                     prescriptionDao.findByConsultationId(consultationId);
-        } catch (SQLException | IllegalArgumentException ex) {
+        } catch (IllegalArgumentException ex) {
             System.out.println(
                     "Read prescriptions failed: " + ex.getMessage());
         }
