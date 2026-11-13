@@ -27,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -41,46 +40,27 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class MedicalRecordDaoImplTest {
 
-    /** The ID of the medical record used in tests. */
     private static final String RECORD_ID =
             "4e49eb71-3481-476b-b6ba-5662a48df1e5";
 
-    /** The ID of the patient used in tests. */
     private static final String PATIENT_ID =
             "ea67a306-d343-4847-b204-c92f2d4cc9e0";
 
-    /** The ID of the consultation used in tests. */
     private static final String CONSULTATION_ID =
             "a451a504-a3d4-4721-bf8d-a18b8c199356";
 
-    /** Mock connection. */
     @Mock
     private Connection connection;
 
-    /** Mock statement. */
     @Mock
     private PreparedStatement statement;
 
-    /** The DAO under test. */
     private MedicalRecordDaoImpl medicalRecordDao;
-
-    /** Static connection helper used in tests. */
     private MockedStatic<ConnectionHelper> connectionHelper;
-
-    /** Prepared statement for finding medical records. */
     private PreparedStatement findRecords;
-
-    /** Prepared statement for adding a medical record. */
     private PreparedStatement insertRecord;
-
-    /** Result set containing medical record information. */
     private ResultSet recordResult;
 
-    /**
-     * Prepares the DAO and mocked database objects before each test.
-     *
-     * @throws SQLException if the statement cannot be prepared.
-     */
     @BeforeEach
     void setUp() throws SQLException {
         when(connection.prepareStatement(anyString()))
@@ -99,20 +79,17 @@ class MedicalRecordDaoImplTest {
                 .thenReturn(connection);
     }
 
-    /**
-     * Closes the mocked static connection helper after each test.
-     */
     @AfterEach
     void tearDown() {
         connectionHelper.close();
     }
 
     /**
-     * Builds a medical record with its ID and medical conditions.
+     * Creates a record for update tests.
      *
-     * @param id the ID of the medical record.
-     * @param conditions the medical conditions of the patient.
-     * @return the medical record.
+     * @param id the record ID.
+     * @param conditions the medical conditions.
+     * @return the prepared record.
      */
     private MedicalRecord buildRecord(String id, String conditions) {
         MedicalRecord record = new MedicalRecord();
@@ -122,11 +99,11 @@ class MedicalRecordDaoImplTest {
     }
 
     /**
-     * Builds a medical record with patient and consultation information.
+     * Creates a record with patient and optional consultation details.
      *
-     * @param id the ID of the medical record.
-     * @param consultationId the ID of the consultation.
-     * @return the medical record.
+     * @param id the record ID.
+     * @param consultationId the consultation ID, if available.
+     * @return the prepared record.
      */
     private MedicalRecord newMedicalRecord(
             String id, String consultationId) {
@@ -151,7 +128,7 @@ class MedicalRecordDaoImplTest {
     }
 
     /**
-     * Prepares the mocked result set with medical record information.
+     * Sets up the values returned by the mocked result set.
      *
      * @param consultationId the consultation ID.
      * @throws SQLException if a database value cannot be read.
@@ -166,14 +143,8 @@ class MedicalRecordDaoImplTest {
         when(recordResult.getString("allergies")).thenReturn("Peanuts");
     }
 
-    /**
-     * TESTCASE1: Should return false if no ID exists.
-     *
-     * @throws SQLException if the SQL query update fails.
-     */
     @Test
-    void updateMedicalRecordWhenIdReturnsNothingReturnsFalse()
-            throws SQLException {
+    void updateReturnsFalseWhenIdIsNotFound() throws SQLException {
         String allisonId = "ea67a306-d343-4847-b204-c92f2d4cc90";
         String jowanConditions = "Hypertension";
 
@@ -185,14 +156,8 @@ class MedicalRecordDaoImplTest {
         assertFalse(result);
     }
 
-    /**
-     * TC2: Returns false if name has no match.
-     *
-     * @throws SQLException if database connection has an error.
-     */
     @Test
-    void updateMedicalRecordWhenNameReturnsNothingReturnsFalse()
-            throws SQLException {
+    void updateReturnsFalseWhenNoRecordMatches() throws SQLException {
         String allisonId = "ea67a306-d343-4847-b204-c92f2d4cc9e0";
         String jowanConditions = "Hypertension";
 
@@ -204,14 +169,8 @@ class MedicalRecordDaoImplTest {
         assertFalse(result);
     }
 
-    /**
-     * TC3: Returns true when update is successful for single ID.
-     *
-     * @throws SQLException if the update has failed.
-     */
     @Test
-    void updateMedicalRecordWhenIdReturnsSingleResultReturnsTrue()
-            throws SQLException {
+    void updateReturnsTrueForOneUpdatedRecord() throws SQLException {
         String jowanId = RECORD_ID;
         String jowanConditions = "Hypertension";
 
@@ -223,14 +182,8 @@ class MedicalRecordDaoImplTest {
         assertTrue(result);
     }
 
-    /**
-     * TC4: Check if update returns true using name parameter.
-     *
-     * @throws SQLException if SQL parameters are wrong.
-     */
     @Test
-    void updateMedicalRecordWhenNameReturnsSingleResultReturnsTrue()
-            throws SQLException {
+    void updateReturnsTrueForAnotherMatchingRecord() throws SQLException {
         String antonioId = "669ce09d-4086-4497-a76e-8cb9afe2b635";
         String antonioConditions = "Asthma";
 
@@ -242,14 +195,8 @@ class MedicalRecordDaoImplTest {
         assertTrue(result);
     }
 
-    /**
-     * TC7: Update should work even if chosen from multiple search results.
-     *
-     * @throws SQLException if table update cannot process data.
-     */
     @Test
-    void updateMedicalRecordWhenSelectedFromMultipleResultsReturnsTrue()
-            throws SQLException {
+    void updateWorksForASelectedSearchResult() throws SQLException {
         String jowanId = "4e49b71-3481-476b-b6ba-5662a48df1e5";
         String jowanConditions = "Hypertension";
 
@@ -261,14 +208,8 @@ class MedicalRecordDaoImplTest {
         assertTrue(result);
     }
 
-    /**
-     * TC9: Verify that correct values are actually passed to the statement.
-     *
-     * @throws SQLException if verification fails.
-     */
     @Test
-    void updateMedicalRecordWhenUpdatedSendsNewValuesToDatabase()
-            throws SQLException {
+    void updateUsesTheCorrectValues() throws SQLException {
         String jowanId = RECORD_ID;
         String jowanConditions = "Hypertension";
 
@@ -283,15 +224,8 @@ class MedicalRecordDaoImplTest {
         verify(statement).executeUpdate();
     }
 
-    /**
-     * Tests adding records with and without a consultation.
-     *
-     * @throws SQLException if the database operation fails.
-     */
     @Test
-    void addMedicalRecordStoresRecordsWithAndWithoutConsultation()
-            throws SQLException {
-
+    void addWorksWithAndWithoutConsultation() throws SQLException {
         when(connection.prepareStatement(
                 QueryConstants.ADD_MEDICAL_RECORD_STATEMENT))
                 .thenReturn(insertRecord);
@@ -317,15 +251,8 @@ class MedicalRecordDaoImplTest {
         verify(insertRecord).setNull(3, Types.VARCHAR);
     }
 
-    /**
-     * Tests invalid records and unsuccessful insert operations.
-     *
-     * @throws SQLException if the database operation fails.
-     */
     @Test
-    void addMedicalRecordRejectsInvalidOrUnsuccessfulRecords()
-            throws SQLException {
-
+    void addRejectsInvalidRecordsAndFailedInserts() throws SQLException {
         MedicalRecord noPatient = newMedicalRecord(RECORD_ID, null);
         noPatient.setPatient(null);
 
@@ -354,20 +281,13 @@ class MedicalRecordDaoImplTest {
                 newMedicalRecord(RECORD_ID, CONSULTATION_ID)));
     }
 
-    /**
-     * Tests finding a medical record by ID.
-     *
-     * @throws SQLException if the database operation fails.
-     */
     @Test
-    void findByIdHandlesFoundMissingAndFailedQueries()
-            throws SQLException {
-
+    void findByIdReturnsRecordWhenFound() throws SQLException {
         when(connection.prepareStatement(
                 QueryConstants.GET_MEDICAL_RECORD_BY_ID_STATEMENT))
                 .thenReturn(findRecords);
 
-        when(recordResult.next()).thenReturn(true, false);
+        when(recordResult.next()).thenReturn(true);
         stubRow(CONSULTATION_ID);
 
         MedicalRecord record = medicalRecordDao.findById(RECORD_ID);
@@ -381,10 +301,24 @@ class MedicalRecordDaoImplTest {
         assertEquals("Peanuts", record.getAllergies());
 
         verify(findRecords).setString(1, RECORD_ID);
+    }
+
+    @Test
+    void findByIdReturnsNullWhenRecordIsMissing() throws SQLException {
+        when(connection.prepareStatement(
+                QueryConstants.GET_MEDICAL_RECORD_BY_ID_STATEMENT))
+                .thenReturn(findRecords);
 
         when(recordResult.next()).thenReturn(false);
 
         assertNull(medicalRecordDao.findById("no-such-id"));
+    }
+
+    @Test
+    void findByIdReturnsNullWhenQueryFails() throws SQLException {
+        when(connection.prepareStatement(
+                QueryConstants.GET_MEDICAL_RECORD_BY_ID_STATEMENT))
+                .thenReturn(findRecords);
 
         doThrow(new SQLException("failed"))
                 .when(findRecords).executeQuery();
@@ -392,15 +326,8 @@ class MedicalRecordDaoImplTest {
         assertNull(medicalRecordDao.findById(RECORD_ID));
     }
 
-    /**
-     * Tests finding all medical records belonging to a patient.
-     *
-     * @throws SQLException if the database operation fails.
-     */
     @Test
-    void findByPatientIdReturnsRecordsOrAnEmptyList()
-            throws SQLException {
-
+    void findByPatientIdReturnsMatchingRecords() throws SQLException {
         when(connection.prepareStatement(
                 QueryConstants.GET_MEDICAL_RECORDS_BY_PATIENT_STATEMENT))
                 .thenReturn(findRecords);
@@ -416,5 +343,20 @@ class MedicalRecordDaoImplTest {
         assertEquals(PATIENT_ID, records.get(1).getPatient().getId());
 
         verify(findRecords).setString(1, PATIENT_ID);
+    }
+
+    @Test
+    void findByPatientIdReturnsEmptyListWhenNoRecordsExist()
+            throws SQLException {
+        when(connection.prepareStatement(
+                QueryConstants.GET_MEDICAL_RECORDS_BY_PATIENT_STATEMENT))
+                .thenReturn(findRecords);
+
+        when(recordResult.next()).thenReturn(false);
+
+        List<MedicalRecord> records =
+                medicalRecordDao.findByPatientId(PATIENT_ID);
+
+        assertTrue(records.isEmpty());
     }
 }
