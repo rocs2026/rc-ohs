@@ -93,7 +93,7 @@ public final class ClinicApp {
 
         // searchMedicalRecords(sc);
     }
-
+}
 /*
  * Searches for medical records and prints the results.
  *
