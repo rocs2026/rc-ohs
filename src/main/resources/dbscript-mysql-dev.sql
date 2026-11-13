@@ -173,6 +173,17 @@ create table prescription (
     check (quantity_to_dispense > 0)
 );
 
+create table referral (
+    id varchar(36) primary key,
+    patient_id varchar(36) null,
+    consultation_id varchar(36) null,
+    personnel_id varchar(36) not null,
+    referred_to varchar(255) null,
+    reason_for text not null,
+    foreign key (patient_id) references person (id),
+    foreign key (consultation_id) references consultation (id),
+    foreign key (personnel_id) references personnel (id)
+);
 -- create test data
 
 
@@ -214,6 +225,7 @@ insert into personnel (id, person_id, employee_id) values
 ('abef97b3-5a0a-400d-b70e-38c6ce10a11a', '43e90036-fb5e-4c31-8950-0b2951ad9d71', 'EMP-003'),
 ('033a2786-23b9-46ae-96fc-5bf81115669b', 'ba6c33c3-0833-4e25-b93e-b000e0027416', 'EMP-004'),
 ('7c2f912e-7bb2-4aea-b0f1-3c5b844c4015', '5a4b605d-21d2-42c2-a93e-86899fcc0c3f', 'EMP-005'),
+('b74de6ca-b83f-4c55-b896-9f517bbeac2f', 'b74de6ca-b83f-4c55-b896-9f517bbeac2f', 'EMP-006'),
 ('583ce499-4a13-40b2-86cc-1134e07fa7c8', '6e00132d-76c0-4c86-82c2-53ba0211aaf0', null);
 
 insert into personnel_position (personnel_id, position_id, department_id) values
@@ -261,6 +273,10 @@ insert into medicine_stock (id, medicine_id, personnel_id, batch_number, quantit
 insert into prescription (id, consultation_id, medicine_stock_id, personnel_id, quantity_to_dispense, dose, frequency, instructions) values
 ('be1215cb-d1f2-415b-ba58-c8510d6579b7', 'a451a504-a3d4-4721-bf8d-a18b8c199356', 'cff69d39-caa4-4a79-978b-8927f5b0c1a4', '64ffaffe-79b5-4690-bbd4-587507b6859c', 1, '500mg', 'Every 6 hours', 'Take after meals'),
 ('71525039-9ceb-4b7b-b295-ce151a53678d', 'a451a504-a3d4-4721-bf8d-a18b8c199356', '70aaf305-a7f5-41f1-bd0a-6ad73c042be9', '64ffaffe-79b5-4690-bbd4-587507b6859c', 2, '500mg', '3 times a day', 'Finish all capsules');
+
+insert into referral (id, patient_id ,consultation_id, personnel_id, referred_to, reason_for) values
+('e72e373a-dfce-4718-b2b7-de3c38c4f17b', 'f04cac48-889d-4a62-9a2b-a274406ece20' , 'a451a504-a3d4-4721-bf8d-a18b8c199356', '64ffaffe-79b5-4690-bbd4-587507b6859c', 'Ospital ng Tagaytay', 'Persistent cough and fever'),
+('b5ec3096-3fce-4735-89d9-c96e6ea7317c', null, null, '64ffaffe-79b5-4690-bbd4-587507b6859c', null, 'For further Medical Evaluation');
 
 -- create join, function, view, procedure
 delimiter $$
