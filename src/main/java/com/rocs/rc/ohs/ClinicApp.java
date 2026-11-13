@@ -32,11 +32,11 @@ import java.util.Scanner;
  */
 public final class ClinicApp {
 
-    //    /**
-//     * Prevents instantiation of this class.
-//     */
-//    private ClinicApp() {
-//    }
+    /**
+     * Prevents instantiation of this class.
+     */
+    private ClinicApp() {
+    }
 //
 //    /**
 //     * Runs the clinic application and logs in the user.
