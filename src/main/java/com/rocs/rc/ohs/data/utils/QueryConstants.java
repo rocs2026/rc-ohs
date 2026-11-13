@@ -1,3 +1,4 @@
+
 package com.rocs.rc.ohs.data.utils;
 
 /**
@@ -18,6 +19,82 @@ public final class QueryConstants {
             "UPDATE medical_record "
                     + "SET medical_conditions = ?, allergies = ? "
                     + "WHERE id = ?";
+
+    /**
+     * Selects all medicine.
+     */
+    public static final String SELECT_ALL_MEDICINE =
+            "SELECT medicine.id, medicine.medicine_name, "
+                    + "medicine.unit, medicine.category_id, "
+                    + "medicine_category.category_name "
+                    + "FROM medicine "
+                    + "LEFT JOIN medicine_category "
+                    + "ON medicine.category_id = medicine_category.id "
+                    + "ORDER BY medicine.medicine_name";
+
+    /**
+     * Selects medicine by ID.
+     */
+    public static final String SELECT_MEDICINE_BY_ID =
+            "SELECT medicine.id, medicine.medicine_name, "
+                    + "medicine.unit, medicine.category_id, "
+                    + "medicine_category.category_name "
+                    + "FROM medicine "
+                    + "LEFT JOIN medicine_category "
+                    + "ON medicine.category_id = medicine_category.id "
+                    + "WHERE medicine.id = ?";
+
+    /**
+     * Searches medicine by name.
+     */
+    public static final String SEARCH_MEDICINE =
+            "SELECT medicine.id, medicine.medicine_name, "
+                    + "medicine.unit, medicine.category_id, "
+                    + "medicine_category.category_name "
+                    + "FROM medicine "
+                    + "LEFT JOIN medicine_category "
+                    + "ON medicine.category_id = medicine_category.id "
+                    + "WHERE medicine.medicine_name LIKE ? "
+                    + "ORDER BY medicine.medicine_name";
+
+    /**
+     * Retrieves all medicine stocks and their remaining quantities
+     * using Wyne's database function.
+     */
+    public static final String SELECT_ALL_MEDICINE_STOCK =
+            "SELECT ms.id AS medicine_stock_id, m.id AS medicine_id, "
+                    + "m.medicine_name, mc.category_name, m.unit, "
+                    + "ms.batch_number, ms.quantity_received, "
+                    + "fn_remaining_stock(ms.id) AS remaining_quantity, "
+                    + "ms.expiration_date, ms.status "
+                    + "FROM medicine_stock ms "
+                    + "JOIN medicine m ON m.id = ms.medicine_id "
+                    + "LEFT JOIN medicine_category mc "
+                    + "ON mc.id = m.category_id "
+                    + "ORDER BY m.medicine_name";
+
+    /**
+     * Searches medicine stocks by medicine name or category.
+     */
+    public static final String SEARCH_MEDICINE_STOCK =
+            "SELECT ms.id AS medicine_stock_id, m.id AS medicine_id, "
+                    + "m.medicine_name, mc.category_name, m.unit, "
+                    + "ms.batch_number, ms.quantity_received, "
+                    + "fn_remaining_stock(ms.id) AS remaining_quantity, "
+                    + "ms.expiration_date, ms.status "
+                    + "FROM medicine_stock ms "
+                    + "JOIN medicine m ON m.id = ms.medicine_id "
+                    + "LEFT JOIN medicine_category mc "
+                    + "ON mc.id = m.category_id "
+                    + "WHERE m.medicine_name LIKE ? "
+                    + "OR mc.category_name LIKE ? "
+                    + "ORDER BY m.medicine_name";
+
+    /**
+     * Retrieves the remaining quantity of a medicine stock.
+     */
+    public static final String SELECT_REMAINING_STOCK =
+            "SELECT fn_remaining_stock(?) AS remaining_quantity FROM dual";
 
     /**
      * Saves a consultation when the clinic staff records a patient's
@@ -82,5 +159,4 @@ public final class QueryConstants {
                     + "and person_id in (select pe.id from person pe "
                     + "join personnel p on p.person_id = pe.id "
                     + "where lower(pe.email) = lower(?))";
-
 }
