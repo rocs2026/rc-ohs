@@ -12,6 +12,38 @@ public final class QueryConstants {
     }
 
     /**
+     * SQL query used to search persons by their names.
+     */
+    public static final String SELECT_BY_NAME_SQL =
+            "SELECT id, first_name, middle_name, last_name, email, "
+                    + "date_of_birth, gender, address, contact_number "
+                    + "FROM person "
+                    + "WHERE LOWER(first_name || ' ' || last_name) LIKE ? "
+                    + "OR LOWER(first_name || ' ' || middle_name || ' ' "
+                    + "|| last_name) LIKE ?";
+
+
+    /**
+     * Gets all medical records belonging to a patient.
+     */
+    public static final String GET_MEDICAL_RECORDS_BY_PATIENT_STATEMENT =
+            "SELECT mr.id, mr.patient_id, mr.consultation_id, "
+                    + "mr.medical_conditions, mr.allergies "
+                    + "FROM medical_record mr "
+                    + "INNER JOIN person p ON mr.patient_id = p.id "
+                    + "WHERE LOWER(p.first_name || ' ' || p.last_name) LIKE ?";
+
+    /**
+     * Saves a new medical record.
+     */
+    public static final String ADD_MEDICAL_RECORD_STATEMENT =
+            "INSERT INTO medical_record "
+                    + "(id, patient_id, consultation_id, "
+                    + "medical_conditions, allergies) "
+                    + "VALUES (?, ?, ?, ?, ?)";
+
+
+    /**
      * Updates the Medical record of a patient (med conditions, allergies).
      */
     public static final String UPDATE_MEDICAL_RECORD_STATEMENT =
