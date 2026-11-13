@@ -22,13 +22,19 @@ import java.util.Locale;
  */
 public class MedicineStockDaoImpl implements MedicineStockDao {
 
-    // Minimum remaining quantity before stock is considered low.
+    /**
+     * Minimum remaining quantity before stock is considered low.
+     */
     private static final int LOW_STOCK_LEVEL = 10;
 
-    // Status used when the remaining quantity is low.
+    /**
+     * Status used when the remaining quantity is low.
+     */
     private static final String STATUS_LOW_STOCK = "Low Stock";
 
-    // Status used when the remaining quantity is enough.
+    /**
+     * Status used when the remaining quantity is enough.
+     */
     private static final String STATUS_ENOUGH = "Enough";
 
     /**

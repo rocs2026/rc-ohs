@@ -1,3 +1,4 @@
+
 package com.rocs.rc.ohs.data.dao.medicinestock.impl;
 
 import com.rocs.rc.ohs.app.model.medicine.Medicine;
@@ -18,85 +19,100 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.startsWith;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+/**
+ * Tests the database operations for medicine stocks.
+ */
 class MedicineStockDaoImplTest {
 
-    // Index used to get Paracetamol test data.
+    /** Index used to get Paracetamol test data. */
     private static final int PARACETAMOL = 0;
 
-    // Index used to get Amoxicillin test data.
+    /** Index used to get Amoxicillin test data. */
     private static final int AMOXICILLIN = 1;
 
-    // Sample IDs for the medicine stock records.
+    /** Sample IDs for the medicine stock records. */
     private static final String[] STOCK_IDS = {
             "cff69d39-caa4-4a79-978b-8927f5b0c1a4",
             "70aaf305-a7f5-41f1-bd0a-6ad73c042be9"
     };
 
-    // IDs of the medicines linked to each stock.
+    /** IDs of the medicines linked to each stock. */
     private static final String[] MEDICINE_IDS = {
             "ebb3209c-50ea-4fbd-8b7e-be4540ab5b57",
             "36c00788-fcfd-485e-8ad3-de08fd49cb76"
     };
 
-    // Medicine names used when checking the returned records.
+    /** Medicine names used when checking the returned records. */
     private static final String[] MEDICINE_NAMES = {
             "Paracetamol 500mg", "Amoxicillin 500mg"
     };
 
-    // Units assigned to the sample medicines.
+    /** Units assigned to the sample medicines. */
     private static final String[] UNITS = {"tablet", "capsule"};
 
-    // Category IDs for the two sample medicines.
+    /** Category IDs for the two sample medicines. */
     private static final String[] CATEGORY_IDS = {
             "fde2280e-3564-4ced-87d5-a06454eec0b3",
             "e855961e-acf2-4bec-9262-30d1961d40b1"
     };
 
-    // Names of the medicine categories.
+    /** Names of the medicine categories. */
     private static final String[] CATEGORY_NAMES = {
             "Analgesic", "Antibiotic"
     };
 
-    // Batch numbers assigned to the sample stocks.
+    /** Batch numbers assigned to the sample stocks. */
     private static final String[] BATCH_NUMBERS = {"B-001", "B-002"};
 
-    // Expiration dates of the sample stocks.
+    /** Expiration dates of the sample stocks. */
     private static final String[] EXPIRATION_DATES = {
             "2027-12-31", "2027-06-30"
     };
 
-    // Default quantity received for each sample stock.
+    /** Default quantity received for each sample stock. */
     private static final int QUANTITY_RECEIVED = 50;
 
-    // Expected status when the remaining stock is enough.
+    /** Expected status when the remaining stock is enough. */
     private static final String STATUS_ENOUGH = "Enough";
 
-    // Used to mock the static database connection method.
+    /** Used to mock the static database connection method. */
     private MockedStatic<ConnectionHelper> connectionHelper;
 
-    // Mock database connection used by the DAO.
+    /** Mock database connection used by the DAO. */
     private Connection connection;
 
-    // Handles the medicine stock select queries.
+    /** Handles the medicine stock select queries. */
     private PreparedStatement statement;
 
-    // Holds the mocked medicine stock query results.
+    /** Holds the mocked medicine stock query results. */
     private ResultSet resultSet;
 
-    // Handles the query for the quantity already dispensed.
+    /** Handles the query for the quantity already dispensed. */
     private PreparedStatement dispensedStatement;
 
-    // Contains the result of the dispensed quantity query.
+    /** Contains the result of the dispensed quantity query. */
     private ResultSet dispensedResultSet;
 
-    // Handles updates made to medicine stock records.
+    /** Handles updates made to medicine stock records. */
     private PreparedStatement updateStatement;
 
-    // DAO being tested in this class.
+    /** DAO being tested in this class. */
     private MedicineStockDaoImpl dao;
 
     @BeforeEach
@@ -322,7 +338,8 @@ class MedicineStockDaoImplTest {
     }
 
     @Test
-    void findLowStockReturnsStocksUsingTheLowStockLevel() throws SQLException {
+    void findLowStockReturnsStocksUsingTheLowStockLevel()
+            throws SQLException {
 
         // Prepare a sample stock record for the low stock query.
         stubRows(AMOXICILLIN);
