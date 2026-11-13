@@ -3,7 +3,6 @@ package com.rocs.rc.ohs.data.dao.medicalrecord.impl;
 import com.rocs.rc.ohs.app.model.consultation.Consultation;
 import com.rocs.rc.ohs.app.model.medicalrecord.MedicalRecord;
 import com.rocs.rc.ohs.app.model.person.Person;
-import com.rocs.rc.ohs.data.connection.ConnectionHelper;
 import com.rocs.rc.ohs.data.dao.medicalrecord.MedicalRecordDao;
 import com.rocs.rc.ohs.data.utils.QueryConstants;
 
@@ -32,33 +31,6 @@ public class MedicalRecordDaoImpl implements MedicalRecordDao {
         this.connection = newConnection;
     }
 
-    /**
-     * Finds a medical record using its ID.
-     *
-     * @param id the record ID
-     * @return the medical record, or null if not found
-     */
-    @Override
-    public MedicalRecord findById(String id) {
-
-        try (Connection dbConnection = ConnectionHelper.getConnection();
-             PreparedStatement statement = dbConnection.prepareStatement(
-                     QueryConstants.GET_MEDICAL_RECORD_BY_ID_STATEMENT)) {
-
-            statement.setString(1, id);
-
-            try (ResultSet result = statement.executeQuery()) {
-                if (result.next()) {
-                    return toMedicalRecord(result);
-                }
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
 
     /**
      * Retrieves all medical records belonging to a patient.
@@ -70,9 +42,8 @@ public class MedicalRecordDaoImpl implements MedicalRecordDao {
     public List<MedicalRecord> findByPatientId(String patientId) {
         List<MedicalRecord> records = new ArrayList<>();
 
-        try (Connection dbConnection = ConnectionHelper.getConnection();
-             PreparedStatement statement = dbConnection.prepareStatement(
-                     QueryConstants.GET_MEDICAL_RECORDS_BY_PATIENT_STATEMENT)) {
+        try (PreparedStatement statement = connection.prepareStatement(
+                QueryConstants.GET_MEDICAL_RECORDS_BY_PATIENT_STATEMENT)) {
 
             statement.setString(1, patientId);
 
@@ -103,9 +74,8 @@ public class MedicalRecordDaoImpl implements MedicalRecordDao {
             return false;
         }
 
-        try (Connection dbConnection = ConnectionHelper.getConnection();
-             PreparedStatement statement = dbConnection.prepareStatement(
-                     QueryConstants.ADD_MEDICAL_RECORD_STATEMENT)) {
+        try (PreparedStatement statement = connection.prepareStatement(
+                QueryConstants.ADD_MEDICAL_RECORD_STATEMENT)) {
 
             statement.setString(1, medicalRecord.getId());
             statement.setString(2, medicalRecord.getPatient().getId());

@@ -1,4 +1,3 @@
-
 package com.rocs.rc.ohs.data.utils;
 
 /**
@@ -12,13 +11,17 @@ public final class QueryConstants {
     private QueryConstants() {
     }
 
-
     /**
-     * Gets a medical record using its ID.
+     * SQL query used to search persons by their names.
      */
-    public static final String GET_MEDICAL_RECORD_BY_ID_STATEMENT =
-            "SELECT id, patient_id, consultation_id, medical_conditions, "
-                    + "allergies FROM medical_record WHERE id = ?";
+    public static final String SELECT_BY_NAME_SQL =
+            "SELECT id, first_name, middle_name, last_name, email, "
+                    + "date_of_birth, gender, address, contact_number "
+                    + "FROM person "
+                    + "WHERE LOWER(first_name || ' ' || last_name) LIKE ? "
+                    + "OR LOWER(first_name || ' ' || middle_name || ' ' "
+                    + "|| last_name) LIKE ?";
+
 
     /**
      * Gets all medical records belonging to a patient.

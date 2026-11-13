@@ -1,10 +1,10 @@
-
 package com.rocs.rc.ohs.data.dao.person.impl;
 
 import com.rocs.rc.ohs.app.model.enums.gender.Gender;
 import com.rocs.rc.ohs.app.model.person.Person;
 import com.rocs.rc.ohs.data.connection.ConnectionHelper;
 import com.rocs.rc.ohs.data.dao.person.PersonDao;
+import com.rocs.rc.ohs.data.utils.QueryConstants;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,67 +14,12 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Handles database operations for person records.
  */
 public class PersonDaoImpl implements PersonDao {
 
-    /**
-     * Logger used to record database errors.
-     */
-    private static final Logger LOGGER =
-            Logger.getLogger(PersonDaoImpl.class.getName());
-
-    /**
-     * SQL query used to find a person by ID.
-     */
-    private static final String SELECT_BY_ID_SQL =
-            "SELECT id, first_name, middle_name, last_name, email, "
-                    + "date_of_birth, gender, address, contact_number "
-                    + "FROM person WHERE id = ?";
-
-    /**
-     * SQL query used to search persons by their names.
-     */
-    private static final String SELECT_BY_NAME_SQL =
-            "SELECT id, first_name, middle_name, last_name, email, "
-                    + "date_of_birth, gender, address, contact_number "
-                    + "FROM person "
-                    + "WHERE LOWER(first_name || ' ' || last_name) LIKE ? "
-                    + "OR LOWER(first_name || ' ' || middle_name || ' ' "
-                    + "|| last_name) LIKE ?";
-
-    /**
-     * Finds a person using their ID.
-     *
-     * @param id the person's ID
-     * @return the matching person, or null if not found
-     */
-    @Override
-    public Person findById(String id) {
-        try (Connection connection = ConnectionHelper.getConnection();
-             PreparedStatement statement =
-                     connection.prepareStatement(SELECT_BY_ID_SQL)) {
-
-            statement.setString(1, id);
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return mapPerson(resultSet);
-                }
-            }
-
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE,
-                    "Unable to retrieve person with ID: {0}", id);
-            LOGGER.log(Level.SEVERE, "Database error details.", e);
-        }
-
-        return null;
-    }
 
     /**
      * Searches for persons using their name.
@@ -94,7 +39,8 @@ public class PersonDaoImpl implements PersonDao {
 
         try (Connection connection = ConnectionHelper.getConnection();
              PreparedStatement statement =
-                     connection.prepareStatement(SELECT_BY_NAME_SQL)) {
+                     connection.prepareStatement(
+                             QueryConstants.SELECT_BY_NAME_SQL)) {
 
             applyNameSearch(statement, searchValue);
 
@@ -105,8 +51,8 @@ public class PersonDaoImpl implements PersonDao {
             }
 
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE,
-                    "Unable to search for persons.", e);
+            System.err.println("Unable to search for persons.");
+            e.printStackTrace();
         }
 
         return matchingPersons;
@@ -159,7 +105,7 @@ public class PersonDaoImpl implements PersonDao {
             person.setDateOfBirth(birthDate.toLocalDateTime());
         }
 
-        person.setGender(findGender(resultSet.getString("gender")));
+        person.setGender(mapGender(resultSet.getString("gender")));
         person.setAddress(resultSet.getString("address"));
         person.setContactNumber(resultSet.getString("contact_number"));
 
@@ -167,12 +113,12 @@ public class PersonDaoImpl implements PersonDao {
     }
 
     /**
-     * Finds the Gender enum that matches the database value.
+     * Converts a database gender value into its corresponding Gender enum.
      *
-     * @param databaseValue the gender value from the database
-     * @return the matching Gender, or null if no match exists
+     * @param databaseValue the gender value retrieved from the database
+     * @return the matching Gender enum, or null if no match exists
      */
-    private Gender findGender(String databaseValue) {
+    private Gender mapGender(String databaseValue) {
         if (databaseValue == null) {
             return null;
         }

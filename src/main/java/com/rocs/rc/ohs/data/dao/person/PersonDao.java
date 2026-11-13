@@ -9,13 +9,6 @@ import java.util.List;
  */
 public interface PersonDao {
 
-    /**
-     * Retrieves the person that matches the given ID.
-     *
-     * @param id The ID of the person to look up.
-     * @return The {@link Person}, or null if it is not found.
-     */
-    Person findById(String id);
 
     /**
      * Retrieves the persons whose name contains the given text. The

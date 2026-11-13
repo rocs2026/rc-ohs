@@ -10,14 +10,6 @@ import java.util.List;
 public interface MedicalRecordDao {
 
     /**
-     * Retrieves a medical record by ID.
-     *
-     * @param id the ID of the medical record.
-     * @return the medical record if found, otherwise null.
-     */
-    MedicalRecord findById(String id);
-
-    /**
      * Retrieves all medical records of a patient.
      *
      * @param patientId the ID of the patient.
