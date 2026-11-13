@@ -120,4 +120,41 @@ public class MedicineStockDaoImpl implements MedicineStockDao {
 
         return stock;
     }
+
+    /**
+     * Retrieves the remaining quantity of a medicine stock
+     * using the database function.
+     *
+     * @param medicineStockId the ID of the medicine stock
+     * @return the remaining quantity of the medicine stock
+     * @throws IllegalArgumentException if the medicine stock ID is null or empty
+     * @throws RuntimeException if an SQL error occurs
+     */
+    @Override
+    public int getRemainingStock(String medicineStockId) {
+
+        if (medicineStockId == null || medicineStockId.trim().isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Medicine stock ID cannot be empty");
+        }
+
+        try (Connection con = ConnectionHelper.getConnection();
+             PreparedStatement statement = con.prepareStatement(
+                     QueryConstants.SELECT_REMAINING_STOCK)) {
+
+            statement.setString(1, medicineStockId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt("remaining_quantity");
+                }
+            }
+
+        } catch (SQLException ex) {
+            throw new RuntimeException(
+                    "Error retrieving remaining stock", ex);
+        }
+
+        return 0;
+    }
 }

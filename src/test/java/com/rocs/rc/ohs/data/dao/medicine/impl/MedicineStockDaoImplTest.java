@@ -74,4 +74,16 @@ public class MedicineStockDaoImplTest {
         assertNotNull(stocks);
         assertTrue(stocks.isEmpty());
     }
+
+    /**
+     * RCISD-5-TC8.
+     */
+
+    @Test
+    void remainingStock() {
+        int remaining = stockDao.getRemainingStock(
+                "cff69d39-caa4-4a79-978b-8927f5b0c1a4");
+
+        assertEquals(49, remaining);
+    }
 }

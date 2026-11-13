@@ -20,4 +20,12 @@ public interface MedicineStockDao {
      * @return A {@link List} of matching {@link MedicineStock} records.
      */
     List<MedicineStock> searchStock(String keyword);
+
+    /**
+     * Retrieves the remaining quantity of a medicine stock.
+     *
+     * @param medicineStockId the medicine stock ID
+     * @return the remaining quantity
+     */
+    int getRemainingStock(String medicineStockId);
 }

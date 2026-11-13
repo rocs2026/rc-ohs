@@ -24,7 +24,6 @@ public class MedicineStockFacadeImplTest {
     void setUp() {
         facade = new MedicineStockFacadeImpl();
     }
-
     /**
      * RCISD-5-TC1.
      */

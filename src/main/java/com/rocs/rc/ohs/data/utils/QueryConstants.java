@@ -27,7 +27,7 @@ public final class QueryConstants {
                     + "FROM medicine "
                     + "LEFT JOIN medicine_category "
                     + "ON medicine.category_id = medicine_category.id "
-                    + "ORDER BY medicine.medicine_name;";
+                    + "ORDER BY medicine.medicine_name";
 
     /**
      * it is the query to select medicine by id.
@@ -39,7 +39,7 @@ public final class QueryConstants {
                     + "FROM medicine "
                     + "LEFT JOIN medicine_category "
                     + "ON medicine.category_id = medicine_category.id "
-                    + "WHERE medicine.id = ?;";
+                    + "WHERE medicine.id = ?";
 
     /**
      * it is the query to search medicine.
@@ -52,7 +52,7 @@ public final class QueryConstants {
                     + "LEFT JOIN medicine_category "
                     + "ON medicine.category_id = medicine_category.id "
                     + "WHERE medicine.medicine_name LIKE ? "
-                    + "ORDER BY medicine.medicine_name;";
+                    + "ORDER BY medicine.medicine_name";
 
     /**
      * This is the function created by Wyne.
@@ -67,7 +67,7 @@ public final class QueryConstants {
                     + "JOIN medicine m ON m.id = ms.medicine_id "
                     + "LEFT JOIN medicine_category mc "
                     + "ON mc.id = m.category_id "
-                    + "ORDER BY m.medicine_name;";
+                    + "ORDER BY m.medicine_name";
 
     /**
      * This is the function created by Wyne.
@@ -84,5 +84,8 @@ public final class QueryConstants {
                     + "ON mc.id = m.category_id "
                     + "WHERE m.medicine_name LIKE ? "
                     + "OR mc.category_name LIKE ? "
-                    + "ORDER BY m.medicine_name;";
+                    + "ORDER BY m.medicine_name";
+
+    public static final String SELECT_REMAINING_STOCK =
+            "SELECT fn_remaining_stock(?) AS remaining_quantity FROM dual";
 }
