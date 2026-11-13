@@ -27,7 +27,6 @@ public final class QueryConstants {
                     + "ORDER BY p.last_name, p.first_name, "
                     + "c.consultation_date DESC";
 
-    /** Query to update patient medical conditions and allergies. */
     /**
      * Updates the Medical record of a patient (med conditions, allergies).
      */

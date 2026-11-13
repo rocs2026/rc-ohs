@@ -221,7 +221,7 @@ public class MedicalRecordDTO {
      * @param newComplaint the complaint raised in the consultation
      */
     public void setComplaint(String newComplaint) {
-        this.newComplaint = newComplaint;
+        this.complaint = newComplaint;
     }
 
     /**
@@ -239,7 +239,7 @@ public class MedicalRecordDTO {
      * @param newDiagnosis the diagnosis made in the consultation
      */
     public void setDiagnosis(String newDiagnosis) {
-        this.newDiagnosis = newDiagnosis;
+        this.diagnosis = newDiagnosis;
     }
 
     /**
