@@ -2,30 +2,28 @@ package com.rocs.rc.ohs;
 
 import com.rocs.rc.ohs.app.facade.login.LoginFacade;
 import com.rocs.rc.ohs.app.facade.login.impl.LoginFacadeImpl;
-import com.rocs.rc.ohs.app.facade.medicalrecord.MedicalRecordFacade;
-import com.rocs.rc.ohs.app.facade.medicalrecord.impl.MedicalRecordFacadeImpl;
-import com.rocs.rc.ohs.app.facade.medicalrecord.impl.MedicalRecordFacadeImpl;
+//import com.rocs.rc.ohs.app.facade.medicalrecord.MedicalRecordFacade;
+//import com.rocs.rc.ohs.app.facade.medicalrecord.impl.MedicalRecordFacadeImpl;
 import com.rocs.rc.ohs.app.model.login.Login;
-import com.rocs.rc.ohs.app.model.medicalrecord.MedicalRecord;
-import com.rocs.rc.ohs.data.connection.ConnectionHelper;
-import com.rocs.rc.ohs.data.dao.medicalrecord.MedicalRecordDao;
-import com.rocs.rc.ohs.data.dao.medicalrecord.impl.MedicalRecordDaoImpl;
-
-import java.sql.Connection;
-import java.sql.SQLException;
- import com.rocs.rc.ohs.app.facade.consultation.ConsultationFacade;
- import com.rocs.rc.ohs.app.facade.consultation.impl.ConsultationFacadeImpl;
- import com.rocs.rc.ohs.app.model.consultation.Consultation;
- import com.rocs.rc.ohs.app.model.enums.recordtype.RecordType;
- import com.rocs.rc.ohs.app.model.medicine.MedicineStock;
- import com.rocs.rc.ohs.app.model.person.Person;
- import com.rocs.rc.ohs.app.model.personnel.Personnel;
- import com.rocs.rc.ohs.app.model.prescription.Prescription;
- import java.time.LocalDateTime;
- import java.time.format.DateTimeFormatter;
- import java.time.format.DateTimeParseException;
- import java.util.ArrayList;
- import java.util.List;
+//import com.rocs.rc.ohs.app.model.medicalrecord.MedicalRecord;
+//import com.rocs.rc.ohs.data.connection.ConnectionHelper;
+//import com.rocs.rc.ohs.data.dao.medicalrecord.MedicalRecordDao;
+//import com.rocs.rc.ohs.data.dao.medicalrecord.impl.MedicalRecordDaoImpl;
+//
+//
+// import com.rocs.rc.ohs.app.facade.consultation.ConsultationFacade;
+// import com.rocs.rc.ohs.app.facade.consultation.impl.ConsultationFacadeImpl;
+// import com.rocs.rc.ohs.app.model.consultation.Consultation;
+// import com.rocs.rc.ohs.app.model.enums.recordtype.RecordType;
+// import com.rocs.rc.ohs.app.model.medicine.MedicineStock;
+// import com.rocs.rc.ohs.app.model.person.Person;
+// import com.rocs.rc.ohs.app.model.personnel.Personnel;
+// import com.rocs.rc.ohs.app.model.prescription.Prescription;
+// import java.time.LocalDateTime;
+// import java.time.format.DateTimeFormatter;
+// import java.time.format.DateTimeParseException;
+// import java.util.ArrayList;
+// import java.util.List;
 import java.util.Scanner;
 
 /**
