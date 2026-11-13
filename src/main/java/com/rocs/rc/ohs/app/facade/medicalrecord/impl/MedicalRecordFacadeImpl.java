@@ -1,51 +1,66 @@
 package com.rocs.rc.ohs.app.facade.medicalrecord.impl;
 
-import com.rocs.rc.ohs.app.facade.medicalrecord.AddMedRecordFacade;
+import com.rocs.rc.ohs.app.facade.medicalrecord.MedicalRecordFacade;
 import com.rocs.rc.ohs.app.model.medicalrecord.MedicalRecord;
 import com.rocs.rc.ohs.app.model.person.Person;
-import com.rocs.rc.ohs.data.dao.medicalrecord.AddMedRecordDao;
-import com.rocs.rc.ohs.data.dao.medicalrecord.impl.AddMedRecordDaoImpl;
+import com.rocs.rc.ohs.data.connection.ConnectionHelper;
+import com.rocs.rc.ohs.data.dao.medicalrecord.MedicalRecordDao;
+import com.rocs.rc.ohs.data.dao.medicalrecord.impl.MedicalRecordDaoImpl;
 import com.rocs.rc.ohs.data.dao.person.PersonDao;
 import com.rocs.rc.ohs.data.dao.person.impl.PersonDaoImpl;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implements the operations for adding and viewing the medical records of
- * a patient.
+ * Implements the operations for managing the medical records of a patient.
  */
-public class AddMedRecordFacadeImpl implements AddMedRecordFacade {
+public class MedicalRecordFacadeImpl implements MedicalRecordFacade {
 
     /** The data access operations for persons. */
     private final PersonDao personDao;
 
     /** The data access operations for medical records. */
-    private final AddMedRecordDao addMedRecordDao;
+    private final MedicalRecordDao medicalRecordDao;
 
     /**
      * Creates a facade that uses the default data access objects.
      */
-    public AddMedRecordFacadeImpl() {
-        this(new PersonDaoImpl(), new AddMedRecordDaoImpl());
+    public MedicalRecordFacadeImpl() {
+        this(new PersonDaoImpl(), createMedicalRecordDao());
     }
 
     /**
      * Creates a facade that uses the given data access objects.
      *
      * @param newPersonDao the data access operations for persons.
-     * @param newAddMedRecordDao the data access operations for medical
-     *                           records.
+     * @param newMedicalRecordDao the data access operations for medical
+     *                            records.
      */
-    public AddMedRecordFacadeImpl(PersonDao newPersonDao,
-                                  AddMedRecordDao newAddMedRecordDao) {
+    public MedicalRecordFacadeImpl(PersonDao newPersonDao,
+                                   MedicalRecordDao newMedicalRecordDao) {
         this.personDao = newPersonDao;
-        this.addMedRecordDao = newAddMedRecordDao;
+        this.medicalRecordDao = newMedicalRecordDao;
     }
 
     /**
-     * Finds the patients that match a patient ID or a name. The patient ID
-     * is checked first, then the name.
+     * Creates the medical record DAO using a database connection.
+     *
+     * @return the medical record DAO.
+     */
+    private static MedicalRecordDao createMedicalRecordDao() {
+        try {
+            return new MedicalRecordDaoImpl(ConnectionHelper.getConnection());
+        } catch (SQLException e) {
+            throw new IllegalStateException(
+                    "Unable to create medical record DAO.", e);
+        }
+    }
+
+    /**
+     * Finds patients that match a patient ID or name. The patient ID is
+     * checked first, then the name.
      *
      * @param keyword the patient ID, or the full or partial name.
      * @return the matching patients, or an empty list if there is no match.
@@ -54,22 +69,24 @@ public class AddMedRecordFacadeImpl implements AddMedRecordFacade {
     public List<Person> findPatients(String keyword) {
 
         List<Person> patients = new ArrayList<>();
+
         if (isBlank(keyword)) {
             return patients;
         }
 
         String text = keyword.trim();
         Person patient = personDao.findById(text);
+
         if (patient != null) {
             patients.add(patient);
             return patients;
         }
+
         return personDao.findByName(text);
     }
 
     /**
-     * Adds a new medical record for a patient. The medical record has no
-     * consultation yet.
+     * Adds a new medical record for a patient.
      *
      * @param patientId the ID of the patient.
      * @param medicalConditions the medical conditions of the patient.
@@ -94,7 +111,7 @@ public class AddMedRecordFacadeImpl implements AddMedRecordFacade {
         medicalRecord.setMedicalConditions(medicalConditions.trim());
         medicalRecord.setAllergies(allergies.trim());
 
-        return addMedRecordDao.addMedicalRecord(medicalRecord);
+        return medicalRecordDao.addMedicalRecord(medicalRecord);
     }
 
     /**
@@ -110,7 +127,8 @@ public class AddMedRecordFacadeImpl implements AddMedRecordFacade {
         if (isBlank(patientId)) {
             return new ArrayList<>();
         }
-        return addMedRecordDao.findByPatientId(patientId.trim());
+
+        return medicalRecordDao.findByPatientId(patientId.trim());
     }
 
     /**

@@ -6,13 +6,12 @@ import com.rocs.rc.ohs.app.model.person.Person;
 import java.util.List;
 
 /**
- * Defines the operations for adding and viewing the medical records of
- * a patient.
+ * Defines the operations for managing the medical records of a patient.
  */
-public interface AddMedRecordFacade {
+public interface MedicalRecordFacade {
 
     /**
-     * Finds the patients that match a patient ID or a name.
+     * Finds patients that match a patient ID or name.
      *
      * @param keyword the patient ID, or the full or partial name.
      * @return the matching patients, or an empty list if there is no match.
