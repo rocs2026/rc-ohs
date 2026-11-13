@@ -2,16 +2,16 @@ package com.rocs.rc.ohs;
 
 import com.rocs.rc.ohs.app.facade.login.LoginFacade;
 import com.rocs.rc.ohs.app.facade.login.impl.LoginFacadeImpl;
-import com.rocs.rc.ohs.app.facade.medicalrecord.MedicalRecordFacade;
-import com.rocs.rc.ohs.app.facade.medicalrecord.impl.MedicalRecordFacadeImpl;
+//import com.rocs.rc.ohs.app.facade.medicalrecord.MedicalRecordFacade;
+//import com.rocs.rc.ohs.app.facade.medicalrecord.impl.MedicalRecordFacadeImpl;
 import com.rocs.rc.ohs.app.model.login.Login;
-import com.rocs.rc.ohs.app.model.medicalrecord.MedicalRecord;
-import com.rocs.rc.ohs.data.connection.ConnectionHelper;
-import com.rocs.rc.ohs.data.dao.medicalrecord.MedicalRecordDao;
-import com.rocs.rc.ohs.data.dao.medicalrecord.impl.MedicalRecordDaoImpl;
-
-import java.sql.Connection;
-import java.sql.SQLException;
+//import com.rocs.rc.ohs.app.model.medicalrecord.MedicalRecord;
+//import com.rocs.rc.ohs.data.connection.ConnectionHelper;
+//import com.rocs.rc.ohs.data.dao.medicalrecord.MedicalRecordDao;
+//import com.rocs.rc.ohs.data.dao.medicalrecord.impl.MedicalRecordDaoImpl;
+//
+//import java.sql.Connection;
+//import java.sql.SQLException;
 // import com.rocs.rc.ohs.app.facade.consultation.ConsultationFacade;
 // import com.rocs.rc.ohs.app.facade.consultation.impl.ConsultationFacadeImpl;
 // import com.rocs.rc.ohs.app.model.consultation.Consultation;
