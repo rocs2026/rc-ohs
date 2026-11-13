@@ -51,8 +51,10 @@ public class AddMedRecordDaoImpl implements AddMedRecordDao {
             }
 
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE,
-                    "Unable to find medical record with ID: " + id, e);
+            if (LOGGER.isLoggable(Level.SEVERE)) {
+                LOGGER.log(Level.SEVERE,
+                        "Unable to find medical record with ID: " + id, e);
+            }
         }
 
         return null;
@@ -81,9 +83,11 @@ public class AddMedRecordDaoImpl implements AddMedRecordDao {
             }
 
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE,
-                    "Unable to get medical records for patient: "
-                            + patientId, e);
+            if (LOGGER.isLoggable(Level.SEVERE)) {
+                LOGGER.log(Level.SEVERE,
+                        "Unable to get medical records for patient: "
+                                + patientId, e);
+            }
         }
 
         return records;
@@ -124,8 +128,10 @@ public class AddMedRecordDaoImpl implements AddMedRecordDao {
             return statement.executeUpdate() == 1;
 
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE,
-                    "Unable to save medical record.", e);
+            if (LOGGER.isLoggable(Level.SEVERE)) {
+                LOGGER.log(Level.SEVERE,
+                        "Unable to save medical record.", e);
+            }
             return false;
         }
     }

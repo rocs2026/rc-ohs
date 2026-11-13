@@ -22,14 +22,23 @@ import java.util.logging.Logger;
  */
 public class PersonDaoImpl implements PersonDao {
 
+    /**
+     * Logger used to record database errors.
+     */
     private static final Logger LOGGER =
             Logger.getLogger(PersonDaoImpl.class.getName());
 
+    /**
+     * SQL query used to find a person by ID.
+     */
     private static final String SELECT_BY_ID_SQL =
             "SELECT id, first_name, middle_name, last_name, email, "
                     + "date_of_birth, gender, address, contact_number "
                     + "FROM person WHERE id = ?";
 
+    /**
+     * SQL query used to search persons by their names.
+     */
     private static final String SELECT_BY_NAME_SQL =
             "SELECT id, first_name, middle_name, last_name, email, "
                     + "date_of_birth, gender, address, contact_number "
@@ -60,7 +69,8 @@ public class PersonDaoImpl implements PersonDao {
 
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE,
-                    "Unable to retrieve person with ID: " + id, e);
+                    "Unable to retrieve person with ID: {0}", id);
+            LOGGER.log(Level.SEVERE, "Database error details.", e);
         }
 
         return null;
