@@ -181,7 +181,7 @@ public final class ClinicApp {
     // }
     //
     // private static void recordConsultation(Scanner sc,
-    //                                        ConsultationFacade facade) {
+    //                                      ConsultationFacade facade) {
     //     Personnel staff = new Personnel();
     //     staff.setId(ask(sc, "Your staff ID"));
     //     Person patient = new Person();
