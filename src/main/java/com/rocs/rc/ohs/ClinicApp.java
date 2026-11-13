@@ -2,29 +2,30 @@ package com.rocs.rc.ohs;
 
 import com.rocs.rc.ohs.app.facade.login.LoginFacade;
 import com.rocs.rc.ohs.app.facade.login.impl.LoginFacadeImpl;
-//import com.rocs.rc.ohs.app.facade.medicalrecord.MedicalRecordFacade;
-//import com.rocs.rc.ohs.app.facade.medicalrecord.impl.MedicalRecordFacadeImpl;
+import com.rocs.rc.ohs.app.facade.medicalrecord.MedicalRecordFacade;
+import com.rocs.rc.ohs.app.facade.medicalrecord.impl.MedicalRecordFacadeImpl;
+import com.rocs.rc.ohs.app.facade.medicalrecord.impl.MedicalRecordFacadeImpl;
 import com.rocs.rc.ohs.app.model.login.Login;
-//import com.rocs.rc.ohs.app.model.medicalrecord.MedicalRecord;
-//import com.rocs.rc.ohs.data.connection.ConnectionHelper;
-//import com.rocs.rc.ohs.data.dao.medicalrecord.MedicalRecordDao;
-//import com.rocs.rc.ohs.data.dao.medicalrecord.impl.MedicalRecordDaoImpl;
-//
-//import java.sql.Connection;
-//import java.sql.SQLException;
-// import com.rocs.rc.ohs.app.facade.consultation.ConsultationFacade;
-// import com.rocs.rc.ohs.app.facade.consultation.impl.ConsultationFacadeImpl;
-// import com.rocs.rc.ohs.app.model.consultation.Consultation;
-// import com.rocs.rc.ohs.app.model.enums.recordtype.RecordType;
-// import com.rocs.rc.ohs.app.model.medicine.MedicineStock;
-// import com.rocs.rc.ohs.app.model.person.Person;
-// import com.rocs.rc.ohs.app.model.personnel.Personnel;
-// import com.rocs.rc.ohs.app.model.prescription.Prescription;
-// import java.time.LocalDateTime;
-// import java.time.format.DateTimeFormatter;
-// import java.time.format.DateTimeParseException;
-// import java.util.ArrayList;
-// import java.util.List;
+import com.rocs.rc.ohs.app.model.medicalrecord.MedicalRecord;
+import com.rocs.rc.ohs.data.connection.ConnectionHelper;
+import com.rocs.rc.ohs.data.dao.medicalrecord.MedicalRecordDao;
+import com.rocs.rc.ohs.data.dao.medicalrecord.impl.MedicalRecordDaoImpl;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+ import com.rocs.rc.ohs.app.facade.consultation.ConsultationFacade;
+ import com.rocs.rc.ohs.app.facade.consultation.impl.ConsultationFacadeImpl;
+ import com.rocs.rc.ohs.app.model.consultation.Consultation;
+ import com.rocs.rc.ohs.app.model.enums.recordtype.RecordType;
+ import com.rocs.rc.ohs.app.model.medicine.MedicineStock;
+ import com.rocs.rc.ohs.app.model.person.Person;
+ import com.rocs.rc.ohs.app.model.personnel.Personnel;
+ import com.rocs.rc.ohs.app.model.prescription.Prescription;
+ import java.time.LocalDateTime;
+ import java.time.format.DateTimeFormatter;
+ import java.time.format.DateTimeParseException;
+ import java.util.ArrayList;
+ import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -51,6 +52,7 @@ public final class ClinicApp {
         System.out.println("Welcome to Clinic IS");
         System.out.println("[1] Login");
 //        System.out.println("[2] Forgot password");
+        System.out.println("[3] Update medical record:");
         System.out.print("Choose: ");
         String choice = sc.nextLine().trim();
 
@@ -60,6 +62,9 @@ public final class ClinicApp {
                 break;
 //            case "2":
 //                forgotPassword(sc, loginFacade);
+//                break;
+//            case "3":
+//                updateMedicalRecord(sc, new MedicalRecordFacadeImpl());
 //                break;
             default:
                 System.out.println("Invalid choice");
@@ -105,29 +110,14 @@ public final class ClinicApp {
         // consultationMenu(sc);
 
     }
-//    /**
-//     * Opens a db connection and starts the update
-//     * med record flow.
-//     *
-//     * @param scanner the scanner used to read input.
-//     */
-//    private static void runUpdateMedicalRecord(Scanner scanner) {
-//        try (Connection connection = ConnectionHelper.getConnection()) {
-//            MedicalRecordDao dao = new MedicalRecordDaoImpl(connection);
-//            MedicalRecordFacade facade = new MedicalRecordFacadeImpl(dao);
-//            updateMedicalRecord(scanner, facade);
-//        } catch (SQLException e) {
-//            System.out.println("Unable to connect to the database. ");
-//        }
-//    }
-//
-//    /**
-//     * User input and updates med record if confirmed.
-//     *
-//     * @param scanner input scanner.
-//     *
-//     * @param medicalRecordFacade facade for updating records.
-//     */
+
+    /**
+     * User input and updates med record if confirmed.
+     *
+     * @param scanner input scanner.
+     *
+     * @param medicalRecordFacade facade for updating records.
+     */
 //    private static void updateMedicalRecord(
 //            Scanner scanner, MedicalRecordFacade medicalRecordFacade) {
 //
@@ -163,7 +153,7 @@ public final class ClinicApp {
 //        }
 //
 //    }
-//
+
     // /**
     //  * Resets a forgotten password after
     //  * verifying the email and username.
