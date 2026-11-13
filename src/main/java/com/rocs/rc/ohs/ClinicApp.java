@@ -3,8 +3,13 @@ package com.rocs.rc.ohs;
 
 import com.rocs.rc.ohs.app.facade.login.LoginFacade;
 import com.rocs.rc.ohs.app.facade.login.impl.LoginFacadeImpl;
+
+
 import com.rocs.rc.ohs.app.model.login.Login;
 
+//import com.rocs.rc.ohs.app.model.medicalrecord.MedicalRecord;
+//import com.rocs.rc.ohs.app.facade.medicalrecord.MedicalRecordFacade;
+//import com.rocs.rc.ohs.app.facade.medicalrecord.impl.MedicalRecordFacadeImpl;
 // import com.rocs.rc.ohs.app.facade.consultation.ConsultationFacade;
 // import com.rocs.rc.ohs.app.facade.consultation.impl.ConsultationFacadeImpl;
 // import com.rocs.rc.ohs.app.model.consultation.Consultation;
@@ -18,6 +23,7 @@ import com.rocs.rc.ohs.app.model.login.Login;
 // import java.time.format.DateTimeParseException;
 // import java.util.ArrayList;
 // import java.util.List;
+//import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -224,4 +230,107 @@ public final class ClinicApp {
     //     System.out.print(label + ": ");
     //     return sc.nextLine();
     // }
+
+
+//    /**
+//     * Displays the medical record menu.
+//     *
+//     * @param sc The scanner used to read input.
+//     */
+//    private static void medicalRecordMenu(Scanner sc) {
+//        MedicalRecordFacade facade = new MedicalRecordFacadeImpl();
+//        String choice = "";
+//
+//        while (!"0".equals(choice)) {
+//            System.out.println("\n=== MEDICAL RECORD MENU ===");
+//            System.out.println("1. Add medical record");
+//            System.out.println("2. View patient medical records");
+//            System.out.println("0. Logout");
+//
+//            choice = ask(sc, "Choose");
+//
+//            if ("1".equals(choice)) {
+//                addMedicalRecord(sc, facade);
+//            } else if ("2".equals(choice)) {
+//                viewMedicalRecords(sc, facade);
+//            } else if (!"0".equals(choice)) {
+//                System.out.println("Invalid choice");
+//            }
+//        }
+//    }
+//
+//    /**
+//     * Adds a medical record for a patient.
+//     *
+//     * @param sc The scanner used to read input.
+//     * @param facade The facade used for medical record operations.
+//     */
+//    private static void addMedicalRecord(
+//            Scanner sc, MedicalRecordFacade facade) {
+//
+//        String patientId = ask(sc, "Patient ID");
+//        String conditions = ask(sc, "Medical Conditions");
+//        String allergies = ask(sc, "Allergies");
+//
+//        if (patientId.trim().isEmpty()
+//                || conditions.trim().isEmpty()
+//                || allergies.trim().isEmpty()) {
+//            System.out.println("Please complete all fields");
+//            return;
+//        }
+//
+//        if (facade.addMedicalRecord(
+//                patientId, conditions, allergies)) {
+//            System.out.println("Medical record added successfully");
+//        } else {
+//            System.out.println("Unable to add medical record");
+//        }
+//    }
+//
+//    /**
+//     * Displays the medical records of a patient.
+//     *
+//     * @param sc The scanner used to read input.
+//     * @param facade The facade used for medical record operations.
+//     */
+//    private static void viewMedicalRecords(
+//            Scanner sc, MedicalRecordFacade facade) {
+//
+//        String patientId = ask(sc, "Patient ID");
+//
+//        if (patientId.trim().isEmpty()) {
+//            System.out.println("Please enter patient ID");
+//            return;
+//        }
+//
+//        List<MedicalRecord> records =
+//                facade.findMedicalRecords(patientId);
+//
+//        if (records.isEmpty()) {
+//            System.out.println("No medical records found");
+//            return;
+//        }
+//
+//        for (MedicalRecord record : records) {
+//            System.out.println("\nMedical Record ID: "
+//                    + record.getId());
+//            System.out.println("Medical Conditions: "
+//                    + record.getMedicalConditions());
+//            System.out.println("Allergies: "
+//                    + record.getAllergies());
+//        }
+//    }
+//
+//    /**
+//     * Reads user input.
+//     *
+//     * @param sc The scanner used to read input.
+//     * @param label The input label.
+//     * @return the entered value.
+//     */
+//    private static String ask(Scanner sc, String label) {
+//        System.out.print(label + ": ");
+//        return sc.nextLine();
+//    }
+
 }
