@@ -2,7 +2,6 @@
 
     import com.rocs.rc.ohs.app.dto.MedicalRecordDTO;
     import com.rocs.rc.ohs.app.facade.login.LoginFacade;
-    import com.rocs.rc.ohs.app.facade.login.impl.LoginFacadeImpl;
     import com.rocs.rc.ohs.app.facade.medicalrecord.MedicalRecordFacade;
     import com.rocs.rc.ohs.app.facade.medicalrecord.impl.MedicalRecordFacadeImpl;
     import com.rocs.rc.ohs.app.model.login.Login;
@@ -15,15 +14,15 @@
      */
     public final class ClinicApp {
 
-        /**
-         * The text the user types to leave the search screen.
-         */
-        private static final String EXIT_COMMAND = "exit";
-
-        /**
-         * The text shown when a value is missing.
-         */
-        private static final String NOT_AVAILABLE = "N/A";
+//        /**
+//         * The text the user types to leave the search screen.
+//         */
+//        private static final String EXIT_COMMAND = "exit";
+//
+//        /**
+//         * The text shown when a value is missing.
+//         */
+//        private static final String NOT_AVAILABLE = "N/A";
 
         /**
          * Prevents instantiation of this class.
@@ -36,29 +35,29 @@
          *
          * @param args The command line arguments.
          */
-        public static void main(String[] args) {
-
-            Scanner sc = new Scanner(System.in);
-            LoginFacade loginFacade = new LoginFacadeImpl();
-
-            System.out.println("Welcome to Clinic IS");
-            System.out.println("[1] Login");
-            //        System.out.println("[2] Forgot password");
-            System.out.print("Choose: ");
-            String choice = sc.nextLine().trim();
-
-            switch (choice) {
-                case "1":
-                    login(sc, loginFacade);
-                    break;
-                //            case "2":
-                //                forgotPassword(sc, loginFacade);
-                //                break;
-                default:
-                    System.out.println("Invalid choice");
-                    break;
-            }
-        }
+//        public static void main(String[] args) {
+//
+//            Scanner sc = new Scanner(System.in);
+//            LoginFacade loginFacade = new LoginFacadeImpl();
+//
+//            System.out.println("Welcome to Clinic IS");
+//            System.out.println("[1] Login");
+//            //        System.out.println("[2] Forgot password");
+//            System.out.print("Choose: ");
+//            String choice = sc.nextLine().trim();
+//
+//            switch (choice) {
+//                case "1":
+//                    login(sc, loginFacade);
+//                    break;
+//                //            case "2":
+//                //                forgotPassword(sc, loginFacade);
+//                //                break;
+//                default:
+//                    System.out.println("Invalid choice");
+//                    break;
+//            }
+//        }
 
         /**
          * Logs in the user.
