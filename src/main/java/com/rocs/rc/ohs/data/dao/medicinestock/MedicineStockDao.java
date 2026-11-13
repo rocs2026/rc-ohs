@@ -1,3 +1,4 @@
+
 package com.rocs.rc.ohs.data.dao.medicinestock;
 
 import com.rocs.rc.ohs.app.model.medicine.MedicineStock;
@@ -6,6 +7,7 @@ import java.util.List;
 
 /**
  * Handles data access operations for medicine stock inventory.
+ * Database errors may result in an IllegalStateException.
  */
 public interface MedicineStockDao {
 
@@ -17,9 +19,9 @@ public interface MedicineStockDao {
     List<MedicineStock> findAll();
 
     /**
-     * Gets a medicine stock using its id.
+     * Gets a medicine stock using its ID.
      *
-     * @param id The id of the medicine stock.
+     * @param id The medicine stock ID.
      * @return The medicine stock, or null if not found.
      */
     MedicineStock findById(String id);
@@ -32,18 +34,18 @@ public interface MedicineStockDao {
     List<MedicineStock> findLowStock();
 
     /**
-     * Searches medicine stocks by name, ignoring uppercase and lowercase.
+     * Searches medicine stocks by name, ignoring case.
      * Returns all stocks if the keyword is empty or null.
      *
      * @param keyword The medicine name or part of it.
-     * @return The matching medicine stocks, or an empty list if none match.
+     * @return The matching medicine stocks.
      */
     List<MedicineStock> search(String keyword);
 
     /**
      * Updates the quantity of a medicine stock.
      *
-     * @param id The id of the medicine stock.
+     * @param id The medicine stock ID.
      * @param quantity The new quantity, which must not be negative.
      * @return true if the update was successful.
      * @throws IllegalArgumentException if the quantity is negative or lower

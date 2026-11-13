@@ -1,3 +1,4 @@
+
 package com.rocs.rc.ohs.data.dao.medicinestock.impl;
 
 import com.rocs.rc.ohs.app.model.medicine.Medicine;
@@ -35,34 +36,33 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Tests the medicine stock DAO using the RCISD-5 test cases.
+ * Tests the medicine stock DAO using RCISD-5 test cases.
  */
 class MedicineStockDaoImplTest {
 
-    /** Index for Paracetamol 500mg. */
+    /** Index for Paracetamol. */
     private static final int PARACETAMOL = 0;
 
-    /** Index for Amoxicillin 500mg. */
+    /** Index for Amoxicillin. */
     private static final int AMOXICILLIN = 1;
 
-    /** Seed stock IDs. */
+    /** Test stock IDs. */
     private static final String[] STOCK_IDS = {
             "cff69d39-caa4-4a79-978b-8927f5b0c1a4",
             "70aaf305-a7f5-41f1-bd0a-6ad73c042be9"
     };
 
-    /** Seed medicine IDs. */
+    /** Test medicine IDs. */
     private static final String[] MEDICINE_IDS = {
             "ebb3209c-50ea-4fbd-8b7e-be4540ab5b57",
             "36c00788-fcfd-485e-8ad3-de08fd49cb76"
     };
 
-    /** Medicine names used in the tests. */
+    /** Medicine names. */
     private static final String[] MEDICINE_NAMES = {
             "Paracetamol 500mg", "Amoxicillin 500mg"
     };
 
-    /** Units for each medicine. */
     private static final String[] UNITS = {"tablet", "capsule"};
 
     /** Medicine category IDs. */
@@ -74,42 +74,24 @@ class MedicineStockDaoImplTest {
     /** Medicine category names. */
     private static final String[] CATEGORY_NAMES = {"Analgesic", "Antibiotic"};
 
-    /** Batch numbers for the seed stocks. */
+    /** Stock batch numbers. */
     private static final String[] BATCH_NUMBERS = {"B-001", "B-002"};
 
-    /** Expiration dates for the seed stocks. */
+    /** Expiration dates. */
     private static final String[] EXPIRATION_DATES = {
             "2027-12-31", "2027-06-30"
     };
 
-    /** Quantity received for each stock. */
     private static final int QUANTITY_RECEIVED = 50;
-
-    /** Default stock status. */
     private static final String STATUS_ENOUGH = "Enough";
 
-    /** Mock for the database connection helper. */
     private MockedStatic<ConnectionHelper> connectionHelper;
-
-    /** Mock database connection. */
     private Connection connection;
-
-    /** Mock for select queries. */
     private PreparedStatement statement;
-
-    /** Mock result set for stock records. */
     private ResultSet resultSet;
-
-    /** Mock for the dispensed quantity query. */
     private PreparedStatement dispensedStatement;
-
-    /** Mock result set for dispensed quantities. */
     private ResultSet dispensedResultSet;
-
-    /** Mock for update queries. */
     private PreparedStatement updateStatement;
-
-    /** DAO instance used in the tests. */
     private MedicineStockDaoImpl dao;
 
     @BeforeEach
@@ -357,10 +339,10 @@ class MedicineStockDaoImplTest {
     }
 
     /**
-     * Checks the stock details against the seed data.
+     * Checks the stock details against the test data.
      *
      * @param stock The stock record to check.
-     * @param row The seed data index.
+     * @param row The test data index.
      */
     private void assertStock(MedicineStock stock, int row) {
         assertEquals(STOCK_IDS[row], stock.getId());
@@ -369,6 +351,7 @@ class MedicineStockDaoImplTest {
         assertEquals(LocalDate.parse(EXPIRATION_DATES[row]).atStartOfDay(),
                 stock.getExpirationDate());
         assertEquals(STATUS_ENOUGH, stock.getStatus());
+
         Medicine medicine = stock.getMedicine();
         assertNotNull(medicine);
         assertEquals(MEDICINE_IDS[row], medicine.getId());
@@ -381,9 +364,9 @@ class MedicineStockDaoImplTest {
     }
 
     /**
-     * Prepares the result set using the selected seed rows.
+     * Prepares the result set using the selected test rows.
      *
-     * @param rows The seed indexes to include, or none for an empty result.
+     * @param rows The test indexes to include.
      * @throws SQLException if the result set setup fails.
      */
     private void stubRows(int... rows) throws SQLException {
@@ -415,11 +398,11 @@ class MedicineStockDaoImplTest {
     }
 
     /**
-     * Sets up a result set column using the selected seed values.
+     * Sets up a result set column using the selected values.
      *
      * @param column The column name.
      * @param values The values to use.
-     * @param rows The seed indexes to include.
+     * @param rows The test indexes to include.
      * @throws SQLException if the column setup fails.
      */
     private void stubColumn(String column, String[] values, int... rows)
