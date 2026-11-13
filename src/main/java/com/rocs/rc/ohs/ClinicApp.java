@@ -139,7 +139,7 @@ public final class ClinicApp {
     //     if (loginFacade.forgotPassword(email, username, newPassword)) {
     //         System.out.println("Password updated successfully");
     //     } else {
-    //         System.out.println("Email and username do not match any account");
+    //       System.out.println("Email and username do not match any account");
     //     }
     // }
 
