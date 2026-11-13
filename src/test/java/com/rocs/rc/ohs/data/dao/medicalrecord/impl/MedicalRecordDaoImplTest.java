@@ -2,33 +2,24 @@ package com.rocs.rc.ohs.data.dao.medicalrecord.impl;
 
 import com.rocs.rc.ohs.app.dto.MedicalRecordDTO;
 import com.rocs.rc.ohs.data.connection.ConnectionHelper;
-import com.rocs.rc.ohs.data.dao.medicalrecord.MedicalRecordDAO;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.List;
+import com.rocs.rc.ohs.data.dao.medicalrecord.MedicalRecordDao;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.sql.*;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
- * Search behavior tests for {@link MedicalRecordDAOImpl}.
+ * Search behavior tests for {@link MedicalRecordDaoImpl}.
  */
-class MedicalRecordDAOImplTest {
+class MedicalRecordDaoImplTest {
 
     /** Static connection factory mock. */
     private MockedStatic<ConnectionHelper> helper;
@@ -43,7 +34,7 @@ class MedicalRecordDAOImplTest {
     private ResultSet resultSet;
 
     /** DAO instance under test. */
-    private MedicalRecordDAO dao;
+    private MedicalRecordDao dao;
 
     /**
      * Stubs JDBC objects and static connection lookup before each run.
@@ -62,7 +53,7 @@ class MedicalRecordDAOImplTest {
         helper = mockStatic(ConnectionHelper.class);
         helper.when(ConnectionHelper::getConnection).thenReturn(connection);
 
-        dao = new MedicalRecordDAOImpl();
+        dao = new MedicalRecordDaoImpl();
     }
 
     /**

@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Defines the data access operations for medical records.
  */
-public interface MedicalRecordDAO {
+public interface MedicalRecordDao {
 
     /**
      * Searches for medical records matching the given keyword.
