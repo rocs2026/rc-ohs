@@ -21,10 +21,10 @@ public class Referral {
     /** The personnel who issued the referral*/
     private Personnel personnel;
 
-    /** The hospital or facility the patient is referred to., null if there is none*/
+    /** The hospital or facility the patient is referred to., null if there is none.*/
     private String referredTo;
 
-    /** The reason for the referral*/
+    /** The reason for the referral. */
     private String reasonFor;
 
     /**
