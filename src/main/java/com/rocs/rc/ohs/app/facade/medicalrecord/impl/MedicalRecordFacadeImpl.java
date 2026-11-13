@@ -32,28 +32,18 @@ public class MedicalRecordFacadeImpl implements MedicalRecordFacade {
     }
 
     /**
-     * Finds patients by ID or name, checking the ID first.
+     * Finds patients by name.
      *
-     * @param keyword patient ID or full or partial name
+     * @param keyword the full or partial patient name
      * @return matching patients, or an empty list
      */
     @Override
     public List<Person> findPatients(String keyword) {
-        List<Person> patients = new ArrayList<>();
-
         if (isBlank(keyword)) {
-            return patients;
+            return new ArrayList<>();
         }
 
-        String text = keyword.trim();
-        Person patient = personDao.findById(text);
-
-        if (patient != null) {
-            patients.add(patient);
-            return patients;
-        }
-
-        return personDao.findByName(text);
+        return personDao.findByName(keyword.trim());
     }
 
     /**

@@ -1,18 +1,14 @@
-
 package com.rocs.rc.ohs.data.dao.medicalrecord.impl;
 
 import com.rocs.rc.ohs.app.model.consultation.Consultation;
 import com.rocs.rc.ohs.app.model.medicalrecord.MedicalRecord;
 import com.rocs.rc.ohs.app.model.person.Person;
-import com.rocs.rc.ohs.data.connection.ConnectionHelper;
 import com.rocs.rc.ohs.data.utils.QueryConstants;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.sql.Connection;
@@ -24,16 +20,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 
 /**
  * Tests the {@link MedicalRecordDaoImpl} class.
@@ -64,9 +58,6 @@ class MedicalRecordDaoImplTest {
     /** DAO instance being tested. */
     private MedicalRecordDaoImpl medicalRecordDao;
 
-    /** Static mock for the connection helper. */
-    private MockedStatic<ConnectionHelper> connectionHelper;
-
     /** Prepared statement for medical record queries. */
     private PreparedStatement findRecords;
 
@@ -86,17 +77,6 @@ class MedicalRecordDaoImplTest {
         findRecords = mock(PreparedStatement.class);
         insertRecord = mock(PreparedStatement.class);
         recordResult = mock(ResultSet.class);
-
-        when(findRecords.executeQuery()).thenReturn(recordResult);
-
-        connectionHelper = mockStatic(ConnectionHelper.class);
-        connectionHelper.when(ConnectionHelper::getConnection)
-                .thenReturn(connection);
-    }
-
-    @AfterEach
-    void tearDown() {
-        connectionHelper.close();
     }
 
     /**
@@ -252,17 +232,15 @@ class MedicalRecordDaoImplTest {
 
         assertTrue(medicalRecordDao.addMedicalRecord(existingRecord));
 
-        verify(insertRecord).setString(1, RECORD_ID);
-        verify(insertRecord).setString(2, PATIENT_ID);
-        verify(insertRecord).setString(3, CONSULTATION_ID);
-        verify(insertRecord).setString(4, "Asthma");
-        verify(insertRecord).setString(5, "Peanuts");
-
         MedicalRecord newRecord = newMedicalRecord(RECORD_ID, null);
 
         assertTrue(medicalRecordDao.addMedicalRecord(newRecord));
 
-        verify(insertRecord).setString(1, RECORD_ID);
+        verify(insertRecord, times(2)).setString(1, RECORD_ID);
+        verify(insertRecord, times(2)).setString(2, PATIENT_ID);
+        verify(insertRecord).setString(3, CONSULTATION_ID);
+        verify(insertRecord, times(2)).setString(4, "Asthma");
+        verify(insertRecord, times(2)).setString(5, "Peanuts");
         verify(insertRecord).setNull(3, Types.VARCHAR);
     }
 
@@ -278,7 +256,8 @@ class MedicalRecordDaoImplTest {
         assertFalse(medicalRecordDao.addMedicalRecord(noPatient));
         assertFalse(medicalRecordDao.addMedicalRecord(noPatientId));
 
-        connectionHelper.verify(ConnectionHelper::getConnection, never());
+        verify(connection, never()).prepareStatement(
+                QueryConstants.ADD_MEDICAL_RECORD_STATEMENT);
 
         when(connection.prepareStatement(
                 QueryConstants.ADD_MEDICAL_RECORD_STATEMENT))
@@ -297,56 +276,12 @@ class MedicalRecordDaoImplTest {
     }
 
     @Test
-    void findByIdReturnsRecordWhenFound() throws SQLException {
-        when(connection.prepareStatement(
-                QueryConstants.GET_MEDICAL_RECORD_BY_ID_STATEMENT))
-                .thenReturn(findRecords);
-
-        when(recordResult.next()).thenReturn(true);
-        stubRow(CONSULTATION_ID);
-
-        MedicalRecord record = medicalRecordDao.findById(RECORD_ID);
-
-        assertNotNull(record);
-        assertEquals(RECORD_ID, record.getId());
-        assertEquals(PATIENT_ID, record.getPatient().getId());
-        assertEquals(CONSULTATION_ID,
-                record.getConsultation().getId());
-        assertEquals("Asthma", record.getMedicalConditions());
-        assertEquals("Peanuts", record.getAllergies());
-
-        verify(findRecords).setString(1, RECORD_ID);
-    }
-
-    @Test
-    void findByIdReturnsNullWhenRecordIsMissing() throws SQLException {
-        when(connection.prepareStatement(
-                QueryConstants.GET_MEDICAL_RECORD_BY_ID_STATEMENT))
-                .thenReturn(findRecords);
-
-        when(recordResult.next()).thenReturn(false);
-
-        assertNull(medicalRecordDao.findById("no-such-id"));
-    }
-
-    @Test
-    void findByIdReturnsNullWhenQueryFails() throws SQLException {
-        when(connection.prepareStatement(
-                QueryConstants.GET_MEDICAL_RECORD_BY_ID_STATEMENT))
-                .thenReturn(findRecords);
-
-        doThrow(new SQLException("failed"))
-                .when(findRecords).executeQuery();
-
-        assertNull(medicalRecordDao.findById(RECORD_ID));
-    }
-
-    @Test
     void findByPatientIdReturnsMatchingRecords() throws SQLException {
         when(connection.prepareStatement(
                 QueryConstants.GET_MEDICAL_RECORDS_BY_PATIENT_STATEMENT))
                 .thenReturn(findRecords);
 
+        when(findRecords.executeQuery()).thenReturn(recordResult);
         when(recordResult.next()).thenReturn(true, true, false);
         stubRow(CONSULTATION_ID);
 
@@ -367,7 +302,24 @@ class MedicalRecordDaoImplTest {
                 QueryConstants.GET_MEDICAL_RECORDS_BY_PATIENT_STATEMENT))
                 .thenReturn(findRecords);
 
+        when(findRecords.executeQuery()).thenReturn(recordResult);
         when(recordResult.next()).thenReturn(false);
+
+        List<MedicalRecord> records =
+                medicalRecordDao.findByPatientId(PATIENT_ID);
+
+        assertTrue(records.isEmpty());
+    }
+
+    @Test
+    void findByPatientIdReturnsEmptyListWhenQueryFails()
+            throws SQLException {
+        when(connection.prepareStatement(
+                QueryConstants.GET_MEDICAL_RECORDS_BY_PATIENT_STATEMENT))
+                .thenReturn(findRecords);
+
+        doThrow(new SQLException("failed"))
+                .when(findRecords).executeQuery();
 
         List<MedicalRecord> records =
                 medicalRecordDao.findByPatientId(PATIENT_ID);

@@ -17,10 +17,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.startsWith;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -55,7 +54,7 @@ class PersonDaoImplTest {
         findPersons = mock(PreparedStatement.class);
         personResult = mock(ResultSet.class);
 
-        when(connection.prepareStatement(startsWith("select")))
+        when(connection.prepareStatement(anyString()))
                 .thenReturn(findPersons);
         when(findPersons.executeQuery()).thenReturn(personResult);
 
@@ -72,63 +71,57 @@ class PersonDaoImplTest {
     }
 
     @Test
-    void findByIdMapsPersonAndHandlesMissingDataAndQueryFailures()
-            throws SQLException {
+    void findByNameReturnsMatchingPersons() throws SQLException {
         when(personResult.next()).thenReturn(true, true, false);
-        stubPersonRow();
-
-        Timestamp birthDate = Timestamp.valueOf(
-                LocalDateTime.of(2005, 3, 14, 0, 0));
-
-        when(personResult.getTimestamp("date_of_birth"))
-                .thenReturn(birthDate, null);
-        when(personResult.getString("gender"))
-                .thenReturn("Male", null);
-
-        Person person = dao.findById(PERSON_ID);
-
-        assertNotNull(person);
-        assertEquals(PERSON_ID, person.getId());
-        assertEquals("Jowan", person.getFirstName());
-        assertEquals("Carl", person.getMiddleName());
-        assertEquals("Quirona", person.getLastName());
-        assertEquals(Gender.MALE, person.getGender());
-        assertEquals(LocalDateTime.of(2005, 3, 14, 0, 0),
-                person.getDateOfBirth());
-        assertEquals("09171234501", person.getContactNumber());
-
-        verify(findPersons).setString(1, PERSON_ID);
-
-        Person personWithMissingFields = dao.findById(PERSON_ID);
-
-        assertNotNull(personWithMissingFields);
-        assertNull(personWithMissingFields.getDateOfBirth());
-        assertNull(personWithMissingFields.getGender());
-
-        assertNull(dao.findById("no-such-id"));
-
-        doThrow(new SQLException("failed"))
-                .when(findPersons).executeQuery();
-
-        assertNull(dao.findById(PERSON_ID));
-    }
-
-    @Test
-    void findByNameReturnsMatchesOrAnEmptyListWhenNoMatchOrQueryFails()
-            throws SQLException {
-        when(personResult.next()).thenReturn(true, true, false, false);
         stubPersonRow();
 
         List<Person> persons = dao.findByName(" Jowan ");
 
         assertEquals(2, persons.size());
+        assertEquals(PERSON_ID, persons.get(0).getId());
+        assertEquals("Jowan", persons.get(0).getFirstName());
+        assertEquals("Carl", persons.get(0).getMiddleName());
         assertEquals("Quirona", persons.get(0).getLastName());
+        assertEquals(Gender.MALE, persons.get(0).getGender());
+        assertEquals(
+                LocalDateTime.of(2005, 3, 14, 0, 0),
+                persons.get(0).getDateOfBirth());
+        assertEquals("09171234501",
+                persons.get(0).getContactNumber());
 
         verify(findPersons).setString(1, "%jowan%");
         verify(findPersons).setString(2, "%jowan%");
+    }
 
-        assertTrue(dao.findByName("Nobody").isEmpty());
+    @Test
+    void findByNameHandlesMissingPersonFields() throws SQLException {
+        when(personResult.next()).thenReturn(true, false);
+        stubPersonRow();
 
+        when(personResult.getTimestamp("date_of_birth"))
+                .thenReturn((Timestamp) null);
+        when(personResult.getString("gender"))
+                .thenReturn((String) null);
+
+        List<Person> persons = dao.findByName("Jowan");
+
+        assertEquals(1, persons.size());
+        assertNull(persons.get(0).getDateOfBirth());
+        assertNull(persons.get(0).getGender());
+    }
+
+    @Test
+    void findByNameReturnsEmptyListWhenNoMatch() throws SQLException {
+        when(personResult.next()).thenReturn(false);
+
+        List<Person> persons = dao.findByName("Nobody");
+
+        assertTrue(persons.isEmpty());
+    }
+
+    @Test
+    void findByNameReturnsEmptyListWhenQueryFails()
+            throws SQLException {
         doThrow(new SQLException("failed"))
                 .when(findPersons).executeQuery();
 
@@ -140,7 +133,8 @@ class PersonDaoImplTest {
         assertTrue(dao.findByName(null).isEmpty());
         assertTrue(dao.findByName("   ").isEmpty());
 
-        connectionHelper.verify(ConnectionHelper::getConnection, never());
+        connectionHelper.verify(
+                ConnectionHelper::getConnection, never());
     }
 
     private void stubPersonRow() throws SQLException {
