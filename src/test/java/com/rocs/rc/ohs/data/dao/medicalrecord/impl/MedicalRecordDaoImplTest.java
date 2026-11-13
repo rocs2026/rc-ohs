@@ -1,3 +1,4 @@
+
 package com.rocs.rc.ohs.data.dao.medicalrecord.impl;
 
 import com.rocs.rc.ohs.app.model.consultation.Consultation;
@@ -276,28 +277,33 @@ class MedicalRecordDaoImplTest {
     }
 
     @Test
-    void findByPatientIdReturnsMatchingRecords() throws SQLException {
+    void findByPatientNameReturnsMatchingRecords() throws SQLException {
+        String patientName = "Juan Dela Cruz";
+        String searchPattern = "%juan dela cruz%";
+
         when(connection.prepareStatement(
                 QueryConstants.GET_MEDICAL_RECORDS_BY_PATIENT_STATEMENT))
                 .thenReturn(findRecords);
 
         when(findRecords.executeQuery()).thenReturn(recordResult);
         when(recordResult.next()).thenReturn(true, true, false);
+
         stubRow(CONSULTATION_ID);
 
         List<MedicalRecord> records =
-                medicalRecordDao.findByPatientId(PATIENT_ID);
+                medicalRecordDao.findByPatientName(patientName);
 
         assertEquals(2, records.size());
         assertEquals(PATIENT_ID, records.get(0).getPatient().getId());
         assertEquals(PATIENT_ID, records.get(1).getPatient().getId());
 
-        verify(findRecords).setString(1, PATIENT_ID);
+        verify(findRecords).setString(1, searchPattern);
     }
 
     @Test
-    void findByPatientIdReturnsEmptyListWhenNoRecordsExist()
+    void findByPatientNameReturnsEmptyListWhenNoRecordsExist()
             throws SQLException {
+
         when(connection.prepareStatement(
                 QueryConstants.GET_MEDICAL_RECORDS_BY_PATIENT_STATEMENT))
                 .thenReturn(findRecords);
@@ -306,14 +312,15 @@ class MedicalRecordDaoImplTest {
         when(recordResult.next()).thenReturn(false);
 
         List<MedicalRecord> records =
-                medicalRecordDao.findByPatientId(PATIENT_ID);
+                medicalRecordDao.findByPatientName("Juan Dela Cruz");
 
         assertTrue(records.isEmpty());
     }
 
     @Test
-    void findByPatientIdReturnsEmptyListWhenQueryFails()
+    void findByPatientNameReturnsEmptyListWhenQueryFails()
             throws SQLException {
+
         when(connection.prepareStatement(
                 QueryConstants.GET_MEDICAL_RECORDS_BY_PATIENT_STATEMENT))
                 .thenReturn(findRecords);
@@ -322,8 +329,21 @@ class MedicalRecordDaoImplTest {
                 .when(findRecords).executeQuery();
 
         List<MedicalRecord> records =
-                medicalRecordDao.findByPatientId(PATIENT_ID);
+                medicalRecordDao.findByPatientName("Juan Dela Cruz");
 
         assertTrue(records.isEmpty());
+    }
+
+    @Test
+    void findByPatientNameReturnsEmptyListWhenNameIsBlank()
+            throws SQLException {
+
+        List<MedicalRecord> records =
+                medicalRecordDao.findByPatientName(" ");
+
+        assertTrue(records.isEmpty());
+
+        verify(connection, never()).prepareStatement(
+                QueryConstants.GET_MEDICAL_RECORDS_BY_PATIENT_STATEMENT);
     }
 }

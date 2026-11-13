@@ -5,6 +5,7 @@ import com.rocs.rc.ohs.app.model.medicalrecord.MedicalRecord;
 import com.rocs.rc.ohs.app.model.person.Person;
 import com.rocs.rc.ohs.data.dao.medicalrecord.MedicalRecordDao;
 import com.rocs.rc.ohs.data.dao.person.PersonDao;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,25 +50,28 @@ public class MedicalRecordFacadeImpl implements MedicalRecordFacade {
     /**
      * Adds a medical record for an existing patient.
      *
-     * @param patientId the patient's ID
+     * @param patientName the name of the patient
      * @param medicalConditions the patient's medical conditions
      * @param allergies the patient's allergies
      * @return true if the record was added, otherwise false
      */
     @Override
-    public boolean addMedicalRecord(String patientId,
+    public boolean addMedicalRecord(String patientName,
                                     String medicalConditions,
                                     String allergies) {
-        if (isBlank(patientId) || isBlank(medicalConditions)
+        if (isBlank(patientName) || isBlank(medicalConditions)
                 || isBlank(allergies)) {
             return false;
         }
 
-        Person patient = new Person();
-        patient.setId(patientId.trim());
+        List<Person> patients = personDao.findByName(patientName.trim());
+
+        if (patients.size() != 1) {
+            return false;
+        }
 
         MedicalRecord medicalRecord = new MedicalRecord();
-        medicalRecord.setPatient(patient);
+        medicalRecord.setPatient(patients.get(0));
         medicalRecord.setMedicalConditions(medicalConditions.trim());
         medicalRecord.setAllergies(allergies.trim());
 
@@ -75,18 +79,18 @@ public class MedicalRecordFacadeImpl implements MedicalRecordFacade {
     }
 
     /**
-     * Retrieves the records associated with a patient.
+     * Retrieves the records associated with a patient by name.
      *
-     * @param patientId the patient's ID
+     * @param patientName the name of the patient
      * @return the patient's medical records, or an empty list
      */
     @Override
-    public List<MedicalRecord> findMedicalRecords(String patientId) {
-        if (isBlank(patientId)) {
+    public List<MedicalRecord> findMedicalRecords(String patientName) {
+        if (isBlank(patientName)) {
             return new ArrayList<>();
         }
 
-        return medicalRecordDao.findByPatientId(patientId.trim());
+        return medicalRecordDao.findByPatientName(patientName.trim());
     }
 
     /**

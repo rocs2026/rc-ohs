@@ -11,9 +11,9 @@ import java.util.List;
 public interface MedicalRecordFacade {
 
     /**
-     * Finds patients that match a patient ID or name.
+     * Finds patients by name.
      *
-     * @param keyword the patient ID, or the full or partial name.
+     * @param keyword the full or partial patient name.
      * @return the matching patients, or an empty list if there is no match.
      */
     List<Person> findPatients(String keyword);
@@ -21,20 +21,20 @@ public interface MedicalRecordFacade {
     /**
      * Adds a new medical record for a patient.
      *
-     * @param patientId the ID of the patient.
+     * @param patientName the name of the patient.
      * @param medicalConditions the medical conditions of the patient.
      * @param allergies the allergies of the patient.
      * @return true if the medical record was added, otherwise false.
      */
-    boolean addMedicalRecord(String patientId, String medicalConditions,
+    boolean addMedicalRecord(String patientName, String medicalConditions,
                              String allergies);
 
     /**
-     * Retrieves the medical records of a patient.
+     * Retrieves the medical records of a patient by name.
      *
-     * @param patientId the ID of the patient.
+     * @param patientName the name of the patient.
      * @return the medical records of the patient, or an empty list if
      *         the patient has none.
      */
-    List<MedicalRecord> findMedicalRecords(String patientId);
+    List<MedicalRecord> findMedicalRecords(String patientName);
 }

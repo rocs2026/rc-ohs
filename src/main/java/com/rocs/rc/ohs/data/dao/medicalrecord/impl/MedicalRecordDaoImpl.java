@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * JDBC implementation of {@link MedicalRecordDao}.
@@ -31,21 +32,27 @@ public class MedicalRecordDaoImpl implements MedicalRecordDao {
         this.connection = newConnection;
     }
 
-
     /**
-     * Retrieves all medical records belonging to a patient.
+     * Retrieves all medical records belonging to a patient by name.
      *
-     * @param patientId the patient's ID
+     * @param patientName the patient's name
      * @return a list of the patient's medical records
      */
     @Override
-    public List<MedicalRecord> findByPatientId(String patientId) {
+    public List<MedicalRecord> findByPatientName(String patientName) {
         List<MedicalRecord> records = new ArrayList<>();
+
+        if (patientName == null || patientName.trim().isEmpty()) {
+            return records;
+        }
+
+        String searchPattern =
+                "%" + patientName.trim().toLowerCase(Locale.ROOT) + "%";
 
         try (PreparedStatement statement = connection.prepareStatement(
                 QueryConstants.GET_MEDICAL_RECORDS_BY_PATIENT_STATEMENT)) {
 
-            statement.setString(1, patientId);
+            statement.setString(1, searchPattern);
 
             try (ResultSet result = statement.executeQuery()) {
                 while (result.next()) {

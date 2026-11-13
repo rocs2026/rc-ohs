@@ -10,13 +10,13 @@ import java.util.List;
 public interface MedicalRecordDao {
 
     /**
-     * Retrieves all medical records of a patient.
+     * Retrieves all medical records of a patient using the patient's name.
      *
-     * @param patientId the ID of the patient.
+     * @param patientName the name of the patient.
      * @return the medical records of the patient, or an empty list if
      *         the patient has none.
      */
-    List<MedicalRecord> findByPatientId(String patientId);
+    List<MedicalRecord> findByPatientName(String patientName);
 
     /**
      * Adds a medical record.
