@@ -1,3 +1,4 @@
+
 package com.rocs.rc.ohs.data.dao.medicalrecord.impl;
 
 import com.rocs.rc.ohs.app.model.consultation.Consultation;
@@ -40,25 +41,39 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class MedicalRecordDaoImplTest {
 
+    /** ID used for medical record test cases. */
     private static final String RECORD_ID =
             "4e49eb71-3481-476b-b6ba-5662a48df1e5";
 
+    /** ID used for patient test cases. */
     private static final String PATIENT_ID =
             "ea67a306-d343-4847-b204-c92f2d4cc9e0";
 
+    /** ID used for consultation test cases. */
     private static final String CONSULTATION_ID =
             "a451a504-a3d4-4721-bf8d-a18b8c199356";
 
+    /** Mock database connection. */
     @Mock
     private Connection connection;
 
+    /** Mock prepared statement for update tests. */
     @Mock
     private PreparedStatement statement;
 
+    /** DAO instance being tested. */
     private MedicalRecordDaoImpl medicalRecordDao;
+
+    /** Static mock for the connection helper. */
     private MockedStatic<ConnectionHelper> connectionHelper;
+
+    /** Prepared statement for medical record queries. */
     private PreparedStatement findRecords;
+
+    /** Prepared statement for inserting medical records. */
     private PreparedStatement insertRecord;
+
+    /** Mock result set returned by database queries. */
     private ResultSet recordResult;
 
     @BeforeEach
