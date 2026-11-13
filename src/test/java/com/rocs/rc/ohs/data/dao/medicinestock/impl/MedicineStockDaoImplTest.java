@@ -2,14 +2,11 @@
 package com.rocs.rc.ohs.data.dao.medicinestock.impl;
 
 import com.rocs.rc.ohs.app.model.medicine.Medicine;
+import com.rocs.rc.ohs.app.model.medicine.MedicineCategory;
 import com.rocs.rc.ohs.app.model.medicine.MedicineStock;
 import com.rocs.rc.ohs.data.connection.ConnectionHelper;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.stubbing.OngoingStubbing;
+import com.rocs.rc.ohs.data.dao.medicinestock.MedicineStockDao;
+import com.rocs.rc.ohs.data.utils.QueryConstants;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -17,67 +14,53 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.startsWith;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.stubbing.OngoingStubbing;
 
-/**
- * Tests the medicine stock DAO using RCISD-5 test cases.
- */
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
 class MedicineStockDaoImplTest {
 
-    /** Index for Paracetamol. */
     private static final int PARACETAMOL = 0;
-
-    /** Index for Amoxicillin. */
     private static final int AMOXICILLIN = 1;
 
-    /** Test stock IDs. */
     private static final String[] STOCK_IDS = {
             "cff69d39-caa4-4a79-978b-8927f5b0c1a4",
             "70aaf305-a7f5-41f1-bd0a-6ad73c042be9"
     };
 
-    /** Test medicine IDs. */
     private static final String[] MEDICINE_IDS = {
             "ebb3209c-50ea-4fbd-8b7e-be4540ab5b57",
             "36c00788-fcfd-485e-8ad3-de08fd49cb76"
     };
 
-    /** Medicine names. */
     private static final String[] MEDICINE_NAMES = {
             "Paracetamol 500mg", "Amoxicillin 500mg"
     };
 
     private static final String[] UNITS = {"tablet", "capsule"};
 
-    /** Medicine category IDs. */
     private static final String[] CATEGORY_IDS = {
             "fde2280e-3564-4ced-87d5-a06454eec0b3",
             "e855961e-acf2-4bec-9262-30d1961d40b1"
     };
 
-    /** Medicine category names. */
-    private static final String[] CATEGORY_NAMES = {"Analgesic", "Antibiotic"};
+    private static final String[] CATEGORY_NAMES = {
+            "Analgesic", "Antibiotic"
+    };
 
-    /** Stock batch numbers. */
     private static final String[] BATCH_NUMBERS = {"B-001", "B-002"};
 
-    /** Expiration dates. */
     private static final String[] EXPIRATION_DATES = {
             "2027-12-31", "2027-06-30"
     };
@@ -253,7 +236,8 @@ class MedicineStockDaoImplTest {
     }
 
     @Test
-    void findLowStockReturnsStocksUsingTheLowStockLevel() throws SQLException {
+    void findLowStockReturnsStocksUsingTheLowStockLevel()
+            throws SQLException {
         stubRows(AMOXICILLIN);
 
         List<MedicineStock> stocks = dao.findLowStock();
@@ -339,10 +323,10 @@ class MedicineStockDaoImplTest {
     }
 
     /**
-     * Checks the stock details against the test data.
+     * Checks the stock details against the seed data.
      *
      * @param stock The stock record to check.
-     * @param row The test data index.
+     * @param row The seed data index.
      */
     private void assertStock(MedicineStock stock, int row) {
         assertEquals(STOCK_IDS[row], stock.getId());
@@ -364,9 +348,9 @@ class MedicineStockDaoImplTest {
     }
 
     /**
-     * Prepares the result set using the selected test rows.
+     * Prepares the result set using the selected seed rows.
      *
-     * @param rows The test indexes to include.
+     * @param rows The seed indexes to include, or none for an empty result.
      * @throws SQLException if the result set setup fails.
      */
     private void stubRows(int... rows) throws SQLException {
@@ -392,17 +376,18 @@ class MedicineStockDaoImplTest {
                         Date.valueOf(EXPIRATION_DATES[row]));
             }
         }
+
         when(resultSet.getInt("quantity_received"))
                 .thenReturn(QUANTITY_RECEIVED);
         when(resultSet.getString("status")).thenReturn(STATUS_ENOUGH);
     }
 
     /**
-     * Sets up a result set column using the selected values.
+     * Sets up a result set column using the selected seed values.
      *
      * @param column The column name.
      * @param values The values to use.
-     * @param rows The test indexes to include.
+     * @param rows The seed indexes to include.
      * @throws SQLException if the column setup fails.
      */
     private void stubColumn(String column, String[] values, int... rows)
@@ -410,6 +395,7 @@ class MedicineStockDaoImplTest {
         if (rows.length == 0) {
             return;
         }
+
         OngoingStubbing<String> stub = when(resultSet.getString(column));
         for (int row : rows) {
             stub = stub.thenReturn(values[row]);

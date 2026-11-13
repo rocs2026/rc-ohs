@@ -38,15 +38,20 @@ public class MedicineStockDaoImpl implements MedicineStockDao {
      */
     @Override
     public List<MedicineStock> findAll() {
+        List<MedicineStock> stocks = new ArrayList<>();
+
         try (Connection conn = ConnectionHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
                      QueryConstants.SELECT_STOCK
                              + "order by ms.batch_number")) {
-            return readStocks(stmt);
+
+            stocks = readStocks(stmt);
+
         } catch (SQLException e) {
-            throw new IllegalStateException(
-                    "Failed to retrieve medicine stocks.", e);
+            return stocks;
         }
+
+        return stocks;
     }
 
     /**
@@ -57,22 +62,25 @@ public class MedicineStockDaoImpl implements MedicineStockDao {
      */
     @Override
     public MedicineStock findById(String id) {
+        MedicineStock stock = null;
+
         try (Connection conn = ConnectionHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
                      QueryConstants.SELECT_STOCK + "where ms.id = ?")) {
+
             stmt.setString(1, id);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return mapStock(rs);
+                    stock = mapStock(rs);
                 }
             }
+
         } catch (SQLException e) {
-            throw new IllegalStateException(
-                    "Failed to find medicine stock with ID: " + id, e);
+            return stock;
         }
 
-        return null;
+        return stock;
     }
 
     /**
@@ -82,17 +90,22 @@ public class MedicineStockDaoImpl implements MedicineStockDao {
      */
     @Override
     public List<MedicineStock> findLowStock() {
+        List<MedicineStock> stocks = new ArrayList<>();
+
         try (Connection conn = ConnectionHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
                      QueryConstants.SELECT_STOCK
                              + "where fn_remaining_stock(ms.id) <= ? "
                              + "order by ms.batch_number")) {
+
             stmt.setInt(1, LOW_STOCK_LEVEL);
-            return readStocks(stmt);
+            stocks = readStocks(stmt);
+
         } catch (SQLException e) {
-            throw new IllegalStateException(
-                    "Failed to retrieve low stock records.", e);
+            return stocks;
         }
+
+        return stocks;
     }
 
     /**
@@ -112,17 +125,22 @@ public class MedicineStockDaoImpl implements MedicineStockDao {
         String pattern = "%"
                 + keyword.trim().toLowerCase(Locale.ROOT) + "%";
 
+        List<MedicineStock> stocks = new ArrayList<>();
+
         try (Connection conn = ConnectionHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
                      QueryConstants.SELECT_STOCK
                              + "where lower(m.medicine_name) like ? "
                              + "order by ms.batch_number")) {
+
             stmt.setString(1, pattern);
-            return readStocks(stmt);
+            stocks = readStocks(stmt);
+
         } catch (SQLException e) {
-            throw new IllegalStateException(
-                    "Failed to search medicine stocks.", e);
+            return stocks;
         }
+
+        return stocks;
     }
 
     /**
@@ -155,15 +173,16 @@ public class MedicineStockDaoImpl implements MedicineStockDao {
 
             try (PreparedStatement stmt = conn.prepareStatement(
                     QueryConstants.UPDATE_STOCK_QUANTITY)) {
+
                 stmt.setInt(1, quantity);
                 stmt.setString(2, status);
                 stmt.setString(3, id);
 
                 return stmt.executeUpdate() > 0;
             }
+
         } catch (SQLException e) {
-            throw new IllegalStateException(
-                    "Failed to update medicine stock with ID: " + id, e);
+            return false;
         }
     }
 
@@ -186,12 +205,17 @@ public class MedicineStockDaoImpl implements MedicineStockDao {
             throws SQLException {
         try (PreparedStatement stmt = conn.prepareStatement(
                 QueryConstants.SELECT_DISPENSED_QUANTITY)) {
+
             stmt.setString(1, id);
 
             try (ResultSet rs = stmt.executeQuery()) {
-                return rs.next() ? rs.getInt(1) : 0;
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
             }
         }
+
+        return 0;
     }
 
     // Maps the current result row to a MedicineStock object.
@@ -204,8 +228,13 @@ public class MedicineStockDaoImpl implements MedicineStockDao {
         stock.setQuantityReceived(rs.getInt("quantity_received"));
 
         Date expiration = rs.getDate("expiration_date");
-        stock.setExpirationDate(expiration == null
-                ? null : expiration.toLocalDate().atStartOfDay());
+
+        if (expiration != null) {
+            stock.setExpirationDate(
+                    expiration.toLocalDate().atStartOfDay());
+        } else {
+            stock.setExpirationDate(null);
+        }
 
         stock.setStatus(rs.getString("status"));
 
@@ -224,8 +253,10 @@ public class MedicineStockDaoImpl implements MedicineStockDao {
 
         if (categoryId != null) {
             MedicineCategory category = new MedicineCategory();
+
             category.setId(categoryId);
             category.setCategoryName(rs.getString("category_name"));
+
             medicine.setCategory(category);
         }
 
