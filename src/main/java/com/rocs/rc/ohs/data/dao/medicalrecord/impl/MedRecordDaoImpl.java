@@ -5,7 +5,7 @@ import com.rocs.rc.ohs.app.model.consultation.Consultation;
 import com.rocs.rc.ohs.app.model.medicalrecord.MedicalRecord;
 import com.rocs.rc.ohs.app.model.person.Person;
 import com.rocs.rc.ohs.data.connection.ConnectionHelper;
-import com.rocs.rc.ohs.data.dao.medicalrecord.MedicalRecordDao;
+import com.rocs.rc.ohs.data.dao.medicalrecord.MedRecordDao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,10 +20,10 @@ import java.util.logging.Logger;
 /**
  * Handles database operations for medical records.
  */
-public class MedicalRecordDaoImpl implements MedicalRecordDao {
+public class MedRecordDaoImpl implements MedRecordDao {
 
     private static final Logger LOGGER =
-            Logger.getLogger(MedicalRecordDaoImpl.class.getName());
+            Logger.getLogger(MedRecordDaoImpl.class.getName());
 
     private static final String SELECT_BY_ID =
             "select id, patient_id, consultation_id, medical_conditions, "
