@@ -1,13 +1,21 @@
-package com.rocs.rc.ohs.data.utils.medicine;
+package com.rocs.rc.ohs.data.utils;
 
 /**
- * it is the query constants class for medicine.
+ * Holds the SQL statements used by the data access objects.
  */
 public final class QueryConstants {
 
     private QueryConstants() {
         // Private constructor to prevent instantiation
     }
+
+    /**
+     * it is the query to update medical record.
+     */
+    public static final String UPDATE_MEDICAL_RECORD_STATEMENT =
+            "UPDATE medical_record "
+                    + "SET medical_conditions = ?, allergies = ? "
+                    + "WHERE id =?";
 
     /**
      * it is the query to select all medicine.
@@ -47,26 +55,34 @@ public final class QueryConstants {
                     + "ORDER BY medicine.medicine_name;";
 
     /**
-     * it is the query to select all medicine stock.
+     * This is the function created by Wyne.
      */
     public static final String SELECT_ALL_MEDICINE_STOCK =
-            "SELECT medicine_stock_id, medicine_id, medicine_name, "
-                    + "category_name, unit, batch_number, "
-                    + "quantity_received, remaining_quantity, "
-                    + "expiration_date, status "
-                    + "FROM inventory_view "
-                    + "ORDER BY medicine_name";
+            "SELECT ms.id AS medicine_stock_id, m.id AS medicine_id, "
+                    + "m.medicine_name, mc.category_name, m.unit, "
+                    + "ms.batch_number, ms.quantity_received, "
+                    + "fn_remaining_stock(ms.id) AS remaining_quantity, "
+                    + "ms.expiration_date, ms.status "
+                    + "FROM medicine_stock ms "
+                    + "JOIN medicine m ON m.id = ms.medicine_id "
+                    + "LEFT JOIN medicine_category mc "
+                    + "ON mc.id = m.category_id "
+                    + "ORDER BY m.medicine_name;";
 
     /**
-     * it is the query to search medicine stock.
+     * This is the function created by Wyne.
      */
     public static final String SEARCH_MEDICINE_STOCK =
-            "SELECT medicine_stock_id, medicine_id, medicine_name, "
-                    + "category_name, unit, batch_number, "
-                    + "quantity_received, remaining_quantity, "
-                    + "expiration_date, status "
-                    + "FROM inventory_view "
-                    + "WHERE medicine_name LIKE ? "
-                    + "OR category_name LIKE ? "
-                    + "ORDER BY medicine_name";
+            "SELECT ms.id AS medicine_stock_id, m.id AS medicine_id, "
+                    + "m.medicine_name, mc.category_name, m.unit, "
+                    + "ms.batch_number, ms.quantity_received, "
+                    + "fn_remaining_stock(ms.id) AS remaining_quantity, "
+                    + "ms.expiration_date, ms.status "
+                    + "FROM medicine_stock ms "
+                    + "JOIN medicine m ON m.id = ms.medicine_id "
+                    + "LEFT JOIN medicine_category mc "
+                    + "ON mc.id = m.category_id "
+                    + "WHERE m.medicine_name LIKE ? "
+                    + "OR mc.category_name LIKE ? "
+                    + "ORDER BY m.medicine_name;";
 }

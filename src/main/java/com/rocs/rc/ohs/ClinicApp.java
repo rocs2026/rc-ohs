@@ -2,12 +2,12 @@ package com.rocs.rc.ohs;
 
 import com.rocs.rc.ohs.app.facade.login.LoginFacade;
 import com.rocs.rc.ohs.app.facade.login.impl.LoginFacadeImpl;
-import com.rocs.rc.ohs.app.facade.medicine.MedicineStockFacade;
-import com.rocs.rc.ohs.app.facade.medicine.impl.MedicineStockFacadeImpl;
+// import com.rocs.rc.ohs.app.facade.medicine.MedicineStockFacade;
+// import com.rocs.rc.ohs.app.facade.medicine.impl.MedicineStockFacadeImpl;
 import com.rocs.rc.ohs.app.model.login.Login;
-import com.rocs.rc.ohs.app.model.medicine.MedicineStock;
+// import com.rocs.rc.ohs.app.model.medicine.MedicineStock;
 
-import java.util.List;
+// import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -63,84 +63,85 @@ public final class ClinicApp {
 
         System.out.println("Login successful");
 
-        MedicineStockFacade medicineStockFacade =
-                new MedicineStockFacadeImpl();
-        int choice;
-
-        do {
-            System.out.println("\nMedicine Inventory");
-            System.out.println("1. View inventory");
-            System.out.println("2. Search medicine");
-            System.out.println("0. Exit");
-            System.out.print("Choose: ");
-
-            while (!scanner.hasNextInt()) {
-                System.out.print("Invalid input. Choose: ");
-                scanner.next();
-            }
-            choice = scanner.nextInt();
-            scanner.nextLine();
-
-            if (choice == 1) {
-                viewInventory(medicineStockFacade);
-            } else if (choice == 2) {
-                searchMedicineStock(
-                        scanner, medicineStockFacade);
-            } else if (choice == 0) {
-                System.out.println("Exiting application...");
-            } else {
-                System.out.println("Invalid choice. Try again.");
-            }
-        } while (choice != 0);
-
-        scanner.close();
-    }
-
-    /**
-     * it is the method to view inventory.
-     *
-     * @param facade the medicine stock facade
-     */
-    public static void viewInventory(
-            MedicineStockFacade facade) {
-        List<MedicineStock> stocks = facade.getAllStock();
-        if (stocks.isEmpty()) {
-            System.out.println("No stocks found.");
-            return;
-        }
-        for (MedicineStock stock : stocks) {
-            System.out.println("Medicine: "
-                    + stock.getMedicine().getMedicineName()
-                    + " Batch: " + stock.getBatchNumber()
-                    + " Received: "
-                    + stock.getQuantityReceived()
-                    + " Status: " + stock.getStatus());
-        }
-    }
-
-    /**
-     * it is the method to search medicine stock.
-     *
-     * @param scanner the scanner
-     * @param facade  the medicine stock facade
-     */
-    public static void searchMedicineStock(
-            Scanner scanner, MedicineStockFacade facade) {
-        System.out.print("Enter search keyword: ");
-        String keyword = scanner.nextLine();
-        List<MedicineStock> stocks =
-                facade.searchStock(keyword);
-        if (stocks.isEmpty()) {
-            System.out.println("No matching stocks found.");
-            return;
-        }
-        for (MedicineStock stock : stocks) {
-            System.out.println("Medicine: "
-                    + stock.getMedicine().getMedicineName()
-                    + " Batch: " + stock.getBatchNumber()
-                    + " Received: "
-                    + stock.getQuantityReceived()
-                    + " Status: " + stock.getStatus());
-        }
+//        MedicineStockFacade medicineStockFacade =
+//                new MedicineStockFacadeImpl();
+//        int choice;
+//
+//        do {
+//            System.out.println("\nMedicine Inventory");
+//            System.out.println("1. View inventory");
+//            System.out.println("2. Search medicine");
+//            System.out.println("0. Exit");
+//            System.out.print("Choose: ");
+//
+//            while (!scanner.hasNextInt()) {
+//                System.out.print("Invalid input. Choose: ");
+//                scanner.next();
+//            }
+//            choice = scanner.nextInt();
+//            scanner.nextLine();
+//
+//            if (choice == 1) {
+//                viewInventory(medicineStockFacade);
+//            } else if (choice == 2) {
+//                searchMedicineStock(
+//                        scanner, medicineStockFacade);
+//            } else if (choice == 0) {
+//                System.out.println("Exiting application...");
+//            } else {
+//                System.out.println("Invalid choice. Try again.");
+//            }
+//        } while (choice != 0);
+//
+//        scanner.close();
+//    }
+//
+//    /**
+//     * it is the method to view inventory.
+//     *
+//     * @param facade the medicine stock facade
+//     */
+//    public static void viewInventory(
+//            MedicineStockFacade facade) {
+//        List<MedicineStock> stocks = facade.getAllStock();
+//        if (stocks.isEmpty()) {
+//            System.out.println("No stocks found.");
+//            return;
+//        }
+//        for (MedicineStock stock : stocks) {
+//            System.out.println("Medicine: "
+//                    + stock.getMedicine().getMedicineName()
+//                    + " Batch: " + stock.getBatchNumber()
+//                    + " Received: "
+//                    + stock.getQuantityReceived()
+//                    + " Status: " + stock.getStatus());
+//        }
+//    }
+//
+//    /**
+//     * it is the method to search medicine stock.
+//     *
+//     * @param scanner the scanner
+//     * @param facade  the medicine stock facade
+//     */
+//    public static void searchMedicineStock(
+//            Scanner scanner, MedicineStockFacade facade) {
+//        System.out.print("Enter search keyword: ");
+//        String keyword = scanner.nextLine();
+//        List<MedicineStock> stocks =
+//                facade.searchStock(keyword);
+//        if (stocks.isEmpty()) {
+//            System.out.println("No matching stocks found.");
+//            return;
+//        }
+//        for (MedicineStock stock : stocks) {
+//            System.out.println("Medicine: "
+//                    + stock.getMedicine().getMedicineName()
+//                    + " Batch: " + stock.getBatchNumber()
+//                    + " Received: "
+//                    + stock.getQuantityReceived()
+//                    + " Status: " + stock.getStatus());
+//        }
+//    }
     }
 }

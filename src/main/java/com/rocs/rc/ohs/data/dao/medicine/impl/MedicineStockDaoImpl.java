@@ -5,7 +5,7 @@ import com.rocs.rc.ohs.app.model.medicine.MedicineCategory;
 import com.rocs.rc.ohs.app.model.medicine.MedicineStock;
 import com.rocs.rc.ohs.data.connection.ConnectionHelper;
 import com.rocs.rc.ohs.data.dao.medicine.MedicineStockDao;
-import com.rocs.rc.ohs.data.utils.medicine.QueryConstants;
+import com.rocs.rc.ohs.data.utils.QueryConstants;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
