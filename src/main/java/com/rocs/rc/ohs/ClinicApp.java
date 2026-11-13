@@ -90,7 +90,7 @@
             }
 
             System.out.println("Login successful");
-
+        }
 //            searchMedicalRecords(sc);
         }
 
@@ -149,7 +149,7 @@
 //        }
 
     
-        }
+//        }
     
         // /**
         //  * Resets a forgotten password after
