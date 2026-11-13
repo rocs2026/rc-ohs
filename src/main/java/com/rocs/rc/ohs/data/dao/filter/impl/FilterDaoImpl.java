@@ -21,10 +21,10 @@ public class FilterDaoImpl implements FilterDao {
     /**
      * Retrieves the medical records that match the given criteria.
      * A null or blank criterion is ignored.
-     * parameter patientName first or last name of the patient.
-     * parameter medicalCondition medical condition of the patient.
-     * parameter allergy of the patient.
-     * return list of matching {@link MedicalRecord} records.
+     * @param patientName first or last name of the patient.
+     * @param medicalCondition medical condition of the patient.
+     * @param allergy allergy of the patient.
+     * @return list of matching {@link MedicalRecord} records.
      */
     @Override
     public List<MedicalRecord> filterMedicalRecords(String patientName,
