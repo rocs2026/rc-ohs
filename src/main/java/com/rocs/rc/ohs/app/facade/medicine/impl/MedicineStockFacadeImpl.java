@@ -23,16 +23,14 @@ public class MedicineStockFacadeImpl implements MedicineStockFacade {
     public MedicineStockFacadeImpl() {
         this.medicineStockDao = new MedicineStockDaoImpl();
     }
-
     /**
      * Constructs a new MedicineStockFacadeImpl with a specified DAO.
      *
-     * @param medicineStockDao the medicine stock DAO
+     * @param dao the medicine stock DAO
      */
-    public MedicineStockFacadeImpl(MedicineStockDao medicineStockDao) {
-        this.medicineStockDao = medicineStockDao;
+    public MedicineStockFacadeImpl(MedicineStockDao dao) {
+        this.medicineStockDao = dao;
     }
-
     @Override
     public List<MedicineStock> getAllStock() {
         return medicineStockDao.getAllStock();

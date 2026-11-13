@@ -129,7 +129,6 @@ public class MedicineStockDaoImpl implements MedicineStockDao {
      *
      * @param medicineStockId the ID of the medicine stock
      * @return the remaining quantity of the medicine stock
-     * @throws IllegalArgumentException if the medicine stock ID is null or empty
      * @throws RuntimeException if an SQL error occurs
      */
     @Override
