@@ -105,3 +105,4 @@ class LoginFacadeImplTest {
         verifyNoInteractions(loginDao);
     }
 }
+
