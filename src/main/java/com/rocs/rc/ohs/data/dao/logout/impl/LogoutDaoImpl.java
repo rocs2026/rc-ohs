@@ -10,22 +10,32 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-
+/**
+*implementation of the {@link LogoutDao} to end user sessions
+*/
 public class LogoutDaoImpl implements LogoutDao {
     private static final String ACTIVE = "ACTIVE";
     private static final String ENDED = "ENDED";
 
+/**status for currently active. */
     private static final String FIND_ACTIVE =
             "SELECT session_id, staff_id, login_time, logout_time, status "
                     + "FROM user_session WHERE staff_id = ? AND status = ? "
                     + "ORDER BY login_time DESC LIMIT 1";
 
+/** Statement that marks an active session as ended. */
     private static final String END_SESSION =
             "UPDATE user_session SET logout_time = ?, status = ? "
                     + "WHERE session_id = ? AND status = ?";
-
+    
+/**status for recently ended session. */
     private final DataSource dataSource;
 
+/**
+* Creates a new {@code LogoutDaoImpl}.
+*
+* @param dataSource the data source to remain connections
+*/
     public LogoutDaoImpl(DataSource dataSource) {
         this.dataSource = dataSource;
     }
@@ -58,6 +68,13 @@ public class LogoutDaoImpl implements LogoutDao {
         }
     }
 
+/**
+* Maps the current row of a result set to a {@link UserSession}.
+*
+* @param rs the result on a valid row
+* @return the mapped session
+* @throws SQLException if a column cannot be read
+*/
     private UserSession mapRow(ResultSet rs) throws SQLException {
         UserSession session = new UserSession();
         session.setSessionId(rs.getInt("session_id"));
