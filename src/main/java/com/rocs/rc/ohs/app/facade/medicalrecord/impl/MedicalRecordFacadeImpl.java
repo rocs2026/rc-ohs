@@ -14,7 +14,7 @@ public class MedicalRecordFacadeImpl implements MedicalRecordFacade {
     private final MedicalRecordDao medicalRecordDao;
 
     /**
-     * Initialize the facade with dao
+     * Initialize the facade with dao.
      */
     public MedicalRecordFacadeImpl() {
         this(new MedicalRecordDaoImpl());

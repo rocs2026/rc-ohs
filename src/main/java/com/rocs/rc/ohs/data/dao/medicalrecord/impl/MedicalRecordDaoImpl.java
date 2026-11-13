@@ -1,6 +1,5 @@
 package com.rocs.rc.ohs.data.dao.medicalrecord.impl;
 
-import com.rocs.rc.ohs.app.facade.medicalrecord.impl.MedicalRecordFacadeImpl;
 import com.rocs.rc.ohs.app.model.medicalrecord.MedicalRecord;
 import com.rocs.rc.ohs.data.connection.ConnectionHelper;
 import com.rocs.rc.ohs.data.dao.medicalrecord.MedicalRecordDao;
@@ -49,11 +48,19 @@ public class MedicalRecordDaoImpl implements MedicalRecordDao {
         }
     }
 
-
+    /**
+     * Runs the query update.
+     *
+     * @param activeConnection connection the connection to use.
+     * @param medicalRecord the record with updated values.
+     * @return  true if a row was updated.
+     * @throws SQLException if the query fails.
+     */
     private boolean update(
-            Connection connection, MedicalRecord medicalRecord)
+            Connection activeConnection, MedicalRecord medicalRecord)
         throws SQLException {
-            try (PreparedStatement statement = connection.prepareStatement(
+            try (PreparedStatement statement =
+                         activeConnection.prepareStatement(
                     QueryConstants.UPDATE_MEDICAL_RECORD_STATEMENT)) {
                 statement.setString(1, medicalRecord.getMedicalConditions());
                 statement.setString(2, medicalRecord.getAllergies());

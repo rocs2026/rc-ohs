@@ -108,14 +108,14 @@ public final class ClinicApp {
         // consultationMenu(sc);
 
     }
-
-    /**
-     * User input and updates med record if confirmed.
-     *
-     * @param scanner input scanner.
-     *
-     * @param medicalRecordFacade facade for updating records.
-     */
+//
+//    /**
+//     * User input and updates med record if confirmed.
+//     *
+//     * @param scanner input scanner.
+//     *
+//     * @param medicalRecordFacade facade for updating records.
+//     */
 //    private static void updateMedicalRecord(
 //            Scanner scanner, MedicalRecordFacade medicalRecordFacade) {
 //
