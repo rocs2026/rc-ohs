@@ -37,10 +37,10 @@ public class LogoutDaoImpl implements LogoutDao {
     /**
      * Creates a new {@code LogoutDaoImpl}.
      *
-     * @param dataSource the data source to obtain connections from
+     * @param source the data source to obtain connections from
      */
-    public LogoutDaoImpl(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public LogoutDaoImpl(DataSource source) {
+        this.dataSource = source;
     }
 
     @Override
