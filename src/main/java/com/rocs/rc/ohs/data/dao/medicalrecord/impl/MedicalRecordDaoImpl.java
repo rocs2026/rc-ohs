@@ -15,22 +15,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * JDBC-based implementation for medical record data operations.
+ * JDBC implementation of MedicalRecordDAO.
  */
 public class MedicalRecordDAOImpl implements MedicalRecordDAO {
 
+    /**
+     * The database connection.
+     */
     private final Connection connection;
 
-    /** Uses the standard connection helper by default. */
+    /**
+     * Creates a DAO that opens its own database connection.
+     */
     public MedicalRecordDAOImpl() {
         this(openConnection());
     }
 
-    /** Allows passing an explicit connection (useful for testing). */
-    public MedicalRecordDAOImpl(Connection connection) {
-        this.connection = connection;
+    /**
+     * Creates a DAO that uses the given database connection.
+     *
+     * @param conn the database connection to use
+     */
+    public MedicalRecordDAOImpl(Connection conn) {
+        this.connection = conn;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<MedicalRecordDTO> search(String keyword) {
         List<MedicalRecordDTO> records = new ArrayList<>();
@@ -44,7 +56,6 @@ public class MedicalRecordDAOImpl implements MedicalRecordDAO {
         try (PreparedStatement ps = connection.prepareStatement(
                 QueryConstants.SEARCH_MEDICAL_RECORD)) {
 
-            // Bind search term to all query placeholders
             ps.setString(1, pattern);
             ps.setString(2, pattern);
             ps.setString(3, pattern);
@@ -58,50 +69,75 @@ public class MedicalRecordDAOImpl implements MedicalRecordDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to search medical records", e);
+            throw new RuntimeException(
+                    "Failed to search medical records", e);
         }
 
         return records;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public boolean updateMedicalRecord(MedicalRecord medicalRecord) {
+    public boolean updateMedicalRecord(
+            MedicalRecord medicalRecord) {
         try (PreparedStatement statement = connection
-                .prepareStatement(QueryConstants.UPDATE_MEDICAL_RECORD_STATEMENT)) {
-            statement.setString(1, medicalRecord.getMedicalConditions());
-            statement.setString(2, medicalRecord.getAllergies());
-            statement.setString(3, medicalRecord.getId());
+                .prepareStatement(QueryConstants.
+                        UPDATE_MEDICAL_RECORD_STATEMENT)) {
+            statement.setString(
+                    1, medicalRecord.getMedicalConditions());
+            statement.setString(
+                    2, medicalRecord.getAllergies());
+            statement.setString(
+                    3, medicalRecord.getId());
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
+            String id = medicalRecord.getId();
             throw new RuntimeException(
-                    "Failed to update medical record: " + medicalRecord.getId(), e);
+                    "Failed to update medical record: " + id, e);
         }
     }
 
+    /**
+     * Opens a database connection through the shared helper.
+     *
+     * @return the opened database connection
+     */
     private static Connection openConnection() {
         try {
             return ConnectionHelper.getConnection();
         } catch (Exception e) {
-            throw new IllegalStateException("Failed to open database connection", e);
+            throw new IllegalStateException(
+                    "Failed to open the database connection", e);
         }
     }
 
-    /** Maps a database result row into a transfer object. */
-    private MedicalRecordDTO mapToDTO(ResultSet rs) throws SQLException {
+    /**
+     * Maps the current row of the ResultSet to a MedicalRecordDTO.
+     *
+     * @param rs the ResultSet positioned at the current row
+     * @return the mapped MedicalRecordDTO
+     * @throws SQLException if a database access error occurs
+     */
+    private MedicalRecordDTO mapToDTO(ResultSet rs)
+            throws SQLException {
         MedicalRecordDTO dto = new MedicalRecordDTO();
         dto.setPatientId(rs.getString("p_id"));
         dto.setFirstName(rs.getString("first_name"));
         dto.setMiddleName(rs.getString("middle_name"));
         dto.setLastName(rs.getString("last_name"));
         dto.setMedicalRecordId(rs.getString("mr_id"));
-        dto.setMedicalConditions(rs.getString("medical_conditions"));
+        dto.setMedicalConditions(
+                rs.getString("medical_conditions"));
         dto.setAllergies(rs.getString("allergies"));
         dto.setComplaint(rs.getString("complaint"));
         dto.setDiagnosis(rs.getString("diagnosis"));
         dto.setTreatment(rs.getString("treatment"));
 
         Timestamp date = rs.getTimestamp("consultation_date");
-        dto.setConsultationDate(date != null ? date.toLocalDateTime() : null);
+        dto.setConsultationDate(
+                date != null ? date.toLocalDateTime() : null);
 
         return dto;
     }

@@ -74,10 +74,10 @@ public class MedicalRecordDTO {
     /**
      * Sets the ID of the patient.
      *
-     * @param patientId the ID of the patient
+     * @param newPatientId the ID of the patient
      */
-    public void setPatientId(String patientId) {
-        this.patientId = patientId;
+    public void setPatientId(String newPatientId) {
+        this.patientId = newPatientId;
     }
 
     /**
@@ -92,10 +92,10 @@ public class MedicalRecordDTO {
     /**
      * Sets the first name of the patient.
      *
-     * @param firstName the first name of the patient
+     * @param newFirstName the first name of the patient
      */
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setFirstName(String newFirstName) {
+        this.firstName = newFirstName;
     }
 
     /**
@@ -110,10 +110,10 @@ public class MedicalRecordDTO {
     /**
      * Sets the middle name of the patient.
      *
-     * @param middleName the middle name of the patient
+     * @param newMiddleName the middle name of the patient
      */
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
+    public void setMiddleName(String newMiddleName) {
+        this.middleName = newMiddleName;
     }
 
     /**
@@ -128,10 +128,10 @@ public class MedicalRecordDTO {
     /**
      * Sets the last name of the patient.
      *
-     * @param lastName the last name of the patient
+     * @param newLastName the last name of the patient
      */
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setLastName(String newLastName) {
+        this.lastName = newLastName;
     }
 
     /**
@@ -146,10 +146,10 @@ public class MedicalRecordDTO {
     /**
      * Sets the ID of the medical record.
      *
-     * @param medicalRecordId the ID of the medical record
+     * @param newMedicalRecordId the ID of the medical record
      */
-    public void setMedicalRecordId(String medicalRecordId) {
-        this.medicalRecordId = medicalRecordId;
+    public void setMedicalRecordId(String newMedicalRecordId) {
+        this.medicalRecordId = newMedicalRecordId;
     }
 
     /**
@@ -164,10 +164,10 @@ public class MedicalRecordDTO {
     /**
      * Sets the medical conditions of the patient.
      *
-     * @param medicalConditions the medical conditions of the patient
+     * @param newMedicalConditions the medical conditions of the patient
      */
-    public void setMedicalConditions(String medicalConditions) {
-        this.medicalConditions = medicalConditions;
+    public void setMedicalConditions(String newMedicalConditions) {
+        this.medicalConditions = newMedicalConditions;
     }
 
     /**
@@ -182,10 +182,10 @@ public class MedicalRecordDTO {
     /**
      * Sets the allergies of the patient.
      *
-     * @param allergies the allergies of the patient
+     * @param newAllergies the allergies of the patient
      */
-    public void setAllergies(String allergies) {
-        this.allergies = allergies;
+    public void setAllergies(String newAllergies) {
+        this.allergies = newAllergies;
     }
 
     /**
@@ -200,10 +200,10 @@ public class MedicalRecordDTO {
     /**
      * Sets the date of the consultation.
      *
-     * @param consultationDate the date of the consultation
+     * @param newConsultationDate the date of the consultation
      */
-    public void setConsultationDate(LocalDateTime consultationDate) {
-        this.consultationDate = consultationDate;
+    public void setConsultationDate(LocalDateTime newConsultationDate) {
+        this.consultationDate = newConsultationDate;
     }
 
     /**
@@ -218,10 +218,10 @@ public class MedicalRecordDTO {
     /**
      * Sets the complaint raised in the consultation.
      *
-     * @param complaint the complaint raised in the consultation
+     * @param newComplaint the complaint raised in the consultation
      */
-    public void setComplaint(String complaint) {
-        this.complaint = complaint;
+    public void setComplaint(String newComplaint) {
+        this.newComplaint = newComplaint;
     }
 
     /**
@@ -236,10 +236,10 @@ public class MedicalRecordDTO {
     /**
      * Sets the diagnosis made in the consultation.
      *
-     * @param diagnosis the diagnosis made in the consultation
+     * @param newDiagnosis the diagnosis made in the consultation
      */
-    public void setDiagnosis(String diagnosis) {
-        this.diagnosis = diagnosis;
+    public void setDiagnosis(String newDiagnosis) {
+        this.newDiagnosis = newDiagnosis;
     }
 
     /**
@@ -254,9 +254,9 @@ public class MedicalRecordDTO {
     /**
      * Sets the treatment given in the consultation.
      *
-     * @param treatment the treatment given in the consultation
+     * @param newTreatment the treatment given in the consultation
      */
-    public void setTreatment(String treatment) {
-        this.treatment = treatment;
+    public void setTreatment(String newTreatment) {
+        this.treatment = newTreatment;
     }
 }

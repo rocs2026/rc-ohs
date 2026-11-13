@@ -5,7 +5,9 @@ package com.rocs.rc.ohs.data.utils;
  */
 public final class QueryConstants {
 
-    /** Query to search patient records across names, IDs, and numbers. */
+    /**
+     * Query to search patient records across names, IDs, and numbers.
+     */
     public static final String SEARCH_MEDICAL_RECORD =
             "SELECT p.id AS p_id, p.first_name, p.middle_name, "
                     + "p.last_name, mr.id AS mr_id, mr.medical_conditions, "
