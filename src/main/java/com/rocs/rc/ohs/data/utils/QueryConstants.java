@@ -86,6 +86,9 @@ public final class QueryConstants {
                     + "OR mc.category_name LIKE ? "
                     + "ORDER BY m.medicine_name";
 
+    /**
+     * the remaining quantity of a medicine stock.
+     */
     public static final String SELECT_REMAINING_STOCK =
             "SELECT fn_remaining_stock(?) AS remaining_quantity FROM dual";
 }

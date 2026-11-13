@@ -92,6 +92,7 @@ public class MedicineStockDaoImpl implements MedicineStockDao {
      */
     private MedicineStock mapToStock(ResultSet resultSet)
             throws SQLException {
+
         MedicineCategory category = new MedicineCategory();
         category.setCategoryName(
                 resultSet.getString("category_name"));
@@ -104,6 +105,7 @@ public class MedicineStockDaoImpl implements MedicineStockDao {
         medicine.setCategory(category);
 
         MedicineStock stock = new MedicineStock();
+        stock.setId(resultSet.getString("medicine_stock_id"));
         stock.setMedicine(medicine);
         stock.setBatchNumber(
                 resultSet.getString("batch_number"));
@@ -113,6 +115,7 @@ public class MedicineStockDaoImpl implements MedicineStockDao {
 
         Timestamp expiration =
                 resultSet.getTimestamp("expiration_date");
+
         if (expiration != null) {
             stock.setExpirationDate(
                     expiration.toLocalDateTime());
@@ -120,7 +123,6 @@ public class MedicineStockDaoImpl implements MedicineStockDao {
 
         return stock;
     }
-
     /**
      * Retrieves the remaining quantity of a medicine stock
      * using the database function.

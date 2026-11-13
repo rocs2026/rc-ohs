@@ -45,4 +45,15 @@ public class MedicineStockFacadeImpl implements MedicineStockFacade {
         }
         return medicineStockDao.searchStock(keyword);
     }
+
+    /**
+     * Retrieves the remaining quantity using the medicine stock DAO.
+     *
+     * @param medicineStockId the ID of the medicine stock
+     * @return the remaining quantity of the medicine stock
+     */
+    @Override
+    public int getRemainingStock(String medicineStockId) {
+        return medicineStockDao.getRemainingStock(medicineStockId);
+    }
 }

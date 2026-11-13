@@ -3,6 +3,7 @@ package com.rocs.rc.ohs.app.medicine;
 import com.rocs.rc.ohs.app.facade.medicine.impl.MedicineStockFacadeImpl;
 import com.rocs.rc.ohs.app.model.medicine.MedicineStock;
 
+import com.rocs.rc.ohs.data.dao.medicine.impl.MedicineStockDaoImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +23,8 @@ public class MedicineStockFacadeImplTest {
 
     @BeforeEach
     void setUp() {
-        facade = new MedicineStockFacadeImpl();
+        facade = new MedicineStockFacadeImpl(
+                new MedicineStockDaoImpl());
     }
     /**
      * RCISD-5-TC1.
@@ -124,4 +126,16 @@ public class MedicineStockFacadeImplTest {
         assertNotNull(stocks);
         assertTrue(stocks.isEmpty());
     }
+
+    /**
+     * Remaining Stock.
+     */
+    @Test
+    void remainingStock() {
+        int remaining = facade.getRemainingStock(
+                "cff69d39-caa4-4a79-978b-8927f5b0c1a4");
+
+        assertEquals(49, remaining);
+    }
 }
+
