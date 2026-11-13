@@ -1,6 +1,5 @@
 package com.rocs.rc.ohs.app.facade.login.impl;
 
-
 import com.rocs.rc.ohs.app.facade.login.LoginFacade;
 import com.rocs.rc.ohs.app.model.login.Login;
 import com.rocs.rc.ohs.data.dao.login.LoginDao;
@@ -51,20 +50,20 @@ public class LoginFacadeImpl implements LoginFacade {
      * @param email The email address of the account.
      * @param username The username of the account.
      * @param newPassword The new password of the account.
-     * @return True if the password was updated.
-     * @throws IllegalArgumentException If a required value is missing.
+     * @return True if the password was updated, false otherwise.
      */
     @Override
     public boolean forgotPassword(String email, String username,
-                                  String newPassword)
-            throws IllegalArgumentException {
+                                  String newPassword) {
+        boolean success = false;
         try {
             validateForgotPassword(email, username, newPassword);
+            success = loginDao.updatePassword(email, username, newPassword);
         } catch (IllegalArgumentException ex) {
-            throw new IllegalArgumentException(
-                    "Cannot reset the password. " + ex.getMessage(), ex);
+            System.out.println(
+                    "Cannot reset the password. " + ex.getMessage());
         }
-        return loginDao.updatePassword(email, username, newPassword);
+        return success;
     }
 
     /**
@@ -99,3 +98,4 @@ public class LoginFacadeImpl implements LoginFacade {
         return text == null || text.isBlank();
     }
 }
+

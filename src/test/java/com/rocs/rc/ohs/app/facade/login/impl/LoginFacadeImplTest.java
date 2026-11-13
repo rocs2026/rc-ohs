@@ -6,12 +6,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -35,11 +32,6 @@ class LoginFacadeImplTest {
      * The new password used in the tests.
      */
     private static final String NEW_PASSWORD = "NewPass123!";
-
-    /**
-     * The start of every message of a rejected password reset.
-     */
-    private static final String PREFIX = "Cannot reset the password. ";
 
     /**
      * The mocked data access object of the login accounts.
@@ -79,7 +71,7 @@ class LoginFacadeImplTest {
      * and returns whatever the DAO reports.
      */
     @Test
-    void forgotPasswordReturnsDaoResult() {
+    void forgotPasswordReturnsDaoResult() throws Exception {
         when(loginDao.updatePassword(EMAIL, USERNAME,
                 NEW_PASSWORD))
                 .thenReturn(true);
@@ -94,41 +86,22 @@ class LoginFacadeImplTest {
     }
 
     /**
-     * Forgot password rejects every missing value (null, empty, blank)
-     * with the matching message and never reaches the DAO.
+     * Forgot password returns false for every missing value
+     * (null, empty, blank) and never reaches the DAO.
      */
     @Test
-    void forgotPasswordRejectsMissingValues() {
+    void forgotPasswordReturnsFalseForMissingValues() {
         String[] missing = {null, "", "   "};
 
         for (String value : missing) {
-            assertRejected(value, USERNAME, NEW_PASSWORD,
-                    "Email is required.");
-            assertRejected(EMAIL, value, NEW_PASSWORD,
-                    "Username is required.");
-            assertRejected(EMAIL, USERNAME, value,
-                    "New password is required.");
+            assertFalse(loginFacade.forgotPassword(value, USERNAME,
+                    NEW_PASSWORD));
+            assertFalse(loginFacade.forgotPassword(EMAIL, value,
+                    NEW_PASSWORD));
+            assertFalse(loginFacade.forgotPassword(EMAIL, USERNAME,
+                    value));
         }
 
         verifyNoInteractions(loginDao);
-    }
-
-    /**
-     * Checks that the given values are rejected with the expected message
-     * and that the original exception is kept as the cause.
-     *
-     * @param email The email address to reset the password of.
-     * @param username The username of the account.
-     * @param password The new password.
-     * @param message The expected reason of the rejection.
-     */
-    private void assertRejected(String email, String username,
-                                String password, String message) {
-        IllegalArgumentException ex = assertThrows(
-                IllegalArgumentException.class,
-                () -> loginFacade.forgotPassword(email, username, password));
-
-        assertEquals(PREFIX + message, ex.getMessage());
-        assertInstanceOf(IllegalArgumentException.class, ex.getCause());
     }
 }
