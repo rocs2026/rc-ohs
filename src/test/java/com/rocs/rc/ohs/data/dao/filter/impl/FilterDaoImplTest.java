@@ -30,9 +30,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-/*
- * Start of test
- */
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class FilterDaoImplTest {
@@ -61,13 +58,10 @@ class FilterDaoImplTest {
     private MockedStatic<ConnectionHelper> connectionHelper;
 
     /**
-     * Data access layer of test
+     * Data access layer of test.
      */
     private FilterDaoImpl filterDao;
 
-    /**
-     * Starting the test if error.
-     */
     @BeforeEach
     void setUp() throws SQLException {
         connectionHelper = mockStatic(ConnectionHelper.class);
@@ -79,24 +73,18 @@ class FilterDaoImplTest {
         filterDao = new FilterDaoImpl();
     }
 
-    /**
-     * Testing.
-     */
     @AfterEach
     void tearDown() {
         connectionHelper.close();
     }
 
-    /**
-     * It back in database.
-     */
     private String capturedSql() throws SQLException {
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(connection).prepareStatement(captor.capture());
         return captor.getValue();
     }
 
-    /**
+    /*
      * If you have no criteria  given they no filter found.
      */
     @Test
@@ -108,7 +96,7 @@ class FilterDaoImplTest {
         verify(statement, never()).setString(anyInt(), anyString());
     }
 
-    /**
+    /*
      * If patient matched in search have firstname and lastname.
      */
     @Test
@@ -123,7 +111,7 @@ class FilterDaoImplTest {
         verify(statement).setString(2, "%jowan%");
     }
 
-    /**
+    /*
      * If the patient matched in medical condition.
      */
     @Test
@@ -135,7 +123,7 @@ class FilterDaoImplTest {
         verify(statement).setString(1, "%asthma%");
     }
 
-    /**
+    /*
      * When search in allergies have matched in column.
      */
     @Test
@@ -146,7 +134,7 @@ class FilterDaoImplTest {
         verify(statement).setString(1, "%rashes%");
     }
 
-    /**
+    /*
      * If they ignore or empty.
      */
     @Test
@@ -157,8 +145,9 @@ class FilterDaoImplTest {
         assertTrue(records.isEmpty());
     }
 
-    /**
-     * If they matched in medical record of patient.
+    /*
+     * IF they matched in medical record of patient.
+     * throws message.
      */
     @Test
     void rowToRecord() throws SQLException {
@@ -175,7 +164,7 @@ class FilterDaoImplTest {
                 filterDao.filterMedicalRecords("jowan", null, null);
 
         assertEquals(1, records.size());
-        MedicalRecord record = records.getFirst();
+        MedicalRecord record = records.get(0);
         assertEquals("record-1", record.getId());
         assertEquals("patient-1", record.getPatient().getId());
         assertEquals("Jowan", record.getPatient().getFirstName());
@@ -184,8 +173,9 @@ class FilterDaoImplTest {
         assertEquals("Asthma", record.getMedicalConditions());
     }
 
-    /**
+    /*
      * Matched in all filter that click of user.
+     * throws report message.
      */
     @Test
     void findAllMatches() throws SQLException {
@@ -197,8 +187,9 @@ class FilterDaoImplTest {
         assertEquals(2, records.size());
     }
 
-    /**
+    /*
      * A database error returns an empty list instead of throwing.
+     * throws NullException message.
      */
     @Test
     void sqlExceptionEmpty()
