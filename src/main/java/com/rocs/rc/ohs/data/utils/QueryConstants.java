@@ -10,7 +10,7 @@ public final class QueryConstants {
     }
 
     /**
-     * it is the query to update medical record.
+     * Updates the Medical record of a patient (med conditions, allergies).
      */
     public static final String UPDATE_MEDICAL_RECORD_STATEMENT =
             "UPDATE medical_record "
