@@ -50,13 +50,13 @@ public class MedicalRecordFacadeImplTest {
     }
 
     /**
-     *  Returns false if the ID has no match.
+     * Returns false if the ID has no match.
      */
     @Test
     void updateMedicalRecordWhenIdReturnsNothingReturnsFalse() {
         String allisonId = "ea67a306-d343-4847-b204-c92f2d4cc9e0";
         String jowanConditions = "Hypertension";
-        MedicalRecord record = buildRecord(allisonId, jowanConditions);;
+        MedicalRecord record = buildRecord(allisonId, jowanConditions);
         when(medicalRecordDao.updateMedicalRecord(record)).thenReturn(false);
 
         boolean result = medicalRecordFacade.updateMedicalRecord(record);
@@ -71,7 +71,7 @@ public class MedicalRecordFacadeImplTest {
     void updateMedicalRecordWhenNameReturnsNothingReturnsFalse() {
         String allisonId = "ea67a306-d343-4847-b204-c92f2d4cc9e0";
         String jowanConditions = "Hypertension";
-        MedicalRecord record = buildRecord(allisonId,jowanConditions);
+        MedicalRecord record = buildRecord(allisonId, jowanConditions);
         when(medicalRecordDao.updateMedicalRecord(record)).thenReturn(false);
 
         boolean result = medicalRecordFacade.updateMedicalRecord(record);
@@ -80,13 +80,13 @@ public class MedicalRecordFacadeImplTest {
     }
 
     /**
-     *  Returns true when update is successful for a single ID.
+     * Returns true when update is successful for a single ID.
      */
     @Test
     void updateMedicalRecordWhenIdReturnsSingleResultReturnsTrue() {
         String jowanId = "4e49eb71-3481-476b-b6ba-5662a48df1e5";
         String jowanConditions = "Hypertension";
-        MedicalRecord record = buildRecord(jowanId,jowanConditions);
+        MedicalRecord record = buildRecord(jowanId, jowanConditions);
         when(medicalRecordDao.updateMedicalRecord(record)).thenReturn(true);
 
         boolean result = medicalRecordFacade.updateMedicalRecord(record);
