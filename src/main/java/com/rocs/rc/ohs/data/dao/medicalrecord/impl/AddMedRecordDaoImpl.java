@@ -23,14 +23,17 @@ import java.util.logging.Logger;
  */
 public class AddMedRecordDaoImpl implements AddMedRecordDao {
 
+    /**
+     * Logger used to record database errors.
+     */
     private static final Logger LOGGER =
             Logger.getLogger(AddMedRecordDaoImpl.class.getName());
 
     /**
-     * Finds a medical record by its ID.
+     * Finds a medical record using its ID.
      *
      * @param id the record ID
-     * @return the record, or null if not found
+     * @return the medical record, or null if not found
      */
     @Override
     public MedicalRecord findById(String id) {
@@ -56,10 +59,10 @@ public class AddMedRecordDaoImpl implements AddMedRecordDao {
     }
 
     /**
-     * Gets all medical records of a patient.
+     * Retrieves all medical records belonging to a patient.
      *
      * @param patientId the patient's ID
-     * @return the patient's medical records
+     * @return a list of the patient's medical records
      */
     @Override
     public List<MedicalRecord> findByPatientId(String patientId) {
@@ -79,17 +82,18 @@ public class AddMedRecordDaoImpl implements AddMedRecordDao {
 
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE,
-                    "Unable to get medical records for patient: " + patientId, e);
+                    "Unable to get medical records for patient: "
+                            + patientId, e);
         }
 
         return records;
     }
 
     /**
-     * Saves a medical record.
+     * Saves a medical record to the database.
      *
-     * @param medicalRecord the record to save
-     * @return true if the record was saved successfully
+     * @param medicalRecord the medical record to save
+     * @return true if the record was saved successfully, otherwise false
      */
     @Override
     public boolean addMedicalRecord(MedicalRecord medicalRecord) {
@@ -120,19 +124,21 @@ public class AddMedRecordDaoImpl implements AddMedRecordDao {
             return statement.executeUpdate() == 1;
 
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Unable to save medical record.", e);
+            LOGGER.log(Level.SEVERE,
+                    "Unable to save medical record.", e);
             return false;
         }
     }
 
     /**
-     * Converts a database row into a MedicalRecord object.
+     * Converts a database result into a MedicalRecord object.
      *
      * @param result the current database result
-     * @return the medical record
+     * @return the mapped medical record
      * @throws SQLException if a database value cannot be read
      */
-    private MedicalRecord toMedicalRecord(ResultSet result) throws SQLException {
+    private MedicalRecord toMedicalRecord(
+            ResultSet result) throws SQLException {
 
         MedicalRecord record = new MedicalRecord();
         record.setId(result.getString("id"));
@@ -149,7 +155,8 @@ public class AddMedRecordDaoImpl implements AddMedRecordDao {
             record.setConsultation(consultation);
         }
 
-        record.setMedicalConditions(result.getString("medical_conditions"));
+        record.setMedicalConditions(
+                result.getString("medical_conditions"));
         record.setAllergies(result.getString("allergies"));
 
         return record;

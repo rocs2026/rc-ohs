@@ -18,7 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Provides database access for person records.
+ * Handles database operations for person records.
  */
 public class PersonDaoImpl implements PersonDao {
 
@@ -38,6 +38,12 @@ public class PersonDaoImpl implements PersonDao {
                     + "OR LOWER(first_name || ' ' || middle_name || ' ' "
                     + "|| last_name) LIKE ?";
 
+    /**
+     * Finds a person using their ID.
+     *
+     * @param id the person's ID
+     * @return the matching person, or null if not found
+     */
     @Override
     public Person findById(String id) {
         try (Connection connection = ConnectionHelper.getConnection();
@@ -53,12 +59,19 @@ public class PersonDaoImpl implements PersonDao {
             }
 
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Unable to retrieve person by ID.", e);
+            LOGGER.log(Level.SEVERE,
+                    "Unable to retrieve person with ID: " + id, e);
         }
 
         return null;
     }
 
+    /**
+     * Searches for persons using their name.
+     *
+     * @param name the name to search
+     * @return a list of matching persons
+     */
     @Override
     public List<Person> findByName(String name) {
         List<Person> matchingPersons = new ArrayList<>();
@@ -82,16 +95,30 @@ public class PersonDaoImpl implements PersonDao {
             }
 
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Unable to search for persons.", e);
+            LOGGER.log(Level.SEVERE,
+                    "Unable to search for persons.", e);
         }
 
         return matchingPersons;
     }
 
+    /**
+     * Prepares the name for a partial, case-insensitive search.
+     *
+     * @param name the name entered by the user
+     * @return the formatted search value
+     */
     private String createSearchPattern(String name) {
         return "%" + name.trim().toLowerCase(Locale.ROOT) + "%";
     }
 
+    /**
+     * Sets the search value for both name conditions.
+     *
+     * @param statement the prepared SQL statement
+     * @param searchValue the formatted name to search
+     * @throws SQLException if a parameter cannot be set
+     */
     private void applyNameSearch(
             PreparedStatement statement, String searchValue)
             throws SQLException {
@@ -100,6 +127,13 @@ public class PersonDaoImpl implements PersonDao {
         statement.setString(2, searchValue);
     }
 
+    /**
+     * Converts a database row into a Person object.
+     *
+     * @param resultSet the current database result
+     * @return the mapped person
+     * @throws SQLException if a column cannot be read
+     */
     private Person mapPerson(ResultSet resultSet) throws SQLException {
         Person person = new Person();
 
@@ -122,6 +156,12 @@ public class PersonDaoImpl implements PersonDao {
         return person;
     }
 
+    /**
+     * Finds the Gender enum that matches the database value.
+     *
+     * @param databaseValue the gender value from the database
+     * @return the matching Gender, or null if no match exists
+     */
     private Gender findGender(String databaseValue) {
         if (databaseValue == null) {
             return null;

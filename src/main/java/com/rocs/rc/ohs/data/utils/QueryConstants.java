@@ -1,3 +1,4 @@
+
 package com.rocs.rc.ohs.data.utils;
 
 /**
@@ -31,7 +32,8 @@ public final class QueryConstants {
      */
     public static final String ADD_MEDICAL_RECORD_STATEMENT =
             "INSERT INTO medical_record "
-                    + "(id, patient_id, consultation_id, medical_conditions, allergies) "
+                    + "(id, patient_id, consultation_id, "
+                    + "medical_conditions, allergies) "
                     + "VALUES (?, ?, ?, ?, ?)";
 
 
