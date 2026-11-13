@@ -2,7 +2,7 @@ package com.rocs.rc.ohs;
 
 
 import com.rocs.rc.ohs.app.facade.login.LoginFacade;
-// import com.rocs.rc.ohs.app.facade.login.impl.LoginFacadeImpl;
+import com.rocs.rc.ohs.app.facade.login.impl.LoginFacadeImpl;
 import com.rocs.rc.ohs.app.model.login.Login;
 
 import java.util.Scanner;
@@ -18,34 +18,34 @@ public final class ClinicApp {
     private ClinicApp() {
     }
 
-//    /**
-//     * Runs the clinic application and shows the main menu.
-//     *
-//     * @param args The command line arguments.
-//     */
-//    public static void main(String[] args) {
-//
-//        Scanner sc = new Scanner(System.in);
-//        LoginFacade loginFacade = new LoginFacadeImpl();
-//
-//        System.out.println("Welcome to Clinic IS");
-//        System.out.println("[1] Login");
+    /**
+     * Runs the clinic application and shows the main menu.
+     *
+     * @param args The command line arguments.
+     */
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+        LoginFacade loginFacade = new LoginFacadeImpl();
+
+        System.out.println("Welcome to Clinic IS");
+        System.out.println("[1] Login");
 //        System.out.println("[2] Forgot password");
-//        System.out.print("Choose: ");
-//        String choice = sc.nextLine().trim();
-//
-//        switch (choice) {
-//            case "1":
-//                login(sc, loginFacade);
-//                break;
+        System.out.print("Choose: ");
+        String choice = sc.nextLine().trim();
+
+        switch (choice) {
+            case "1":
+                login(sc, loginFacade);
+                break;
 //            case "2":
 //                forgotPassword(sc, loginFacade);
 //                break;
-//            default:
-//                System.out.println("Invalid choice");
-//                break;
-//        }
-//    }
+            default:
+                System.out.println("Invalid choice");
+                break;
+        }
+    }
 
     /**
      * Logs in the user.
