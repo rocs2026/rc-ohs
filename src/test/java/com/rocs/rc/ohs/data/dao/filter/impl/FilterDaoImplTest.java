@@ -65,7 +65,7 @@ class FilterDaoImplTest {
      */
     private FilterDaoImpl filterDao;
 
-    /*
+    /**
      * Starting the test if error.
      */
     @BeforeEach
@@ -79,7 +79,7 @@ class FilterDaoImplTest {
         filterDao = new FilterDaoImpl();
     }
 
-    /*
+    /**
      * Testing.
      */
     @AfterEach
@@ -87,9 +87,8 @@ class FilterDaoImplTest {
         connectionHelper.close();
     }
 
-    /*
+    /**
      * It back in database.
-     * back in SQL.
      */
     private String capturedSql() throws SQLException {
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
@@ -97,7 +96,7 @@ class FilterDaoImplTest {
         return captor.getValue();
     }
 
-    /*
+    /**
      * If you have no criteria  given they no filter found.
      */
     @Test
@@ -109,7 +108,7 @@ class FilterDaoImplTest {
         verify(statement, never()).setString(anyInt(), anyString());
     }
 
-    /*
+    /**
      * If patient matched in search have firstname and lastname.
      */
     @Test
@@ -124,7 +123,7 @@ class FilterDaoImplTest {
         verify(statement).setString(2, "%jowan%");
     }
 
-    /*
+    /**
      * If the patient matched in medical condition.
      */
     @Test
@@ -136,7 +135,7 @@ class FilterDaoImplTest {
         verify(statement).setString(1, "%asthma%");
     }
 
-    /*
+    /**
      * When search in allergies have matched in column.
      */
     @Test
@@ -147,7 +146,7 @@ class FilterDaoImplTest {
         verify(statement).setString(1, "%rashes%");
     }
 
-    /*
+    /**
      * If they ignore or empty.
      */
     @Test
@@ -158,9 +157,8 @@ class FilterDaoImplTest {
         assertTrue(records.isEmpty());
     }
 
-    /*
-     * IF they matched in medical record of patient.
-     * throws message.
+    /**
+     * If they matched in medical record of patient.
      */
     @Test
     void rowToRecord() throws SQLException {
@@ -186,9 +184,8 @@ class FilterDaoImplTest {
         assertEquals("Asthma", record.getMedicalConditions());
     }
 
-    /*
+    /**
      * Matched in all filter that click of user.
-     * throws report message.
      */
     @Test
     void findAllMatches() throws SQLException {
@@ -200,9 +197,8 @@ class FilterDaoImplTest {
         assertEquals(2, records.size());
     }
 
-    /*
+    /**
      * A database error returns an empty list instead of throwing.
-     * throws NullException message.
      */
     @Test
     void sqlExceptionEmpty()
