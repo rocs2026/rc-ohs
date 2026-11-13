@@ -92,7 +92,9 @@ class FilterDaoImplTest {
             throws SQLException {
         filterDao.filterMedicalRecords(null, null, null);
 
-        assertFalse(capturedSql().contains(" ? "));
+        String sql = capturedSql();
+        assertFalse(sql.contains(" ? "));
+        assertFalse(sql.contains("where"));
         verify(statement, never()).setString(anyInt(), anyString());
     }
 
@@ -164,7 +166,7 @@ class FilterDaoImplTest {
                 filterDao.filterMedicalRecords("jowan", null, null);
 
         assertEquals(1, records.size());
-        MedicalRecord record = records.get(0);
+        MedicalRecord record = records.getFirst();
         assertEquals("record-1", record.getId());
         assertEquals("patient-1", record.getPatient().getId());
         assertEquals("Jowan", record.getPatient().getFirstName());

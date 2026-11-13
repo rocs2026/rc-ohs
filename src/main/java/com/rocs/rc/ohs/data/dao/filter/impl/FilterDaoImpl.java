@@ -12,6 +12,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Implements the data access operations for filtering medical records.
@@ -19,11 +21,17 @@ import java.util.Locale;
 public class FilterDaoImpl implements FilterDao {
 
     /**
+     * Logger of this class.
+     */
+    private static final Logger LOGGER =
+            Logger.getLogger(FilterDaoImpl.class.getName());
+
+    /**
      * Retrieves the medical records that match the given criteria.
      * A null or blank criterion is ignored.
-     * @param patientName first or last name of the patient.
-     * @param medicalCondition medical condition of the patient.
-     * @param allergy allergy of the patient.
+     * @param patientName first or last name of the patient, may be null.
+     * @param medicalCondition medical condition of the patient, may be null.
+     * @param allergy allergy of the patient, may be null.
      * @return list of matching {@link MedicalRecord} records.
      */
     @Override
@@ -87,9 +95,8 @@ public class FilterDaoImpl implements FilterDao {
             }
 
         } catch (SQLException e) {
-            System.out.println(
-                    "An exception thrown while filter medical records. "
-                            + e.getMessage());
+            LOGGER.log(Level.SEVERE,
+                    "An exception thrown while filter medical records.", e);
         }
         return records;
     }
