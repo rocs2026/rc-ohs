@@ -1,5 +1,6 @@
 package com.rocs.rc.ohs;
 
+
 import com.rocs.rc.ohs.app.facade.login.LoginFacade;
 import com.rocs.rc.ohs.app.facade.login.impl.LoginFacadeImpl;
 import com.rocs.rc.ohs.app.model.login.Login;
@@ -31,15 +32,41 @@ public final class ClinicApp {
     }
 
     /**
-     * Runs the clinic application and logs in the user.
+     * Runs the clinic application and shows the main menu.
      *
      * @param args The command line arguments.
      */
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
+        LoginFacade loginFacade = new LoginFacadeImpl();
 
         System.out.println("Welcome to Clinic IS");
+        System.out.println("[1] Login");
+//        System.out.println("[2] Forgot password");
+        System.out.print("Choose: ");
+        String choice = sc.nextLine().trim();
+
+        switch (choice) {
+            case "1":
+                login(sc, loginFacade);
+                break;
+//            case "2":
+//                forgotPassword(sc, loginFacade);
+//                break;
+            default:
+                System.out.println("Invalid choice");
+                break;
+        }
+    }
+
+    /**
+     * Logs in the user.
+     *
+     * @param sc The scanner used to read input.
+     * @param loginFacade The facade used for login operations.
+     */
+    private static void login(Scanner sc, LoginFacade loginFacade) {
         System.out.print("USERNAME: ");
         String username = sc.nextLine();
         System.out.print("PASSWORD: ");
@@ -55,7 +82,6 @@ public final class ClinicApp {
             return;
         }
 
-        LoginFacade loginFacade = new LoginFacadeImpl();
         Login login = loginFacade.login(username, password);
         if (login == null) {
             System.out.println("Invalid username");
@@ -72,6 +98,50 @@ public final class ClinicApp {
         // consultationMenu(sc);
 
     }
+
+    // /**
+    //  * Resets a forgotten password after
+    //  * verifying the email and username.
+    //  *
+    //  * @param sc The scanner used to read input.
+    //  * @param loginFacade The facade used for login operations.
+    //  */
+    // private static void forgotPassword(Scanner sc,
+    //                                    LoginFacade loginFacade) {
+    //     System.out.print("EMAIL: ");
+    //     String email = sc.nextLine().trim();
+    //     if (email.isEmpty()) {
+    //         System.out.println("Please enter email");
+    //         return;
+    //     }
+    //
+    //     System.out.print("USERNAME: ");
+    //     String username = sc.nextLine().trim();
+    //     if (username.isEmpty()) {
+    //         System.out.println("Please enter username");
+    //         return;
+    //     }
+    //
+    //     System.out.print("NEW PASSWORD: ");
+    //     String newPassword = sc.nextLine();
+    //     if (newPassword.isEmpty()) {
+    //         System.out.println("Please enter new password");
+    //         return;
+    //     }
+    //
+    //     System.out.print("CONFIRM PASSWORD: ");
+    //     String confirm = sc.nextLine();
+    //     if (!newPassword.equals(confirm)) {
+    //         System.out.println("Passwords do not match");
+    //         return;
+    //     }
+    //
+    //     if (loginFacade.forgotPassword(email, username, newPassword)) {
+    //         System.out.println("Password updated successfully");
+    //     } else {
+    //       System.out.println("Email and username do not match any account");
+    //     }
+    // }
 
     // private static void consultationMenu(Scanner sc) {
     //     ConsultationFacade facade = new ConsultationFacadeImpl();
@@ -111,7 +181,7 @@ public final class ClinicApp {
     // }
     //
     // private static void recordConsultation(Scanner sc,
-    //                                        ConsultationFacade facade) {
+    //                                      ConsultationFacade facade) {
     //     Personnel staff = new Personnel();
     //     staff.setId(ask(sc, "Your staff ID"));
     //     Person patient = new Person();
