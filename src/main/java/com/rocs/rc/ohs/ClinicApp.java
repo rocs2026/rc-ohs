@@ -230,12 +230,11 @@ public final class ClinicApp {
     //     System.out.print(label + ": ");
     //     return sc.nextLine();
     // }
-
-
+//
 //    /**
-//     * Displays the medical record menu.
+//     * Opens the options for managing patient medical records.
 //     *
-//     * @param sc The scanner used to read input.
+//     * @param sc scanner for menu input
 //     */
 //    private static void medicalRecordMenu(Scanner sc) {
 //        MedicalRecordFacade facade = new MedicalRecordFacadeImpl();
@@ -260,10 +259,10 @@ public final class ClinicApp {
 //    }
 //
 //    /**
-//     * Adds a medical record for a patient.
+//     * Collects patient information and saves a new medical record.
 //     *
-//     * @param sc The scanner used to read input.
-//     * @param facade The facade used for medical record operations.
+//     * @param sc input scanner
+//     * @param facade medical record operations
 //     */
 //    private static void addMedicalRecord(
 //            Scanner sc, MedicalRecordFacade facade) {
@@ -288,10 +287,10 @@ public final class ClinicApp {
 //    }
 //
 //    /**
-//     * Displays the medical records of a patient.
+//     * Retrieves and prints the records linked to a patient.
 //     *
-//     * @param sc The scanner used to read input.
-//     * @param facade The facade used for medical record operations.
+//     * @param sc scanner for patient ID input
+//     * @param facade medical record operations
 //     */
 //    private static void viewMedicalRecords(
 //            Scanner sc, MedicalRecordFacade facade) {
@@ -322,15 +321,14 @@ public final class ClinicApp {
 //    }
 //
 //    /**
-//     * Reads user input.
+//     * Prompts the user and returns the entered text.
 //     *
-//     * @param sc The scanner used to read input.
-//     * @param label The input label.
-//     * @return the entered value.
+//     * @param sc scanner receiving the input
+//     * @param label text displayed before input
+//     * @return the user's response
 //     */
 //    private static String ask(Scanner sc, String label) {
 //        System.out.print(label + ": ");
 //        return sc.nextLine();
 //    }
-
 }
