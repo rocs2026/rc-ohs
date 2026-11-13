@@ -1,4 +1,3 @@
-
 package com.rocs.rc.ohs.data.dao.medicine.impl;
 
 import com.rocs.rc.ohs.app.model.medicine.Medicine;
@@ -6,6 +5,7 @@ import com.rocs.rc.ohs.app.model.medicine.MedicineCategory;
 import com.rocs.rc.ohs.app.model.medicine.MedicineStock;
 import com.rocs.rc.ohs.data.connection.ConnectionHelper;
 import com.rocs.rc.ohs.data.dao.medicine.MedicineStockDao;
+import com.rocs.rc.ohs.data.utils.medicine.QueryConstants;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,81 +16,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implementation of the MedicineStockDao interface.
+ * it is the implementation of medicine stock data access.
  */
 public class MedicineStockDaoImpl implements MedicineStockDao {
 
     /**
-     * This is the connection for all the operations.
-     */
-    private Connection connection;
-
-    /**
-     * Establishes the database connection.
-     */
-    public MedicineStockDaoImpl() {
-        try {
-            connection = ConnectionHelper.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException(
-                    "Failed to establish connection", e);
-        }
-    }
-
-    /**
-     * Retrieves all medicine stock records.
+     * it is the method to get all medicine stocks.
      *
-     * @return a list of all medicine stock records.
+     * @return a list of medicine stocks
      */
     @Override
     public List<MedicineStock> getAllStock() {
         List<MedicineStock> stocks = new ArrayList<>();
 
-        String sql = "SELECT medicine.id, medicine.medicine_name, "
-                + "medicine.unit, medicine_category.category_name, "
-                + "medicine_stock.batch_number, "
-                + "medicine_stock.quantity_received, "
-                + "medicine_stock.expiration_date, medicine_stock.status "
-                + "FROM medicine_stock "
-                + "JOIN medicine "
-                + "ON medicine_stock.medicine_id = medicine.id "
-                + "LEFT JOIN medicine_category "
-                + "ON medicine.category_id = medicine_category.id "
-                + "ORDER BY medicine.medicine_name";
-
-        try (PreparedStatement statement =
-                     connection.prepareStatement(sql);
+        try (Connection con = ConnectionHelper.getConnection();
+             PreparedStatement statement = con.prepareStatement(
+                     QueryConstants.SELECT_ALL_MEDICINE_STOCK);
              ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
-                MedicineCategory category = new MedicineCategory();
-                category.setCategoryName(
-                        resultSet.getString("category_name"));
-
-                Medicine medicine = new Medicine();
-                medicine.setId(resultSet.getString("id"));
-                medicine.setMedicineName(
-                        resultSet.getString("medicine_name"));
-                medicine.setUnit(resultSet.getString("unit"));
-                medicine.setCategory(category);
-
-                MedicineStock stock = new MedicineStock();
-                stock.setMedicine(medicine);
-                stock.setBatchNumber(
-                        resultSet.getString("batch_number"));
-                stock.setQuantityReceived(
-                        resultSet.getInt("quantity_received"));
-                stock.setStatus(resultSet.getString("status"));
-
-                Timestamp expiration =
-                        resultSet.getTimestamp("expiration_date");
-
-                if (expiration != null) {
-                    stock.setExpirationDate(
-                            expiration.toLocalDateTime());
-                }
-
-                stocks.add(stock);
+                stocks.add(mapToStock(resultSet));
             }
 
         } catch (SQLException ex) {
@@ -102,66 +47,31 @@ public class MedicineStockDaoImpl implements MedicineStockDao {
     }
 
     /**
-     * Searches medicine stock records by medicine name or category.
+     * it is the method to search medicine stock.
      *
-     * @param keyword the medicine name or category keyword.
-     * @return a list of matching medicine stock records.
+     * @param keyword the keyword
+     * @return a list of matching stocks
      */
     @Override
     public List<MedicineStock> searchStock(String keyword) {
         List<MedicineStock> stocks = new ArrayList<>();
 
-        String sql = "SELECT medicine.id, medicine.medicine_name, "
-                + "medicine.unit, medicine_category.category_name, "
-                + "medicine_stock.batch_number, "
-                + "medicine_stock.quantity_received, "
-                + "medicine_stock.expiration_date, medicine_stock.status "
-                + "FROM medicine_stock "
-                + "JOIN medicine "
-                + "ON medicine_stock.medicine_id = medicine.id "
-                + "LEFT JOIN medicine_category "
-                + "ON medicine.category_id = medicine_category.id "
-                + "WHERE medicine.medicine_name LIKE ? "
-                + "OR medicine_category.category_name LIKE ? "
-                + "ORDER BY medicine.medicine_name";
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return stocks;
+        }
 
-        try (PreparedStatement statement =
-                     connection.prepareStatement(sql)) {
+        String pattern = "%" + keyword.trim() + "%";
 
-            statement.setString(1, "%" + keyword + "%");
-            statement.setString(2, "%" + keyword + "%");
+        try (Connection con = ConnectionHelper.getConnection();
+             PreparedStatement statement = con.prepareStatement(
+                     QueryConstants.SEARCH_MEDICINE_STOCK)) {
+
+            statement.setString(1, pattern);
+            statement.setString(2, pattern);
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    MedicineCategory category =
-                            new MedicineCategory();
-                    category.setCategoryName(
-                            resultSet.getString("category_name"));
-
-                    Medicine medicine = new Medicine();
-                    medicine.setId(resultSet.getString("id"));
-                    medicine.setMedicineName(
-                            resultSet.getString("medicine_name"));
-                    medicine.setUnit(resultSet.getString("unit"));
-                    medicine.setCategory(category);
-
-                    MedicineStock stock = new MedicineStock();
-                    stock.setMedicine(medicine);
-                    stock.setBatchNumber(
-                            resultSet.getString("batch_number"));
-                    stock.setQuantityReceived(
-                            resultSet.getInt("quantity_received"));
-                    stock.setStatus(resultSet.getString("status"));
-
-                    Timestamp expiration =
-                            resultSet.getTimestamp("expiration_date");
-
-                    if (expiration != null) {
-                        stock.setExpirationDate(
-                                expiration.toLocalDateTime());
-                    }
-
-                    stocks.add(stock);
+                    stocks.add(mapToStock(resultSet));
                 }
             }
 
@@ -171,5 +81,43 @@ public class MedicineStockDaoImpl implements MedicineStockDao {
         }
 
         return stocks;
+    }
+
+    /**
+     * it is the helper method to map result set to stock.
+     *
+     * @param resultSet the result set
+     * @return the mapped medicine stock
+     * @throws SQLException if sql error occurs
+     */
+    private MedicineStock mapToStock(ResultSet resultSet)
+            throws SQLException {
+        MedicineCategory category = new MedicineCategory();
+        category.setCategoryName(
+                resultSet.getString("category_name"));
+
+        Medicine medicine = new Medicine();
+        medicine.setId(resultSet.getString("medicine_id"));
+        medicine.setMedicineName(
+                resultSet.getString("medicine_name"));
+        medicine.setUnit(resultSet.getString("unit"));
+        medicine.setCategory(category);
+
+        MedicineStock stock = new MedicineStock();
+        stock.setMedicine(medicine);
+        stock.setBatchNumber(
+                resultSet.getString("batch_number"));
+        stock.setQuantityReceived(
+                resultSet.getInt("quantity_received"));
+        stock.setStatus(resultSet.getString("status"));
+
+        Timestamp expiration =
+                resultSet.getTimestamp("expiration_date");
+        if (expiration != null) {
+            stock.setExpirationDate(
+                    expiration.toLocalDateTime());
+        }
+
+        return stock;
     }
 }

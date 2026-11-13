@@ -1,4 +1,4 @@
-package com.rocs.rc.ohs.data.utils;
+package com.rocs.rc.ohs.data.utils.medicalrecord;
 
 /**
  * Holds the SQL statements used by the data access objects.

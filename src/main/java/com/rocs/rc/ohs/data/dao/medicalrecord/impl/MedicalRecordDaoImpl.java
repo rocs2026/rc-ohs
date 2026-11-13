@@ -2,7 +2,7 @@ package com.rocs.rc.ohs.data.dao.medicalrecord.impl;
 
 import com.rocs.rc.ohs.app.model.medicalrecord.MedicalRecord;
 import com.rocs.rc.ohs.data.dao.medicalrecord.MedicalRecordDao;
-import com.rocs.rc.ohs.data.utils.QueryConstants;
+import com.rocs.rc.ohs.data.utils.medicalrecord.QueryConstants;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
