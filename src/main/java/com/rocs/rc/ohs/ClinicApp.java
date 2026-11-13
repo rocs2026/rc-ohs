@@ -1,29 +1,25 @@
 package com.rocs.rc.ohs;
 
-
 import com.rocs.rc.ohs.app.facade.login.LoginFacade;
 import com.rocs.rc.ohs.app.facade.login.impl.LoginFacadeImpl;
 import com.rocs.rc.ohs.app.model.login.Login;
 
-// import com.rocs.rc.ohs.app.facade.consultation.ConsultationFacade;
-// import com.rocs.rc.ohs.app.facade.consultation.impl.ConsultationFacadeImpl;
-// import com.rocs.rc.ohs.app.model.consultation.Consultation;
-// import com.rocs.rc.ohs.app.model.enums.recordtype.RecordType;
-// import com.rocs.rc.ohs.app.model.medicine.MedicineStock;
-// import com.rocs.rc.ohs.app.model.person.Person;
-// import com.rocs.rc.ohs.app.model.personnel.Personnel;
-// import com.rocs.rc.ohs.app.model.prescription.Prescription;
-// import java.time.LocalDateTime;
-// import java.time.format.DateTimeFormatter;
-// import java.time.format.DateTimeParseException;
-// import java.util.ArrayList;
-// import java.util.List;
 import java.util.Scanner;
 
 /**
  * The main entry point of the clinic application.
  */
 public final class ClinicApp {
+
+    // /**
+    //  * The text the user types to leave the search screen.
+    //  */
+    // private static final String EXIT_COMMAND = "exit";
+
+    // /**
+    //  * The text shown when a value is missing.
+    //  */
+    // private static final String NOT_AVAILABLE = "N/A";
 
     /**
      * Prevents instantiation of this class.
@@ -37,33 +33,33 @@ public final class ClinicApp {
      * @param args The command line arguments.
      */
     public static void main(String[] args) {
+        try (Scanner sc = new Scanner(System.in)) {
+            LoginFacade loginFacade = new LoginFacadeImpl();
 
-        Scanner sc = new Scanner(System.in);
-        LoginFacade loginFacade = new LoginFacadeImpl();
+            System.out.println("Welcome to Clinic IS");
+            System.out.println("[1] Login");
+            //        System.out.println("[2] Forgot password");
+            System.out.print("Choose: ");
+            String choice = sc.nextLine().trim();
 
-        System.out.println("Welcome to Clinic IS");
-        System.out.println("[1] Login");
-//        System.out.println("[2] Forgot password");
-        System.out.print("Choose: ");
-        String choice = sc.nextLine().trim();
-
-        switch (choice) {
-            case "1":
-                login(sc, loginFacade);
-                break;
-//            case "2":
-//                forgotPassword(sc, loginFacade);
-//                break;
-            default:
-                System.out.println("Invalid choice");
-                break;
+            switch (choice) {
+                case "1":
+                    login(sc, loginFacade);
+                    break;
+                //            case "2":
+                //                forgotPassword(sc, loginFacade);
+                //                break;
+                default:
+                    System.out.println("Invalid choice");
+                    break;
+            }
         }
     }
 
     /**
      * Logs in the user.
      *
-     * @param sc The scanner used to read input.
+     * @param sc          The scanner used to read input.
      * @param loginFacade The facade used for login operations.
      */
     private static void login(Scanner sc, LoginFacade loginFacade) {
@@ -95,9 +91,62 @@ public final class ClinicApp {
 
         System.out.println("Login successful");
 
-        // consultationMenu(sc);
-
+        // searchMedicalRecords(sc);
     }
+
+    // /**
+    //  * Searches for medical records and prints the results.
+    //  *
+    //  * @param sc the scanner used to read input
+    //  */
+    // private static void searchMedicalRecords(Scanner sc) {
+    //     System.out.print("Enter patient ID or name (exit to quit): ");
+    //     String keyword = sc.nextLine().trim();
+    //
+    //     if (keyword.isEmpty() || EXIT_COMMAND.equalsIgnoreCase(keyword)) {
+    //         return;
+    //     }
+    //
+    //     try {
+    //         MedicalRecordFacade facade = new MedicalRecordFacadeImpl();
+    //         List<MedicalRecordDTO> records = facade.search(keyword);
+    //
+    //         if (records.isEmpty()) {
+    //             System.out.println("No record found");
+    //             return;
+    //         }
+    //
+    //         System.out.println(records.size() + " result(s) found");
+    //         for (MedicalRecordDTO r : records) {
+    //             String pId = r.getPatientId();
+    //             System.out.println("Patient ID         : "
+    //                     + (pId == null ? NOT_AVAILABLE : pId));
+    //             String name = (r.getFirstName() == null ? NOT_AVAILABLE
+    //                     : r.getFirstName()) + " "
+    //                     + (r.getLastName() == null ? NOT_AVAILABLE
+    //                     : r.getLastName());
+    //             System.out.println("Name               : " + name);
+    //             String cond = r.getMedicalConditions();
+    //             System.out.println("Medical conditions : "
+    //                     + (cond == null ? NOT_AVAILABLE : cond));
+    //             String alg = r.getAllergies();
+    //             System.out.println("Allergies          : "
+    //                     + (alg == null ? NOT_AVAILABLE : alg));
+    //             Object date = r.getConsultationDate();
+    //             System.out.println("Consultation date  : "
+    //                     + (date == null ? NOT_AVAILABLE : date));
+    //             String diag = r.getDiagnosis();
+    //             System.out.println("Diagnosis          : "
+    //                     + (diag == null ? NOT_AVAILABLE : diag));
+    //             String treat = r.getTreatment();
+    //             System.out.println("Treatment          : "
+    //                     + (treat == null ? NOT_AVAILABLE : treat));
+    //         }
+    //     } catch (RuntimeException e) {
+    //         System.out.println("Unable to search right now: "
+    //                 + e.getMessage());
+    //     }
+    // }
 
     // /**
     //  * Resets a forgotten password after

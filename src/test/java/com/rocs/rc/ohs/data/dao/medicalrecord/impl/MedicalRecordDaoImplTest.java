@@ -1,174 +1,188 @@
 package com.rocs.rc.ohs.data.dao.medicalrecord.impl;
 
-import com.rocs.rc.ohs.app.model.medicalrecord.MedicalRecord;
+import com.rocs.rc.ohs.app.dto.MedicalRecordDTO;
+import com.rocs.rc.ohs.data.connection.ConnectionHelper;
+import com.rocs.rc.ohs.data.dao.medicalrecord.MedicalRecordDao;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockedStatic;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * test the {@link MedicalRecordDaoImpl}.
+ * Search behavior tests for {@link MedicalRecordDaoImpl}.
  */
-@ExtendWith(MockitoExtension.class)
-public class MedicalRecordDaoImplTest {
+class MedicalRecordDaoImplTest {
 
-    /** mock connection. */
-    @Mock
+    /** Static connection factory mock. */
+    private MockedStatic<ConnectionHelper> helper;
+
+    /** Connection stubbed for the DAO. */
     private Connection connection;
 
-    /** mock statement. */
-    @Mock
+    /** Prepared statement stubbed for search queries. */
     private PreparedStatement statement;
 
-    /** The DAO under test. */
-    private MedicalRecordDaoImpl medicalRecordDao;
+    /** Result set stubbed with mock patient rows. */
+    private ResultSet resultSet;
+
+    /** DAO instance under test. */
+    private MedicalRecordDao dao;
 
     /**
-     * Prepares the DAO and the mocked statement before each test.
+     * Stubs JDBC objects and static connection lookup before each run.
      *
-     * @throws SQLException if the statement cannot be prepared.
+     * @throws SQLException if stubbing fails
      */
     @BeforeEach
-    void setUp()
-            throws SQLException {
+    void setUp() throws SQLException {
+        connection = mock(Connection.class);
+        statement = mock(PreparedStatement.class);
+        resultSet = mock(ResultSet.class);
+
         when(connection.prepareStatement(anyString())).thenReturn(statement);
-        medicalRecordDao = new MedicalRecordDaoImpl(connection);
+        when(statement.executeQuery()).thenReturn(resultSet);
+
+        helper = mockStatic(ConnectionHelper.class);
+        helper.when(ConnectionHelper::getConnection).thenReturn(connection);
+
+        dao = new MedicalRecordDaoImpl();
     }
 
     /**
-     * Builds medical record with only its ID and medical condition sets.
-     *
-     * @param id the ID of the medical record.
-     * @param conditions the medical conditions of the patient.
-     * @return the medical record.
+     * Releases the static connection mock after each run.
      */
-    private MedicalRecord buildRecord(String id, String conditions) {
-        MedicalRecord record = new MedicalRecord();
-        record.setId(id);
-        record.setMedicalConditions(conditions);
-        return record;
+    @AfterEach
+    void tearDown() {
+        helper.close();
     }
 
     /**
-     * TESTCASE1: Should return false if no ID exists.
+     * Maps a full patient row including medical record and consultation fields.
      *
-     * @throws SQLException if the sql query update fails
-     */
-    @Test
-    void updateMedicalRecordWhenIdReturnsNothingReturnsFalse()
-            throws SQLException {
-        String allisonId = "ea67a306-d343-4847-b204-c92f2d4cc90";
-        String jowanConditions = "Hypertension";
-
-        when(statement.executeUpdate()).thenReturn(0);
-
-        boolean result = medicalRecordDao.updateMedicalRecord(
-                buildRecord(allisonId, jowanConditions));
-
-        assertFalse(result);
-    }
-
-    /**
-     * TC2: Returns false if name has no match.
-     *
-     * @throws SQLException if database connection has error
+     * @throws SQLException if result set reading fails
      */
     @Test
-    void updateMedicalRecordWhenNameReturnsNothingReturnsFalse()
-            throws SQLException {
-        String allisonId = "ea67a306-d343-4847-b204-c92f2d4cc9e0";
-        String jowanConditions = "Hypertension";
-        when(statement.executeUpdate()).thenReturn(0);
+    void searchReturnsMatchingRecord() throws SQLException {
+        LocalDateTime date = LocalDateTime.of(2026, 10, 20, 9, 30);
 
-        boolean result = medicalRecordDao.updateMedicalRecord(
-                buildRecord(allisonId, jowanConditions));
+        when(resultSet.next()).thenReturn(true, false);
+        when(resultSet.getString("p_id")).thenReturn("p1");
+        when(resultSet.getString("first_name")).thenReturn("Jowan");
+        when(resultSet.getString("middle_name")).thenReturn("A");
+        when(resultSet.getString("last_name")).thenReturn("Quirona");
+        when(resultSet.getString("mr_id")).thenReturn("mr1");
+        when(resultSet.getString("medical_conditions")).thenReturn("Asthma");
+        when(resultSet.getString("allergies")).thenReturn("Peanut allergy");
+        when(resultSet.getString("c_id")).thenReturn("c1");
+        when(resultSet.getTimestamp("consultation_date"))
+                .thenReturn(Timestamp.valueOf(date));
+        when(resultSet.getString("complaint")).thenReturn("Cough");
+        when(resultSet.getString("diagnosis")).thenReturn("Infection");
+        when(resultSet.getString("treatment")).thenReturn("Antibiotics");
 
-        assertFalse(result);
+        List<MedicalRecordDTO> records = dao.search("Jowan");
+
+        assertEquals(1, records.size());
+        assertEquals("p1", records.get(0).getPatientId());
+        assertEquals("Jowan", records.get(0).getFirstName());
+        assertEquals("Quirona", records.get(0).getLastName());
+        assertEquals("mr1", records.get(0).getMedicalRecordId());
+        assertEquals("Asthma", records.get(0).getMedicalConditions());
+        assertEquals("Peanut allergy", records.get(0).getAllergies());
+        assertEquals("Cough", records.get(0).getComplaint());
+        assertEquals("Infection", records.get(0).getDiagnosis());
+        assertEquals("Antibiotics", records.get(0).getTreatment());
+        assertEquals(date, records.get(0).getConsultationDate());
     }
 
     /**
-     * TC3: Returns true when update is successful for single ID.
+     * Leaves consultation date null when no consultation ID is present.
      *
-     * @throws SQLException if the update has failed
+     * @throws SQLException if result set reading fails
      */
     @Test
-    void updateMedicalRecordWhenIdReturnsSingleResultReturnsTrue()
-            throws SQLException {
-        String jowanId = "4e49eb71-3481-476b-b6ba-5662a48df1e5";
-        String jowanConditions = "Hypertension";
-        when(statement.executeUpdate()).thenReturn(1);
+    void searchHandlesMissingConsultation() throws SQLException {
+        when(resultSet.next()).thenReturn(true, false);
+        when(resultSet.getString("p_id")).thenReturn("p1");
+        when(resultSet.getString("mr_id")).thenReturn("mr1");
+        when(resultSet.getString("c_id")).thenReturn(null);
 
-        boolean result = medicalRecordDao.updateMedicalRecord(
-                buildRecord(jowanId, jowanConditions));
+        List<MedicalRecordDTO> records = dao.search("Jowan");
 
-        assertTrue(result);
+        assertEquals(1, records.size());
+        assertNull(records.get(0).getConsultationDate());
     }
 
     /**
-     * TC4: Check if update returns true using  name parameter.
+     * Strips leading and trailing spaces before binding wildcard parameters.
      *
-     * @throws SQLException if sql params are wrong.
+     * @throws SQLException if parameter binding fails
      */
     @Test
-    void updateMedicalRecordWhenNameReturnsSingleResultReturnsTrue()
-            throws SQLException {
-        String antonioId = "669ce09d-4086-4497-a76e-8cb9afe2b635";
-        String antonioConditions = "Asthma";
-        when(statement.executeUpdate()).thenReturn(1);
+    void searchBindsTrimmedKeyword() throws SQLException {
+        when(resultSet.next()).thenReturn(false);
 
-        boolean result = medicalRecordDao.updateMedicalRecord(
-                buildRecord(antonioId, antonioConditions));
+        dao.search("  Quirona  ");
 
-        assertTrue(result);
+        int parameterCount = 6;
+        for (int i = 1; i <= parameterCount; i++) {
+            verify(statement).setString(i, "%Quirona%");
+        }
     }
 
     /**
-     * TC7: Update should work even if chosen from multiple search results.
+     * Returns an empty list when the query matches zero rows.
      *
-     * @throws SQLException if table update cannot process data.
+     * @throws SQLException if query execution fails
      */
     @Test
-    void updateMedicalRecordWhenSelectedFromMultipleResultsReturnsTrue()
-            throws SQLException {
-        String jowanId = "4e49b71-3481-476b-b6ba-5662a48df1e5";
-        String jowanConditions = "Hypertension";
-        when(statement.executeUpdate()).thenReturn(1);
+    void searchReturnsEmptyWhenNoMatch() throws SQLException {
+        when(resultSet.next()).thenReturn(false);
 
-        boolean result = medicalRecordDao.updateMedicalRecord(
-                buildRecord(jowanId, jowanConditions));
-
-        assertTrue(result);
+        assertEquals(0, dao.search("Unknown").size());
     }
 
     /**
-     * TC9: Verify that corrects values are actually passed to the statement.
+     * Exits early without querying on null or whitespace input.
      *
-     * @throws SQLException if verification drops.
+     * @throws SQLException if verifying the connection fails
      */
     @Test
-    void updateMedicalRecordWhenUpdatedSendsNewValuesToDatabase()
-            throws SQLException {
-        String jowanId = "4e49eb71-3481-476b-b6ba-5662a48df1e5";
-        String jowanConditions = "Hypertension";
-        when(statement.executeUpdate()).thenReturn(1);
+    void searchSkipsBlankKeyword() throws SQLException {
+        assertEquals(0, dao.search(null).size());
+        assertEquals(0, dao.search("   ").size());
 
-        medicalRecordDao.updateMedicalRecord(
-                buildRecord(jowanId, jowanConditions));
+        verify(connection, never()).prepareStatement(anyString());
+    }
 
-        verify(statement).setString(1, jowanConditions);
-        verify(statement).setString(2, null);
-        verify(statement).setString(3, jowanId);
-        verify(statement).executeUpdate();
+    /**
+     * Propagates SQL failures as a RuntimeException.
+     *
+     * @throws SQLException when stubbing query execution failure
+     */
+    @Test
+    void searchThrowsOnDatabaseError() throws SQLException {
+        when(statement.executeQuery())
+                .thenThrow(new SQLException("Database error"));
+
+        assertThrows(RuntimeException.class, () -> dao.search("Jowan"));
     }
 }
