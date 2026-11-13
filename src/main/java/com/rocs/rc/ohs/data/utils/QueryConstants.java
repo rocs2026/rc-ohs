@@ -1,15 +1,11 @@
 package com.rocs.rc.ohs.data.utils;
 
 /**
- * Holds the SQL statements used by the data access objects.
+ * SQL statement definitions used across data access classes.
  */
-public final class MedRecordQueryConstants {
+public final class QueryConstants {
 
-    /**
-     * Searches a patient (student or personnel) by ID, name, student number
-     * or employee ID and returns the patient's medical records with their
-     * consultations.
-     */
+    /** Query to search patient records across names, IDs, and numbers. */
     public static final String SEARCH_MEDICAL_RECORD =
             "SELECT p.id AS p_id, p.first_name, p.middle_name, "
                     + "p.last_name, mr.id AS mr_id, mr.medical_conditions, "
@@ -29,19 +25,12 @@ public final class MedRecordQueryConstants {
                     + "ORDER BY p.last_name, p.first_name, "
                     + "c.consultation_date DESC";
 
-    /**
-     * Updates the Medical record of a patient (med conditions,
-     * allergies)
-     */
+    /** Query to update patient medical conditions and allergies. */
     public static final String UPDATE_MEDICAL_RECORD_STATEMENT =
             "UPDATE medical_record "
                     + "SET medical_conditions = ?, allergies = ? "
-                    + "WHERE id =?";
+                    + "WHERE id = ?";
 
-    /**
-     * Prevents instantiation of this class.
-     */
-    private MedRecordQueryConstants() {
+    private QueryConstants() {
     }
 }
-
