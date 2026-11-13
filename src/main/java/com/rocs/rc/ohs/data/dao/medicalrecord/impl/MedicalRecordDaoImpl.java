@@ -31,7 +31,7 @@ public class MedicalRecordDaoImpl implements MedicalRecordDao {
             MedicalRecord medicalRecord) {
         try (PreparedStatement statement = connection
                 .prepareStatement(QueryConstants.
-                        UPDATE_PASSWORD_BY_EMAIL_AND_USERNAME)) {
+                        UPDATE_MEDICAL_RECORD_STATEMENT)) {
             statement.setString(1, medicalRecord.getMedicalConditions());
             statement.setString(2, medicalRecord.getAllergies());
             statement.setString(3, medicalRecord.getId());
