@@ -11,6 +11,30 @@ public final class QueryConstants {
     private QueryConstants() {
     }
 
+
+    /**
+     * Gets a medical record using its ID.
+     */
+    public static final String GET_MEDICAL_RECORD_BY_ID_STATEMENT =
+            "SELECT id, patient_id, consultation_id, medical_conditions, "
+                    + "allergies FROM medical_record WHERE id = ?";
+
+    /**
+     * Gets all medical records belonging to a patient.
+     */
+    public static final String GET_MEDICAL_RECORDS_BY_PATIENT_STATEMENT =
+            "SELECT id, patient_id, consultation_id, medical_conditions, "
+                    + "allergies FROM medical_record WHERE patient_id = ?";
+
+    /**
+     * Saves a new medical record.
+     */
+    public static final String ADD_MEDICAL_RECORD_STATEMENT =
+            "INSERT INTO medical_record "
+                    + "(id, patient_id, consultation_id, medical_conditions, allergies) "
+                    + "VALUES (?, ?, ?, ?, ?)";
+
+
     /**
      * Updates the Medical record of a patient (med conditions, allergies).
      */

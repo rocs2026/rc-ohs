@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Defines the data access operations for medical records.
  */
-public interface MedRecordDao {
+public interface AddMedRecordDao {
 
     /**
      * Retrieves a medical record by ID.

@@ -29,9 +29,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 /**
- * Tests the {@link MedRecordDaoImpl} class.
+ * Tests the {@link AddMedRecordDaoImpl} class.
  */
-class MedRecordDaoImplTest {
+class AddMedRecordDaoImplTest {
 
     /** The ID of the medical record used in tests. */
     private static final String RECORD_ID =
@@ -58,7 +58,7 @@ class MedRecordDaoImplTest {
     private ResultSet recordResult;
 
     /** DAO instance being tested. */
-    private MedRecordDaoImpl dao;
+    private AddMedRecordDaoImpl dao;
 
     @BeforeEach
     void setUp() throws SQLException {
@@ -77,7 +77,7 @@ class MedRecordDaoImplTest {
         connectionHelper.when(ConnectionHelper::getConnection)
                 .thenReturn(connection);
 
-        dao = new MedRecordDaoImpl();
+        dao = new AddMedRecordDaoImpl();
     }
 
     @AfterEach
