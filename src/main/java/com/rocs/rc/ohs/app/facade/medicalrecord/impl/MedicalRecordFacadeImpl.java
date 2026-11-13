@@ -3,18 +3,13 @@ package com.rocs.rc.ohs.app.facade.medicalrecord.impl;
 import com.rocs.rc.ohs.app.facade.medicalrecord.MedicalRecordFacade;
 import com.rocs.rc.ohs.app.model.medicalrecord.MedicalRecord;
 import com.rocs.rc.ohs.app.model.person.Person;
-import com.rocs.rc.ohs.data.connection.ConnectionHelper;
 import com.rocs.rc.ohs.data.dao.medicalrecord.MedicalRecordDao;
-import com.rocs.rc.ohs.data.dao.medicalrecord.impl.MedicalRecordDaoImpl;
 import com.rocs.rc.ohs.data.dao.person.PersonDao;
-import com.rocs.rc.ohs.data.dao.person.impl.PersonDaoImpl;
-
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implements the operations for managing the medical records of a patient.
+ * Implements the operations for managing patient medical records.
  */
 public class MedicalRecordFacadeImpl implements MedicalRecordFacade {
 
@@ -25,18 +20,10 @@ public class MedicalRecordFacadeImpl implements MedicalRecordFacade {
     private final MedicalRecordDao medicalRecordDao;
 
     /**
-     * Creates a facade that uses the default data access objects.
-     */
-    public MedicalRecordFacadeImpl() {
-        this(new PersonDaoImpl(), createMedicalRecordDao());
-    }
-
-    /**
      * Creates a facade that uses the given data access objects.
      *
-     * @param newPersonDao the data access operations for persons.
-     * @param newMedicalRecordDao the data access operations for medical
-     *                            records.
+     * @param newPersonDao the person data access object
+     * @param newMedicalRecordDao the medical record data access object
      */
     public MedicalRecordFacadeImpl(PersonDao newPersonDao,
                                    MedicalRecordDao newMedicalRecordDao) {
@@ -45,29 +32,13 @@ public class MedicalRecordFacadeImpl implements MedicalRecordFacade {
     }
 
     /**
-     * Creates the medical record DAO using a database connection.
+     * Finds patients by ID or name, checking the ID first.
      *
-     * @return the medical record DAO.
-     */
-    private static MedicalRecordDao createMedicalRecordDao() {
-        try {
-            return new MedicalRecordDaoImpl(ConnectionHelper.getConnection());
-        } catch (SQLException e) {
-            throw new IllegalStateException(
-                    "Unable to create medical record DAO.", e);
-        }
-    }
-
-    /**
-     * Finds patients that match a patient ID or name. The patient ID is
-     * checked first, then the name.
-     *
-     * @param keyword the patient ID, or the full or partial name.
-     * @return the matching patients, or an empty list if there is no match.
+     * @param keyword patient ID or full or partial name
+     * @return matching patients, or an empty list
      */
     @Override
     public List<Person> findPatients(String keyword) {
-
         List<Person> patients = new ArrayList<>();
 
         if (isBlank(keyword)) {
@@ -86,18 +57,17 @@ public class MedicalRecordFacadeImpl implements MedicalRecordFacade {
     }
 
     /**
-     * Adds a new medical record for a patient.
+     * Adds a medical record for an existing patient.
      *
-     * @param patientId the ID of the patient.
-     * @param medicalConditions the medical conditions of the patient.
-     * @param allergies the allergies of the patient.
-     * @return true if the medical record was added, otherwise false.
+     * @param patientId the patient's ID
+     * @param medicalConditions the patient's medical conditions
+     * @param allergies the patient's allergies
+     * @return true if the record was added, otherwise false
      */
     @Override
     public boolean addMedicalRecord(String patientId,
                                     String medicalConditions,
                                     String allergies) {
-
         if (isBlank(patientId) || isBlank(medicalConditions)
                 || isBlank(allergies)) {
             return false;
@@ -115,15 +85,13 @@ public class MedicalRecordFacadeImpl implements MedicalRecordFacade {
     }
 
     /**
-     * Retrieves the medical records of a patient.
+     * Retrieves the records associated with a patient.
      *
-     * @param patientId the ID of the patient.
-     * @return the medical records of the patient, or an empty list if
-     *         the patient has none.
+     * @param patientId the patient's ID
+     * @return the patient's medical records, or an empty list
      */
     @Override
     public List<MedicalRecord> findMedicalRecords(String patientId) {
-
         if (isBlank(patientId)) {
             return new ArrayList<>();
         }
@@ -132,10 +100,10 @@ public class MedicalRecordFacadeImpl implements MedicalRecordFacade {
     }
 
     /**
-     * Checks whether a text is null or has no characters except spaces.
+     * Checks whether the supplied text is blank.
      *
-     * @param text the text to check.
-     * @return true if the text is blank, otherwise false.
+     * @param text the value to check
+     * @return true if null or empty after trimming
      */
     private boolean isBlank(String text) {
         return text == null || text.trim().isEmpty();

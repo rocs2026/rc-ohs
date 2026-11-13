@@ -22,6 +22,7 @@ import com.rocs.rc.ohs.app.model.login.Login;
 // import java.time.format.DateTimeFormatter;
 // import java.time.format.DateTimeParseException;
 // import java.util.ArrayList;
+
 // import java.util.List;
 //import java.util.List;
 import java.util.Scanner;
@@ -230,14 +231,15 @@ public final class ClinicApp {
     //     System.out.print(label + ": ");
     //     return sc.nextLine();
     // }
-//
 //    /**
 //     * Opens the options for managing patient medical records.
 //     *
 //     * @param sc scanner for menu input
+//     * @param facade medical record operations
 //     */
-//    private static void medicalRecordMenu(Scanner sc) {
-//        MedicalRecordFacade facade = new MedicalRecordFacadeImpl();
+//    private static void medicalRecordMenu(
+//            Scanner sc, MedicalRecordFacade facade) {
+//
 //        String choice = "";
 //
 //        while (!"0".equals(choice)) {
@@ -259,7 +261,7 @@ public final class ClinicApp {
 //    }
 //
 //    /**
-//     * Collects patient information and saves a new medical record.
+//     * Saves a medical record using the entered patient details.
 //     *
 //     * @param sc input scanner
 //     * @param facade medical record operations
@@ -287,7 +289,7 @@ public final class ClinicApp {
 //    }
 //
 //    /**
-//     * Retrieves and prints the records linked to a patient.
+//     * Displays the medical records associated with a patient.
 //     *
 //     * @param sc scanner for patient ID input
 //     * @param facade medical record operations
@@ -321,11 +323,11 @@ public final class ClinicApp {
 //    }
 //
 //    /**
-//     * Prompts the user and returns the entered text.
+//     * Reads a value entered by the user.
 //     *
 //     * @param sc scanner receiving the input
-//     * @param label text displayed before input
-//     * @return the user's response
+//     * @param label prompt displayed to the user
+//     * @return entered text
 //     */
 //    private static String ask(Scanner sc, String label) {
 //        System.out.print(label + ": ");
