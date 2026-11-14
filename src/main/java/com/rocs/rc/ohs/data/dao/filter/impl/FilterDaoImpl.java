@@ -32,7 +32,8 @@ public class FilterDaoImpl implements FilterDao {
      * @param patientName first or last name of the patient, may be null.
      * @param medicalCondition medical condition of the patient, may be null.
      * @param allergy allergy of the patient, may be null.
-     * @return list of matching {@link MedicalRecord} records.
+     * @return list of matching {@link MedicalRecord} records,
+     *         or an empty list if none match.
      */
     @Override
     public List<MedicalRecord> filterMedicalRecords(String patientName,

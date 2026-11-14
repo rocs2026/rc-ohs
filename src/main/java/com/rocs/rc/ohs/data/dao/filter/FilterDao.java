@@ -15,7 +15,8 @@ public interface FilterDao {
      * @param patientName first or last name of the patient, may be null.
      * @param medicalCondition medical condition of the patient, may be null.
      * @param allergy allergy of the patient, may be null.
-     * @return list of matching {@link MedicalRecord} records.
+     * @return list of matching {@link MedicalRecord} records,
+     *         or an empty list if none match.
      */
     List<MedicalRecord> filterMedicalRecords(String patientName,
                                              String medicalCondition,

@@ -187,6 +187,7 @@ class FilterDaoImplTest {
                 filterDao.filterMedicalRecords(null, null, null);
 
         assertEquals(2, records.size());
+        verify(statement, never()).setString(anyInt(), anyString());
     }
 
     /*
