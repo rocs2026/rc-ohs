@@ -1,0 +1,24 @@
+package com.rocs.rc.ohs.data.dao.filter;
+
+import com.rocs.rc.ohs.app.model.medicalrecord.MedicalRecord;
+
+import java.util.List;
+
+/**
+ * Defines the data access operations for filtering medical records.
+ */
+public interface FilterDao {
+
+    /**
+     * Retrieves the medical records that match the given criteria.
+     * A null or blank criterion is ignored.
+     * @param patientName first or last name of the patient, may be null.
+     * @param medicalCondition medical condition of the patient, may be null.
+     * @param allergy allergy of the patient, may be null.
+     * @return list of matching {@link MedicalRecord} records,
+     *         or an empty list if none match.
+     */
+    List<MedicalRecord> filterMedicalRecords(String patientName,
+                                             String medicalCondition,
+                                             String allergy);
+}
