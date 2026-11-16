@@ -5,27 +5,25 @@
 
     <property file="build.properties"/>
     <!--    Build properties-->
-    <property name="build.dir" location="build"/>
-    <property name="classes.dir" location="${build.dir}/classes"/>
-    <property name="dist.dir" location="${build.dir}/dist"/>
-    <property name="src.dir" location="src/main/java"/>
-    <property name="resources.dir" location="src/main/resources"/>
-    <property name="doc.dir" location="${build.dir}/doc"/>
-    <property name="ivy.reports.dir" location="${build.dir}/ivy-reports"/>
-    <property name="test.src.dir" location="src/test/java"/>
-    <property name="test.classes.dir" location="${build.dir}/test-classes"/>
-    <property name="test.reports.dir" location="${build.dir}/test-reports"/>
-    <property name="lib.dir" location="${build.dir}/lib"/>
-    <property name="reports.dir" location="${build.dir}/reports"/>
-    <property name="slop.threshold" value="10"/>
+    <property   name="build.dir"          location="build"/>
+    <property   name="classes.dir"        location="${build.dir}/classes"/>
+    <property   name="dist.dir"           location="${build.dir}/dist"/>
+    <property   name="src.dir"            location="src/main/java"/>
+    <property   name="resources.dir"      location="src/main/resources"/>
+    <property   name="doc.dir"            location="${build.dir}/doc"/>
+    <property   name="ivy.reports.dir"    location="${build.dir}/ivy-reports"/>
+    <property   name="test.src.dir"       location="src/test/java"/>
+    <property   name="test.classes.dir"   location="${build.dir}/test-classes"/>
+    <property   name="test.reports.dir"   location="${build.dir}/test-reports"/>
+    <property   name="lib.dir"            location="${build.dir}/lib"/>
+    <property   name="reports.dir"        location="${build.dir}/reports"/>
+    <property   name="slop.threshold"     value="10"/>
 
     <!-- AI Pattern Detection -->
-    <property name="slop.src.dir" location=".github/tools/slop"/>
-    <property name="slop.classes.dir"
-              location="${build.dir}/slop/classes"/>
-    <property name="slop.report.dir"
-              location="${reports.dir}/slop"/>
-    <property name="slop.scan.dir" location="src"/>
+    <property   name="slop.src.dir"       location=".github/tools/slop"/>
+    <property   name="slop.classes.dir"   location="${build.dir}/slop/classes"/>
+    <property   name="slop.report.dir"    location="${reports.dir}/slop"/>
+    <property   name="slop.scan.dir"      location="src"/>
 
     <target name="clean">
         <echo>Cleaning temporary directories...</echo>
@@ -117,10 +115,10 @@
         <java classname="com.puppycrawl.tools.checkstyle.Main"
               classpathref="checkstyle.path"
               fork="true"
-              failonerror="false">
+              failonerror="true">
             <sysproperty key="org.checkstyle.sun.suppressionfilter.config"
                          value="src/main/resources/checkstyle-suppressions.xml"/>
-            <arg line="-c /sun_checks.xml -f xml -o ${reports.dir}/checkstyle-result.xml ${src.dir}"/>
+            <arg line="-c src/main/resources/checkstyle.xml -f xml -o ${reports.dir}/checkstyle-result.xml ${src.dir}"/>
         </java>
         <echo>Checkstyle report: ${reports.dir}/checkstyle-result.xml</echo>
     </target>
@@ -147,7 +145,7 @@
 
     </target>
 
-    <target name="ai"
+    <target name="ai-check"
             depends="compile-slop-detector"
             description="Runs Java AI Pattern Detection">
 
@@ -193,6 +191,17 @@
 
     <target name="build" depends="compile-tests" description="Builds the project">
         <echo>Building...</echo>
+    </target>
+
+    <target name="run" depends="compile" description="Runs the application">
+        <java classname="com.rocs.rc.ohs.ClinicApp"
+              fork="true"
+              failonerror="true">
+            <classpath>
+                <pathelement location="${classes.dir}"/>
+                <path refid="runtime.path"/>
+            </classpath>
+        </java>
     </target>
 
     <target name="generate-javadoc">
