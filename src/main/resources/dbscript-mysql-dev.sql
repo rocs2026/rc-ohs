@@ -9,7 +9,7 @@ create database rcis;
 create user 'rcis'@'localhost' identified by 'Changeme0';
 
 -- grant
-grant select, insert, update, delete on rcis.* to 'rcis'@'localhost';
+grant select, insert, update on rcis.* to 'rcis'@'localhost';
 grant create, alter, references on rcis.* to 'rcis'@'localhost';
 grant create view, show view on rcis.* to 'rcis'@'localhost';
 grant create routine, execute on rcis.* to 'rcis'@'localhost';
