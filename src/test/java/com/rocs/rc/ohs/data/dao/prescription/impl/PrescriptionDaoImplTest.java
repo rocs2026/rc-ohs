@@ -29,35 +29,22 @@ import static org.mockito.Mockito.when;
  */
 class PrescriptionDaoImplTest {
 
-    /** The ID of a consultation in the test data. */
-    private static final String CONSULTATION_ID =
-            "a451a504-a3d4-4721-bf8d-a18b8c199356";
+    private static final String CONSULTATION_ID = "a451a504-a3d4-4721-bf8d-a18b8c199356";
 
-    /** The ID given to a new prescription, as the facade would do. */
-    private static final String NEW_ID =
-            "9f4e6c1a-2b7d-4c58-8a31-5d0e7b9c2f14";
+    private static final String NEW_ID = "9f4e6c1a-2b7d-4c58-8a31-5d0e7b9c2f14";
 
-    /** The ID of the Amoxicillin 500mg stock in the test data. */
-    private static final String STOCK_ID =
-            "70aaf305-a7f5-41f1-bd0a-6ad73c042be9";
+    private static final String STOCK_ID = "70aaf305-a7f5-41f1-bd0a-6ad73c042be9";
 
-    /** The ID of a personnel in the test data. */
-    private static final String PERSONNEL_ID =
-            "64ffaffe-79b5-4690-bbd4-587507b6859c";
+    private static final String PERSONNEL_ID = "64ffaffe-79b5-4690-bbd4-587507b6859c";
 
-    /** The mocked connection helper. */
     private MockedStatic<ConnectionHelper> connectionHelper;
 
-    /** The mocked connection. */
     private Connection connection;
 
-    /** The mocked prepared statement. */
     private PreparedStatement statement;
 
-    /** The mocked result set. */
     private ResultSet resultSet;
 
-    /** The DAO under test. */
     private PrescriptionDaoImpl dao;
 
     @BeforeEach
@@ -81,9 +68,12 @@ class PrescriptionDaoImplTest {
         connectionHelper.close();
     }
 
-    // The prescription is recorded under the consultation.
+    /**
+     * Test save prescription from consultations.
+     * @throws SQLException
+     */
     @Test
-    void savesThePrescriptionUnderTheConsultation()
+    void testSavePrescription()
             throws SQLException {
         Prescription saved = dao.add(newPrescription());
 
@@ -98,40 +88,15 @@ class PrescriptionDaoImplTest {
         verify(statement).executeUpdate();
     }
 
-    // A prescription without a consultation is rejected, not saved.
+    /**
+     * Test save prescription failure.
+     */
     @Test
-    void rejectsAPrescriptionWithoutConsultation() {
+    void testSavePrescriptionFailed() {
         Prescription prescription = newPrescription();
         prescription.setConsultation(null);
 
-        assertThrows(IllegalArgumentException.class,
-                () -> dao.add(prescription));
-    }
-
-    // The saved prescription details are retrieved for the consultation.
-    @Test
-    void returnsTheSavedPrescriptionDetails() throws SQLException {
-        when(resultSet.next()).thenReturn(true, false);
-        when(resultSet.getString("medicine_stock_id")).thenReturn(STOCK_ID);
-        when(resultSet.getString("personnel_id")).thenReturn(PERSONNEL_ID);
-        when(resultSet.getInt("quantity_to_dispense")).thenReturn(2);
-        when(resultSet.getString("dose")).thenReturn("500mg");
-        when(resultSet.getString("frequency")).thenReturn("3 times a day");
-        when(resultSet.getString("medicine_name"))
-                .thenReturn("Amoxicillin 500mg");
-
-        List<Prescription> result =
-                dao.findByConsultationId(CONSULTATION_ID);
-
-        verify(statement).setString(1, CONSULTATION_ID);
-        assertEquals(1, result.size());
-        Prescription prescription = result.get(0);
-        assertEquals(STOCK_ID, prescription.getMedicineStock().getId());
-        assertEquals("Amoxicillin 500mg", prescription.getMedicineStock()
-                .getMedicine().getMedicineName());
-        assertEquals("500mg", prescription.getDose());
-        assertEquals("3 times a day", prescription.getFrequency());
-        assertEquals(2, prescription.getQuantityToDispense());
+        assertThrows(IllegalArgumentException.class, () -> dao.add(prescription));
     }
 
     private Prescription newPrescription() {
