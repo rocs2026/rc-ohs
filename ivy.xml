@@ -10,34 +10,67 @@
     </info>
 
     <configurations defaultconfmapping="compile->default">
-        <conf name="compile" description="Required to compile application"/>
-        <conf name="runtime" description="Additional run-time dependencies" extends="compile"/>
-        <conf name="test"    description="Required for test only" extends="runtime"/>
-        <conf name="pmd"     description="PMD and CPD tools only"/>
-        <conf name="checkstyle" visibility="private"/>
-        <conf name="compile" description="Required to compile application"/>
-        <conf name="runtime" description="Additional run-time dependencies" extends="compile"/>
-        <conf name="test" description="Required for test only" extends="runtime"/>
-        <conf name="pmd" description="PMD and CPD tools only"/>
-        <conf name="checkstyle" visibility="private"/>
+        <conf   name="compile"
+                visibility="private"
+                description="Required to compile application"/>
+        <conf   name="runtime"
+                description="Additional run-time dependencies"
+                extends="compile"/>
+        <conf   name="test"
+                description="Required for test only"
+                extends="runtime"/>
+        <conf   name="pmd"
+                description="PMD and CPD tools only"/>
+        <conf   name="checkstyle"
+                visibility="private"/>
+        <conf   name="checkstyle"
+                visibility="private"/>
     </configurations>
 
     <dependencies>
         <!--Database connectivity-->
-        <dependency org="com.mysql" name="mysql-connector-j" rev="8.3.0"/>
-        <dependency org="com.oracle.database.jdbc" name="ojdbc11" rev="23.26.3.0.0"/>
+        <dependency     org="com.mysql"
+                        name="mysql-connector-j"
+                        rev="26.10.0"/>
+        <dependency     org="com.oracle.database.jdbc"
+                        name="ojdbc11"
+                        rev="23.26.3.0.0"/>
+
         <!--Unit testing-->
-        <dependency org="org.junit.jupiter" name="junit-jupiter-api" rev="5.11.4"/>
-        <dependency org="org.junit.jupiter" name="junit-jupiter-engine" rev="5.11.4"/>
-        <dependency org="org.junit.platform" name="junit-platform-commons" rev="1.11.4"/>
-        <dependency org="org.junit.platform" name="junit-platform-engine" rev="1.11.4"/>
-        <dependency org="org.junit.platform" name="junit-platform-launcher" rev="1.11.4"/>
-        <dependency org="org.mockito" name="mockito-core" rev="5.15.2"/>
-        <dependency org="org.mockito" name="mockito-junit-jupiter" rev="5.15.2"/>
-        <dependency org="net.bytebuddy" name="byte-buddy-dep" rev="1.17.0"/>
+        <dependency     org="org.junit.jupiter"
+                        name="junit-jupiter-api"
+                        rev="5.11.4"/>
+        <dependency     org="org.junit.jupiter"
+                        name="junit-jupiter-engine"
+                        rev="5.11.4"/>
+        <dependency     org="org.junit.platform"
+                        name="junit-platform-commons"
+                        rev="1.11.4"/>
+        <dependency     org="org.junit.platform"
+                        name="junit-platform-engine"
+                        rev="1.11.4"/>
+        <dependency     org="org.junit.platform"
+                        name="junit-platform-launcher"
+                        rev="1.11.4"/>
+        <dependency     org="org.mockito"
+                        name="mockito-core"
+                        rev="5.15.2"/>
+        <dependency     org="org.mockito"
+                        name="mockito-junit-jupiter"
+                        rev="5.15.2"/>
+        <dependency     org="net.bytebuddy"
+                        name="byte-buddy-dep"
+                        rev="1.17.0"/>
+
         <!--Static analysis (PMD and CPD)-->
-        <dependency org="net.sourceforge.pmd" name="pmd-ant" rev="7.14.0" conf="pmd->default"/>
-        <dependency org="net.sourceforge.pmd" name="pmd-java" rev="7.14.0" conf="pmd->default"/>
-        <dependency org="com.puppycrawl.tools" name="checkstyle" rev="10.17.0" conf="checkstyle->default"/>
+        <dependency     org="net.sourceforge.pmd"
+                        name="pmd-ant" rev="7.14.0"
+                        conf="pmd->default"/>
+        <dependency     org="net.sourceforge.pmd"
+                        name="pmd-java" rev="7.14.0"
+                        conf="pmd->default"/>
+        <dependency     org="com.puppycrawl.tools"
+                        name="checkstyle" rev="10.17.0"
+                        conf="checkstyle->default"/>
     </dependencies>
 </ivy-module>
