@@ -10,6 +10,18 @@ import java.sql.SQLException;
  */
 public final class ConnectionHelper {
 
+    /** The Database Driver. */
+    private static final String DB_DRIVER =  AppConfig.getProperty("db.driver");
+
+    /** The Database Connection String. */
+    private static final String URL =  AppConfig.getProperty("db.url");
+
+    /** The Database User Username. */
+    private static final String USERNAME =  AppConfig.getProperty("db.username");
+
+    /** The Database Password. */
+    private static final String PASSWORD =  AppConfig.getProperty("db.password");
+
     private ConnectionHelper() {
     }
 
@@ -20,19 +32,13 @@ public final class ConnectionHelper {
      */
     public static Connection getConnection() {
         try {
-            String driver = AppConfig.getProperty("db.driver");
-            String url = AppConfig.getProperty("db.url");
-            String username = AppConfig.getProperty("db.username");
-            String password = AppConfig.getProperty("db.password");
-
-            Class.forName(driver);
-            return DriverManager.getConnection(url, username, password);
+            Class.forName(DB_DRIVER);
+            return DriverManager.getConnection(URL, USERNAME, PASSWORD);
         } catch (ClassNotFoundException e) {
             System.out.println("Database driver not found. ");
             e.printStackTrace();
         } catch (SQLException e) {
-            System.out.println("Incorrectt database username or password. ");
-            e.printStackTrace();
+            System.out.println("Incorrect database username or password. ");
         } catch (Exception e) {
             System.out.println("Cannot connect to the database ");
             e.printStackTrace();
