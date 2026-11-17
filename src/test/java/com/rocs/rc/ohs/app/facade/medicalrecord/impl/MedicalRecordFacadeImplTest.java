@@ -19,11 +19,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class MedicalRecordFacadeImplTest {
 
-    /** The mocked medical record DAO. */
     @Mock
     private MedicalRecordDao medicalRecordDao;
 
-    /** The facade under test. */
     private MedicalRecordFacadeImpl medicalRecordFacade;
 
     /**
@@ -53,7 +51,7 @@ public class MedicalRecordFacadeImplTest {
      * Returns false if the ID has no match.
      */
     @Test
-    void updateMedicalRecordWhenIdReturnsNothingReturnsFalse() {
+    void testUpdateNoId() {
         String allisonId = "ea67a306-d343-4847-b204-c92f2d4cc9e0";
         String jowanConditions = "Hypertension";
         MedicalRecord record = buildRecord(allisonId, jowanConditions);
@@ -68,7 +66,7 @@ public class MedicalRecordFacadeImplTest {
      * Returns false if name has no match.
      */
     @Test
-    void updateMedicalRecordWhenNameReturnsNothingReturnsFalse() {
+    void testUpdateNoName() {
         String allisonId = "ea67a306-d343-4847-b204-c92f2d4cc9e0";
         String jowanConditions = "Hypertension";
         MedicalRecord record = buildRecord(allisonId, jowanConditions);
@@ -83,7 +81,7 @@ public class MedicalRecordFacadeImplTest {
      * Returns true when update is successful for a single ID.
      */
     @Test
-    void updateMedicalRecordWhenIdReturnsSingleResultReturnsTrue() {
+    void testUpdateIdSucceed() {
         String jowanId = "4e49eb71-3481-476b-b6ba-5662a48df1e5";
         String jowanConditions = "Hypertension";
         MedicalRecord record = buildRecord(jowanId, jowanConditions);
@@ -94,11 +92,9 @@ public class MedicalRecordFacadeImplTest {
         assertTrue(result);
     }
 
-    /**
-     * Returns true when update is successful for single name.
-     */
+//    Returns true when update is successful for single name.
     @Test
-    void updateMedicalRecordWhenNameReturnsSingleResultReturnsTrue() {
+    void testUpdateNameSucceed() {
         String antonioId = "669ce09d-4086-4497-a76e-8cb9afe2b635";
         String antonioConditions = "Asthma";
         MedicalRecord record = buildRecord(antonioId, antonioConditions);
@@ -109,11 +105,10 @@ public class MedicalRecordFacadeImplTest {
         assertTrue(result);
     }
 
-    /**
-     * Update works when chosen from multiple search results.
-     */
+
+//    Update works when chosen from multiple search results.
     @Test
-    void updateMedicalRecordWhenSelectedFromMultipleResultsReturnsTrue() {
+    void testUpdateMultipleResults() {
         String jowanId = "4e49eb71-3481-476b-b6ba-5662a48df1e5";
         String jowanConditions = "Hypertension";
         MedicalRecord record = buildRecord(jowanId, jowanConditions);
@@ -124,11 +119,10 @@ public class MedicalRecordFacadeImplTest {
         assertTrue(result);
     }
 
-    /**
-     * Verifies that the updated record is passed.
-     */
+
+//    Verifies that the updated record is passed.
     @Test
-    void updateMedicalRecordWhenUpdatedSendsRecordToDao() {
+    void testUpdateToDao() {
         String jowanId = "4e49eb71-3481-476b-b6ba-5662a48df1e5";
         String jowanConditions = "Hypertension";
         MedicalRecord record = buildRecord(jowanId, jowanConditions);

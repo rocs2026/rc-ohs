@@ -23,15 +23,12 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class MedicalRecordDaoImplTest {
 
-    /** mock connection. */
     @Mock
     private Connection connection;
 
-    /** mock statement. */
     @Mock
     private PreparedStatement statement;
 
-    /** The DAO under test. */
     private MedicalRecordDaoImpl medicalRecordDao;
 
     /**
@@ -61,12 +58,12 @@ public class MedicalRecordDaoImplTest {
     }
 
     /**
-     * TESTCASE1: Should return false if no ID exists.
+     * Should return false if no ID exists.
      *
      * @throws SQLException if the sql query update fails
      */
     @Test
-    void updateMedicalRecordWhenIdReturnsNothingReturnsFalse()
+    void testUpdateNoId()
             throws SQLException {
         String allisonId = "ea67a306-d343-4847-b204-c92f2d4cc90";
         String jowanConditions = "Hypertension";
@@ -80,12 +77,12 @@ public class MedicalRecordDaoImplTest {
     }
 
     /**
-     * TC2: Returns false if name has no match.
+     * Returns false if name has no match.
      *
      * @throws SQLException if database connection has error
      */
     @Test
-    void updateMedicalRecordWhenNameReturnsNothingReturnsFalse()
+    void testUpdateNoName()
             throws SQLException {
         String allisonId = "ea67a306-d343-4847-b204-c92f2d4cc9e0";
         String jowanConditions = "Hypertension";
@@ -98,12 +95,12 @@ public class MedicalRecordDaoImplTest {
     }
 
     /**
-     * TC3: Returns true when update is successful for single ID.
+     * Returns true when update is successful for single ID.
      *
      * @throws SQLException if the update has failed
      */
     @Test
-    void updateMedicalRecordWhenIdReturnsSingleResultReturnsTrue()
+    void testUpdateIdSucceed()
             throws SQLException {
         String jowanId = "4e49eb71-3481-476b-b6ba-5662a48df1e5";
         String jowanConditions = "Hypertension";
@@ -115,13 +112,10 @@ public class MedicalRecordDaoImplTest {
         assertTrue(result);
     }
 
-    /**
-     * TC4: Check if update returns true using  name parameter.
-     *
-     * @throws SQLException if sql params are wrong.
-     */
+
+//     Check if update returns true using  name parameter.
     @Test
-    void updateMedicalRecordWhenNameReturnsSingleResultReturnsTrue()
+    void testUpdateNameSucceed()
             throws SQLException {
         String antonioId = "669ce09d-4086-4497-a76e-8cb9afe2b635";
         String antonioConditions = "Asthma";
@@ -133,13 +127,10 @@ public class MedicalRecordDaoImplTest {
         assertTrue(result);
     }
 
-    /**
-     * TC7: Update should work even if chosen from multiple search results.
-     *
-     * @throws SQLException if table update cannot process data.
-     */
+
+//     Update should work even if chosen from multiple search results.
     @Test
-    void updateMedicalRecordWhenSelectedFromMultipleResultsReturnsTrue()
+    void testUpdateMultipleResults()
             throws SQLException {
         String jowanId = "4e49b71-3481-476b-b6ba-5662a48df1e5";
         String jowanConditions = "Hypertension";
@@ -151,13 +142,10 @@ public class MedicalRecordDaoImplTest {
         assertTrue(result);
     }
 
-    /**
-     * TC9: Verify that corrects values are actually passed to the statement.
-     *
-     * @throws SQLException if verification drops.
-     */
+
+//     Verify that corrects values are actually passed to the statement.
     @Test
-    void updateMedicalRecordWhenUpdatedSendsNewValuesToDatabase()
+    void testUpdateStatementParameters()
             throws SQLException {
         String jowanId = "4e49eb71-3481-476b-b6ba-5662a48df1e5";
         String jowanConditions = "Hypertension";
