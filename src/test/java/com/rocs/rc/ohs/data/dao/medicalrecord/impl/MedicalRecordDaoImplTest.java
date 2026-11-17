@@ -140,7 +140,7 @@ public class MedicalRecordDaoImplTest {
 
         assertTrue(result);
     }
-    
+
     /**
      * Verify that corrects values are actually passed to the statement.
      *
