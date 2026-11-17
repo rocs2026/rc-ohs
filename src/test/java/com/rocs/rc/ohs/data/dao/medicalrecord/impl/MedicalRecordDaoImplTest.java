@@ -43,13 +43,6 @@ public class MedicalRecordDaoImplTest {
         medicalRecordDao = new MedicalRecordDaoImpl(connection);
     }
 
-    /**
-     * Builds medical record with only its ID and medical condition sets.
-     *
-     * @param id the ID of the medical record.
-     * @param conditions the medical conditions of the patient.
-     * @return the medical record.
-     */
     private MedicalRecord buildRecord(String id, String conditions) {
         MedicalRecord record = new MedicalRecord();
         record.setId(id);
@@ -112,8 +105,11 @@ public class MedicalRecordDaoImplTest {
         assertTrue(result);
     }
 
-
-//     Check if update returns true using  name parameter.
+    /**
+     * Check if update returns true using  name parameter.
+     *
+     * @throws SQLException if sql params are wrong.
+     */
     @Test
     void testUpdateNameSucceed()
             throws SQLException {
@@ -127,8 +123,11 @@ public class MedicalRecordDaoImplTest {
         assertTrue(result);
     }
 
-
-//     Update should work even if chosen from multiple search results.
+    /**
+     * Update should work even if chosen from multiple search results.
+     *
+     * @throws SQLException if table update cannot process data.
+     */
     @Test
     void testUpdateMultipleResults()
             throws SQLException {
@@ -141,9 +140,12 @@ public class MedicalRecordDaoImplTest {
 
         assertTrue(result);
     }
-
-
-//     Verify that corrects values are actually passed to the statement.
+    
+    /**
+     * Verify that corrects values are actually passed to the statement.
+     *
+     * @throws SQLException if verification failed or drop
+     */
     @Test
     void testUpdateStatementParameters()
             throws SQLException {

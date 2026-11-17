@@ -33,13 +33,6 @@ public class MedicalRecordFacadeImplTest {
         medicalRecordFacade = new MedicalRecordFacadeImpl(medicalRecordDao);
     }
 
-    /**
-     * Makes a med record with the given ID and conditions.
-     *
-     * @param id the record ID.
-     * @param conditions the med conditions.
-     * @return the med record.
-     */
     private MedicalRecord buildRecord(String id, String conditions) {
         MedicalRecord record = new MedicalRecord();
         record.setId(id);
@@ -92,7 +85,9 @@ public class MedicalRecordFacadeImplTest {
         assertTrue(result);
     }
 
-//    Returns true when update is successful for single name.
+    /**
+     * Returns true when update is successful for single name.
+     */
     @Test
     void testUpdateNameSucceed() {
         String antonioId = "669ce09d-4086-4497-a76e-8cb9afe2b635";
@@ -106,7 +101,9 @@ public class MedicalRecordFacadeImplTest {
     }
 
 
-//    Update works when chosen from multiple search results.
+    /**
+     * Update works when chosen from multiple search results.
+     */
     @Test
     void testUpdateMultipleResults() {
         String jowanId = "4e49eb71-3481-476b-b6ba-5662a48df1e5";
@@ -119,8 +116,9 @@ public class MedicalRecordFacadeImplTest {
         assertTrue(result);
     }
 
-
-//    Verifies that the updated record is passed.
+    /**
+     * Verifies that the updated record is passed.
+     */
     @Test
     void testUpdateToDao() {
         String jowanId = "4e49eb71-3481-476b-b6ba-5662a48df1e5";

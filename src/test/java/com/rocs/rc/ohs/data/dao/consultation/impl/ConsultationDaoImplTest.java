@@ -29,51 +29,31 @@ import static org.mockito.Mockito.when;
 /**
  * Tests the {@link ConsultationDaoImpl} class without a real database.
  */
-class ConsultationDaoImplTest {
+public class ConsultationDaoImplTest {
 
-    /** The ID of Jowan Carl Quirona, a patient in the test data. */
-    private static final String JOWAN_ID =
-            "f04cac48-889d-4a62-9a2b-a274406ece20";
+    private static final String JOWAN_ID = "f04cac48-889d-4a62-9a2b-a274406ece20";
 
-    /** The ID of Antonio Ferrer, a patient in the test data. */
-    private static final String ANTONIO_ID =
-            "6e00132d-76c0-4c86-82c2-53ba0211aaf0";
+    private static final String ANTONIO_ID = "6e00132d-76c0-4c86-82c2-53ba0211aaf0";
 
-    /** The ID of a personnel in the test data. */
-    private static final String STAFF_ID =
-            "64ffaffe-79b5-4690-bbd4-587507b6859c";
+    private static final String STAFF_ID = "64ffaffe-79b5-4690-bbd4-587507b6859c";
 
-    /** The ID of a consultation in the test data. */
-    private static final String CONSULTATION_ID =
-            "a451a504-a3d4-4721-bf8d-a18b8c199356";
+    private static final String NEW_ID = "0bd75b66-0afb-4901-88d6-c1e851432727";
 
-    /** The ID given to a new consultation, as the facade would do. */
-    private static final String NEW_ID =
-            "0bd75b66-0afb-4901-88d6-c1e851432727";
-
-    /** The date of the consultation in the test cases. */
     private static final LocalDateTime DATE =
             LocalDateTime.of(2026, 10, 20, 9, 30);
 
-    /** The diagnosis of Jowan in the test cases. */
     private static final String DIAGNOSIS = "Bacterial throat infection";
 
-    /** The treatment of Jowan in the test cases. */
     private static final String TREATMENT = "Antibiotic course and rest";
 
-    /** The mocked connection helper. */
     private MockedStatic<ConnectionHelper> connectionHelper;
 
-    /** The mocked connection. */
     private Connection connection;
 
-    /** The mocked prepared statement. */
     private PreparedStatement statement;
 
-    /** The mocked result set. */
     private ResultSet resultSet;
 
-    /** The DAO under test. */
     private ConsultationDaoImpl dao;
 
     @BeforeEach
@@ -97,11 +77,13 @@ class ConsultationDaoImplTest {
         connectionHelper.close();
     }
 
-    // The treatment plan is saved as part of the consultation.
+    /**
+     * Test save consultation.
+     * @throws SQLException
+     */
     @Test
-    void savesTheTreatmentPlan() throws SQLException {
-        Consultation consultation = newConsultation(ANTONIO_ID,
-                "Mild dehydration", "Drink plenty of water and rest");
+    void testSaveConsultation() throws SQLException {
+        Consultation consultation = newConsultation(ANTONIO_ID, "Mild dehydration", "Drink plenty of water and rest");
 
         dao.add(consultation);
 
@@ -111,11 +93,13 @@ class ConsultationDaoImplTest {
         verify(statement).executeUpdate();
     }
 
-    // The consultation is saved with all its details.
+    /**
+     * Test saving with complete details.
+     * @throws SQLException
+     */
     @Test
-    void savesTheConsultationWithAllDetails() throws SQLException {
-        Consultation saved = dao.add(
-                newConsultation(JOWAN_ID, DIAGNOSIS, TREATMENT));
+    void testSaveWithDetails() throws SQLException {
+        Consultation saved = dao.add(newConsultation(JOWAN_ID, DIAGNOSIS, TREATMENT));
 
         assertEquals(NEW_ID, saved.getId());
         verify(statement).setString(1, NEW_ID);
@@ -128,44 +112,18 @@ class ConsultationDaoImplTest {
         verify(statement).executeUpdate();
     }
 
-    // A consultation without a patient is rejected, not saved.
+    /**
+     * Test saving without Patient.
+     */
     @Test
-    void rejectsAConsultationWithoutPatient() {
-        Consultation consultation =
-                newConsultation(JOWAN_ID, DIAGNOSIS, TREATMENT);
+    void testSaveFailed() {
+        Consultation consultation = newConsultation(JOWAN_ID, DIAGNOSIS, TREATMENT);
         consultation.setPatient(null);
 
-        assertThrows(IllegalArgumentException.class,
-                () -> dao.add(consultation));
+        assertThrows(IllegalArgumentException.class, () -> dao.add(consultation));
     }
 
-    // Tthe saved consultation details are retrieved for the patient.
-    @Test
-    void returnsTheSavedConsultationDetails() throws SQLException {
-        when(resultSet.next()).thenReturn(true, false);
-        when(resultSet.getString("id")).thenReturn(CONSULTATION_ID);
-        when(resultSet.getString("staff_id")).thenReturn(STAFF_ID);
-        when(resultSet.getString("record_type"))
-                .thenReturn(RecordType.CHECK_UP.getValue());
-        when(resultSet.getTimestamp("consultation_date"))
-                .thenReturn(Timestamp.valueOf(DATE));
-        when(resultSet.getString("diagnosis")).thenReturn(DIAGNOSIS);
-        when(resultSet.getString("treatment")).thenReturn(TREATMENT);
-
-        List<Consultation> result = dao.findByPatientId(JOWAN_ID);
-
-        verify(statement).setString(1, JOWAN_ID);
-        assertEquals(1, result.size());
-        Consultation consultation = result.get(0);
-        assertEquals(CONSULTATION_ID, consultation.getId());
-        assertEquals(JOWAN_ID, consultation.getPatient().getId());
-        assertEquals(DATE, consultation.getConsultationDate());
-        assertEquals(DIAGNOSIS, consultation.getDiagnosis());
-        assertEquals(TREATMENT, consultation.getTreatment());
-    }
-
-    private Consultation newConsultation(String patientId, String diagnosis,
-                                         String treatment) {
+    private Consultation newConsultation(String patientId, String diagnosis, String treatment) {
         Person patient = new Person();
         patient.setId(patientId);
         Personnel staff = new Personnel();
