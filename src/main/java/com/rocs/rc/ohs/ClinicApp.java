@@ -7,7 +7,7 @@ import com.rocs.rc.ohs.app.model.login.Login;
 
 import java.util.Scanner;
 
-// Medicine Inventory imports - commented muna
+
 // import com.rocs.rc.ohs.app.facade.medicine.MedicineStockFacade;
 // import com.rocs.rc.ohs.app.facade.medicine.impl.MedicineStockFacadeImpl;
 // import com.rocs.rc.ohs.app.model.medicine.MedicineStock;
@@ -233,9 +233,7 @@ public final class ClinicApp {
     //             + " | Status: " + stock.getStatus());
     // }
 
-    // --------------------------------------------------
-    // CONSULTATION METHODS - COMMENTED MUNA
-    // --------------------------------------------------
+
 
     // private static void consultationMenu(Scanner sc) {
     //     ConsultationFacade facade = new ConsultationFacadeImpl();
