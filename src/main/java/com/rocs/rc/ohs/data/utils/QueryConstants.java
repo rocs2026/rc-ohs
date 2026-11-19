@@ -83,4 +83,33 @@ public final class QueryConstants {
                     + "join personnel p on p.person_id = pe.id "
                     + "where lower(pe.email) = lower(?))";
 
+
+    /**
+     * Selects medicine stock records together with their medicine details.
+     */
+    public static final String SELECT_STOCK =
+            "select ms.id, ms.batch_number, ms.quantity_received, "
+                    + "ms.expiration_date, ms.status, "
+                    + "m.id as medicine_id, m.medicine_name, m.unit, "
+                    + "mc.id as category_id, mc.category_name "
+                    + "from medicine_stock ms "
+                    + "join medicine m on m.id = ms.medicine_id "
+                    + "left join medicine_category mc "
+                    + "on mc.id = m.category_id ";
+
+    /**
+     * Updates the received quantity and status of a medicine stock.
+     */
+    public static final String UPDATE_STOCK_QUANTITY =
+            "update medicine_stock "
+                    + "set quantity_received = ?, status = ? "
+                    + "where id = ?";
+
+    /**
+     * Gets the total quantity already dispensed from a medicine stock.
+     */
+    public static final String SELECT_DISPENSED_QUANTITY =
+            "select coalesce(sum(quantity_to_dispense), 0) "
+                    + "from prescription where medicine_stock_id = ?";
+
 }
