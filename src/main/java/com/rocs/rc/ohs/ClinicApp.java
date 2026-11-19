@@ -92,7 +92,7 @@ public final class ClinicApp {
 
         System.out.println("Login successful");
 
-        // Medicine Inventory section - commented muna
+        // Medicine Inventory section
 
         // MedicineStockFacade medicineStockFacade =
         //         new MedicineStockFacadeImpl(
