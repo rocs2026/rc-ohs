@@ -1,6 +1,6 @@
 name: Checkstyle on Pull Request
 
-on: [pull_request]
+on: [pull_request, workflow_dispatch]
 
 permissions:
   contents: read
@@ -20,14 +20,17 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
-      - name: Download Checkstyle
-        run: curl -sSLO https://github.com/checkstyle/checkstyle/releases/download/checkstyle-10.17.0/checkstyle-10.17.0-all.jar
+      - name: Install Ivy
+        run: |
+          mkdir -p "$HOME/.ant/lib"
+          curl -fsSL -o "$HOME/.ant/lib/ivy-2.6.0.jar" \
+            https://repo.maven.apache.org/maven2/org/apache/ivy/ivy/2.6.0/ivy-2.6.0.jar
 
       - name: Run Checkstyle
-        run: java -Dorg.checkstyle.sun.suppressionfilter.config=src/main/resources/checkstyle-suppressions.xml -jar checkstyle-10.17.0-all.jar -c /sun_checks.xml -f xml -o checkstyle-result.xml src/ || true
+        run: ant -lib "$HOME/.ant/lib" -noinput -buildfile build.xml checkstyle
 
       - name: Push Checkstyle results to GitHub
         if: always()
         uses: jwgmeligmeyling/checkstyle-github-action@v1.2
         with:
-          path: '**/checkstyle-result.xml'
+          path: 'build/reports/checkstyle-result.xml'
