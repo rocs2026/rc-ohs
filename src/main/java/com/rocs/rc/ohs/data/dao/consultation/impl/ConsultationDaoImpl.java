@@ -26,19 +26,9 @@ public class ConsultationDaoImpl implements ConsultationDao {
      *
      * @param consultation The consultation to save. Its ID must be set.
      * @return The saved {@link Consultation}.
-     * @throws IllegalArgumentException If a required value is null.
      */
     @Override
-    public Consultation add(Consultation consultation)
-            throws IllegalArgumentException {
-        if (consultation == null
-                || consultation.getPatient() == null
-                || consultation.getStaff() == null
-                || consultation.getRecordType() == null
-                || consultation.getConsultationDate() == null) {
-            throw new IllegalArgumentException(
-                    "Patient, staff, record type and date are required.");
-        }
+    public Consultation add(Consultation consultation) {
         try (Connection connection = ConnectionHelper.getConnection();
              PreparedStatement statement = connection.prepareStatement(
                      QueryConstants.ADD_CONSULTATION_STATEMENT)) {
@@ -55,7 +45,7 @@ public class ConsultationDaoImpl implements ConsultationDao {
             statement.setString(9, consultation.getActionTaken());
             statement.setString(10, consultation.getRemarks());
             int rows = statement.executeUpdate();
-            if (rows != 1) {
+            if (rows < 1) {
                 System.out.println("No consultation row was saved.");
             }
         } catch (SQLException ex) {
@@ -70,14 +60,9 @@ public class ConsultationDaoImpl implements ConsultationDao {
      *
      * @param patientId The UUID of the patient.
      * @return A list of consultations of the patient.
-     * @throws IllegalArgumentException If the patient ID is null.
      */
     @Override
-    public List<Consultation> findByPatientId(String patientId)
-            throws IllegalArgumentException {
-        if (patientId == null) {
-            throw new IllegalArgumentException("Patient ID is required.");
-        }
+    public List<Consultation> findByPatientId(String patientId) {
         List<Consultation> consultations = new ArrayList<>();
         try (Connection connection = ConnectionHelper.getConnection();
              PreparedStatement statement = connection.prepareStatement(
@@ -93,6 +78,53 @@ public class ConsultationDaoImpl implements ConsultationDao {
                     "Could not read consultations: " + ex.getMessage());
         }
         return consultations;
+    }
+
+    @Override
+    public List<Person> findPatientsByName(String firstName,
+                                           String lastName) {
+        List<Person> persons = new ArrayList<>();
+        try (Connection connection = ConnectionHelper.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     QueryConstants.FIND_PERSON_BY_NAME_STATEMENT)) {
+            statement.setString(1, firstName);
+            statement.setString(2, lastName);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Person person = new Person();
+                    person.setId(resultSet.getString("id"));
+                    person.setFirstName(resultSet.getString("first_name"));
+                    person.setMiddleName(resultSet.getString("middle_name"));
+                    person.setLastName(resultSet.getString("last_name"));
+                    persons.add(person);
+                }
+            }
+        } catch (SQLException ex) {
+            System.out.println(
+                    "Could not find the patient: " + ex.getMessage());
+        }
+        return persons;
+    }
+
+    @Override
+    public List<Personnel> findStaffByUsername(String username) {
+        List<Personnel> staff = new ArrayList<>();
+        try (Connection connection = ConnectionHelper.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     QueryConstants.FIND_PERSONNEL_BY_USERNAME_STATEMENT)) {
+            statement.setString(1, username);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Personnel personnel = new Personnel();
+                    personnel.setId(resultSet.getString("id"));
+                    staff.add(personnel);
+                }
+            }
+        } catch (SQLException ex) {
+            System.out.println(
+                    "Could not find the staff: " + ex.getMessage());
+        }
+        return staff;
     }
 
     /**
@@ -116,10 +148,8 @@ public class ConsultationDaoImpl implements ConsultationDao {
         consultation.setStaff(staff);
         consultation.setRecordType(
                 toRecordType(resultSet.getString("record_type")));
-        Timestamp date = resultSet.getTimestamp("consultation_date");
-        if (date != null) {
-            consultation.setConsultationDate(date.toLocalDateTime());
-        }
+        consultation.setConsultationDate(resultSet
+                .getTimestamp("consultation_date").toLocalDateTime());
         consultation.setComplaint(resultSet.getString("complaint"));
         consultation.setDiagnosis(resultSet.getString("diagnosis"));
         consultation.setTreatment(resultSet.getString("treatment"));

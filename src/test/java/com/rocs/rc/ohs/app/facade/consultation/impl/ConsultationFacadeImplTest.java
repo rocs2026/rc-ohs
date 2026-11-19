@@ -16,6 +16,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -25,39 +26,35 @@ import static org.mockito.Mockito.when;
  */
 class ConsultationFacadeImplTest {
 
-    /** The ID of Jowan Carl Quirona, a patient in the test data. */
     private static final String JOWAN_ID =
             "f04cac48-889d-4a62-9a2b-a274406ece20";
 
-    /** The ID of a personnel in the test data. */
+    private static final String ANTONIO_ID =
+            "6e00132d-76c0-4c86-82c2-53ba0211aaf0";
+
+    private static final String LOGIN_STAFF_ID =
+            "b74de6ca-b83f-4c55-b896-9f517bbeac2f";
+
     private static final String STAFF_ID =
             "64ffaffe-79b5-4690-bbd4-587507b6859c";
 
-    /** The ID of the Amoxicillin 500mg stock in the test data. */
     private static final String STOCK_ID =
             "70aaf305-a7f5-41f1-bd0a-6ad73c042be9";
 
-    /** The ID of a consultation in the test data. */
     private static final String CONSULTATION_ID =
             "a451a504-a3d4-4721-bf8d-a18b8c199356";
 
-    /** The date of the consultation in the test cases. */
     private static final LocalDateTime DATE =
             LocalDateTime.of(2026, 10, 20, 9, 30);
 
-    /** The diagnosis of Jowan in the test cases. */
     private static final String DIAGNOSIS = "Bacterial throat infection";
 
-    /** The treatment of Jowan in the test cases. */
     private static final String TREATMENT = "Antibiotic course and rest";
 
-    /** The mocked consultation DAO. */
     private ConsultationDao consultationDao;
 
-    /** The mocked prescription DAO. */
     private PrescriptionDao prescriptionDao;
 
-    /** The facade under test. */
     private ConsultationFacadeImpl facade;
 
     @BeforeEach
@@ -69,9 +66,11 @@ class ConsultationFacadeImplTest {
                 prescriptionDao);
     }
 
-    // The consultation and its prescription are saved.
+    /**
+     * Test save consultation with prescriptions.
+     */
     @Test
-    void savesTheConsultationWithItsPrescriptions() {
+    void testSaveConsultation() {
         Consultation consultation =
                 newConsultation(null, DIAGNOSIS, TREATMENT);
         Prescription prescription =
@@ -98,9 +97,11 @@ class ConsultationFacadeImplTest {
         assertEquals(2, prescription.getQuantityToDispense());
     }
 
-    // The saved consultations of the patient are retrieved.
+    /**
+     * Test find consultations of a patient.
+     */
     @Test
-    void returnsTheSavedConsultationsOfThePatient() {
+    void testFindRecords() {
         Consultation consultation =
                 newConsultation(CONSULTATION_ID, DIAGNOSIS, TREATMENT);
         Prescription prescription =
@@ -122,6 +123,107 @@ class ConsultationFacadeImplTest {
         assertEquals(1, prescriptions.size());
         assertEquals("500mg", prescriptions.get(0).getDose());
         assertEquals(2, prescriptions.get(0).getQuantityToDispense());
+    }
+
+    /**
+     * Test find patient by full name.
+     */
+    @Test
+    void testFindPatient() {
+        when(consultationDao.findPatientsByName("Jowan", "Quirona"))
+                .thenReturn(List.of(
+                        newPerson(JOWAN_ID, "Jowan", "Carl", "Quirona")));
+
+        Person patient = facade.findPatientByName("Jowan Carl Quirona");
+
+        assertEquals(JOWAN_ID, patient.getId());
+    }
+
+    /**
+     * Test find patient without a middle name.
+     */
+    @Test
+    void testFindNoMiddle() {
+        when(consultationDao.findPatientsByName("Antonio", "Ferrer"))
+                .thenReturn(List.of(
+                        newPerson(ANTONIO_ID, "Antonio", null, "Ferrer")));
+
+        Person patient = facade.findPatientByName("Antonio Ferrer");
+
+        assertEquals(ANTONIO_ID, patient.getId());
+    }
+
+    /**
+     * Test find patient with an unknown name.
+     */
+    @Test
+    void testFindUnknown() {
+        when(consultationDao.findPatientsByName("Maria", "Santos"))
+                .thenReturn(List.of());
+
+        assertThrows(IllegalArgumentException.class,
+                () -> facade.findPatientByName("Maria Santos"));
+    }
+
+    /**
+     * Test find patient with a shared name.
+     */
+    @Test
+    void testFindShared() {
+        when(consultationDao.findPatientsByName("Jowan", "Quirona"))
+                .thenReturn(List.of(
+                        newPerson(JOWAN_ID, "Jowan", "Carl", "Quirona"),
+                        newPerson(ANTONIO_ID, "Jowan", "Dee", "Quirona")));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> facade.findPatientByName("Jowan Quirona"));
+    }
+
+    /**
+     * Test find patient with one word only.
+     */
+    @Test
+    void testFindOneWord() {
+        assertThrows(IllegalArgumentException.class,
+                () -> facade.findPatientByName("Jowan"));
+    }
+
+    /**
+     * Test find staff by username.
+     */
+    @Test
+    void testFindStaff() {
+        Personnel staff = new Personnel();
+        staff.setId(LOGIN_STAFF_ID);
+        when(consultationDao.findStaffByUsername("staff"))
+                .thenReturn(List.of(staff));
+
+        assertEquals(LOGIN_STAFF_ID,
+                facade.findStaffByUsername("staff").getId());
+    }
+
+    /**
+     * Test find medicine stock by name.
+     */
+    @Test
+    void testFindStock() {
+        MedicineStock stock = new MedicineStock();
+        stock.setId(STOCK_ID);
+        when(prescriptionDao.findStocksByMedicineName("Amoxicillin 500mg"))
+                .thenReturn(List.of(stock));
+
+        assertEquals(STOCK_ID,
+                facade.findMedicineStockByName("Amoxicillin 500mg").getId());
+    }
+
+    private Person newPerson(String id, String firstName, String middleName,
+                             String lastName) {
+        Person person = new Person();
+        person.setId(id);
+        person.setFirstName(firstName);
+        person.setMiddleName(middleName);
+        person.setLastName(lastName);
+        return person;
     }
 
     private Consultation newConsultation(String id, String diagnosis,

@@ -19,7 +19,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -113,17 +112,63 @@ public class ConsultationDaoImplTest {
     }
 
     /**
-     * Test saving without Patient.
+     * Test find consultations of a patient.
+     * @throws SQLException
      */
     @Test
-    void testSaveFailed() {
-        Consultation consultation = newConsultation(JOWAN_ID, DIAGNOSIS, TREATMENT);
-        consultation.setPatient(null);
+    void testFindConsultations() throws SQLException {
+        when(resultSet.next()).thenReturn(true, false);
+        when(resultSet.getString("staff_id")).thenReturn(STAFF_ID);
+        when(resultSet.getString("record_type"))
+                .thenReturn(RecordType.CHECK_UP.getValue());
+        when(resultSet.getTimestamp("consultation_date"))
+                .thenReturn(Timestamp.valueOf(DATE));
+        when(resultSet.getString("diagnosis")).thenReturn(DIAGNOSIS);
+        when(resultSet.getString("treatment")).thenReturn(TREATMENT);
 
-        assertThrows(IllegalArgumentException.class, () -> dao.add(consultation));
+        List<Consultation> result = dao.findByPatientId(JOWAN_ID);
+
+        verify(statement).setString(1, JOWAN_ID);
+        assertEquals(1, result.size());
+        assertEquals(DIAGNOSIS, result.get(0).getDiagnosis());
+        assertEquals(TREATMENT, result.get(0).getTreatment());
     }
 
-    private Consultation newConsultation(String patientId, String diagnosis, String treatment) {
+    /**
+     * Test find patient by name.
+     * @throws SQLException
+     */
+    @Test
+    void testFindPatientByName() throws SQLException {
+        when(resultSet.next()).thenReturn(true, false);
+        when(resultSet.getString("id")).thenReturn(JOWAN_ID);
+        when(resultSet.getString("first_name")).thenReturn("Jowan");
+        when(resultSet.getString("last_name")).thenReturn("Quirona");
+
+        List<Person> result = dao.findPatientsByName("Jowan", "Quirona");
+
+        verify(statement).setString(1, "Jowan");
+        verify(statement).setString(2, "Quirona");
+        assertEquals(JOWAN_ID, result.get(0).getId());
+    }
+
+    /**
+     * Test find staff by username.
+     * @throws SQLException
+     */
+    @Test
+    void testFindStaffByUsername() throws SQLException {
+        when(resultSet.next()).thenReturn(true, false);
+        when(resultSet.getString("id")).thenReturn(STAFF_ID);
+
+        List<Personnel> result = dao.findStaffByUsername("staff");
+
+        verify(statement).setString(1, "staff");
+        assertEquals(STAFF_ID, result.get(0).getId());
+    }
+
+    private Consultation newConsultation(String patientId, String diagnosis,
+                                         String treatment) {
         Person patient = new Person();
         patient.setId(patientId);
         Personnel staff = new Personnel();

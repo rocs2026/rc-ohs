@@ -61,6 +61,35 @@ public final class QueryConstants {
                     + "WHERE p.consultation_id = ? ORDER BY p.id";
 
     /**
+     * Finds the persons with the given first and last name, so the clinic
+     * staff can pick a patient by name.
+     */
+    public static final String FIND_PERSON_BY_NAME_STATEMENT =
+            "SELECT id, first_name, middle_name, last_name FROM person "
+                    + "WHERE first_name = ? "
+                    + "AND last_name = ?";
+
+    /**
+     * Finds the personnel of the login account with the given username, so
+     * the staff who logged in is the one who handles the consultation.
+     */
+    public static final String FIND_PERSONNEL_BY_USERNAME_STATEMENT =
+            "SELECT pn.id FROM personnel pn "
+                    + "JOIN login l ON l.person_id = pn.person_id "
+                    + "WHERE l.username = ?";
+
+    /**
+     * Finds the stocks of the medicine with the given name, the one that
+     * expires first coming first, so the staff can prescribe it by name.
+     */
+    public static final String FIND_STOCK_BY_MEDICINE_NAME_STATEMENT =
+            "SELECT ms.id, ms.batch_number, m.medicine_name, m.unit "
+                    + "FROM medicine_stock ms "
+                    + "JOIN medicine m ON m.id = ms.medicine_id "
+                    + "WHERE m.medicine_name = ? "
+                    + "ORDER BY ms.expiration_date";
+
+    /**
      * Selects the login account that has the given username.
      */
     public static final String SELECT_LOGIN_BY_USERNAME =

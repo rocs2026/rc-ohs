@@ -9,9 +9,7 @@ import com.rocs.rc.ohs.app.model.login.Login;
 // import com.rocs.rc.ohs.app.facade.consultation.impl.ConsultationFacadeImpl;
 // import com.rocs.rc.ohs.app.model.consultation.Consultation;
 // import com.rocs.rc.ohs.app.model.enums.recordtype.RecordType;
-// import com.rocs.rc.ohs.app.model.medicine.MedicineStock;
 // import com.rocs.rc.ohs.app.model.person.Person;
-// import com.rocs.rc.ohs.app.model.personnel.Personnel;
 // import com.rocs.rc.ohs.app.model.prescription.Prescription;
 // import java.time.LocalDateTime;
 // import java.time.format.DateTimeFormatter;
@@ -95,7 +93,7 @@ public final class ClinicApp {
 
         System.out.println("Login successful");
 
-        // consultationMenu(sc);
+//         consultationMenu(sc, username);
 
     }
 
@@ -142,86 +140,90 @@ public final class ClinicApp {
     //       System.out.println("Email and username do not match any account");
     //     }
     // }
-
-    // private static void consultationMenu(Scanner sc) {
-    //     ConsultationFacade facade = new ConsultationFacadeImpl();
-    //     String choice = "";
-    //     while (!"0".equals(choice)) {
-    //         System.out.println("1. Record a consultation");
-    //         System.out.println("2. View patient medical records");
-    //         System.out.println("0. Exit");
-    //         choice = ask(sc, "Choose");
-    //         if ("1".equals(choice)) {
-    //             recordConsultation(sc, facade);
-    //         } else if ("2".equals(choice)) {
-    //             viewConsultations(sc, facade);
-    //         }
-    //     }
-    // }
-    //
-    // private static void viewConsultations(Scanner sc,
-    //                                       ConsultationFacade facade) {
-    //     try {
-    //         List<Consultation> consultations = facade
-    //                 .getConsultationsByPatient(ask(sc, "Patient ID"));
-    //         for (Consultation c : consultations) {
-    //             System.out.println(c.getConsultationDate() + " | "
-    //                     + c.getDiagnosis() + " | " + c.getTreatment());
-    //             for (Prescription p
-    //                     : facade.getPrescriptionsByConsultation(c.getId())) {
-    //                 System.out.println("    " + p.getMedicineStock()
-    //                         .getMedicine().getMedicineName() + " | "
-    //                         + p.getDose() + " | " + p.getFrequency()
-    //                         + " | qty " + p.getQuantityToDispense());
-    //             }
-    //         }
-    //     } catch (IllegalArgumentException ex) {
-    //         System.out.println("Cannot show records: " + ex.getMessage());
-    //     }
-    // }
-    //
-    // private static void recordConsultation(Scanner sc,
-    //                                      ConsultationFacade facade) {
-    //     Personnel staff = new Personnel();
-    //     staff.setId(ask(sc, "Your staff ID"));
-    //     Person patient = new Person();
-    //     patient.setId(ask(sc, "Patient ID"));
-    //     Consultation consultation = new Consultation();
-    //     consultation.setStaff(staff);
-    //     consultation.setPatient(patient);
-    //     consultation.setRecordType(RecordType.CHECK_UP);
-    //     List<Prescription> prescriptions = new ArrayList<>();
-    //     try {
-    //         consultation.setConsultationDate(LocalDateTime.parse(
-    //                 ask(sc, "Date (yyyy-MM-dd HH:mm)"),
-    //                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
-    //         consultation.setDiagnosis(ask(sc, "Diagnosis"));
-    //         consultation.setTreatment(ask(sc, "Treatment plan"));
-    //         while ("y".equalsIgnoreCase(
-    //                 ask(sc, "Add a prescription? (y/n)"))) {
-    //             MedicineStock stock = new MedicineStock();
-    //             stock.setId(ask(sc, "Medicine stock ID"));
-    //             Prescription prescription = new Prescription();
-    //             prescription.setMedicineStock(stock);
-    //             prescription.setDose(ask(sc, "Dose"));
-    //             prescription.setFrequency(ask(sc, "Frequency"));
-    //             prescription.setQuantityToDispense(
-    //                     Integer.parseInt(ask(sc, "Quantity to dispense")));
-    //             prescriptions.add(prescription);
-    //         }
-    //         if (facade.saveConsultation(consultation, prescriptions)
-    //                 == null) {
-    //             System.out.println("Could not save. Check the IDs.");
-    //         } else {
-    //             System.out.println("Consultation saved.");
-    //         }
-    //     } catch (DateTimeParseException | IllegalArgumentException ex) {
-    //         System.out.println("Invalid input: " + ex.getMessage());
-    //     }
-    // }
-    //
-    // private static String ask(Scanner sc, String label) {
-    //     System.out.print(label + ": ");
-    //     return sc.nextLine();
-    // }
+//
+//     private static void consultationMenu(Scanner sc, String username) {
+//         ConsultationFacade facade = new ConsultationFacadeImpl();
+//         String choice = "";
+//         while (!"0".equals(choice)) {
+//             System.out.println("1. Record a consultation");
+//             System.out.println("2. View patient medical records");
+//             System.out.println("0. Exit");
+//             choice = ask(sc, "Choose");
+//             if ("1".equals(choice)) {
+//                 recordConsultation(sc, facade, username);
+//             } else if ("2".equals(choice)) {
+//                 viewConsultations(sc, facade);
+//             }
+//         }
+//     }
+//
+//     private static void viewConsultations(Scanner sc,
+//                                           ConsultationFacade facade) {
+//         try {
+//             Person patient = facade
+//                     .findPatientByName(ask(sc, "Patient name"));
+//             for (Consultation c
+//                     : facade.getConsultationsByPatient(patient.getId())) {
+//                 System.out.println(c.getConsultationDate() + " | "
+//                         + c.getDiagnosis() + " | " + c.getTreatment());
+//                 for (Prescription p
+//                         : facade.getPrescriptionsByConsultation(c.getId())) {
+//                     System.out.println("    " + p.getMedicineStock()
+//                             .getMedicine().getMedicineName() + " | "
+//                             + p.getDose() + " | " + p.getFrequency()
+//                             + " | qty " + p.getQuantityToDispense());
+//                 }
+//             }
+//         } catch (IllegalArgumentException ex) {
+//             System.out.println("Cannot show records: " + ex.getMessage());
+//         }
+//     }
+//
+//     private static void recordConsultation(Scanner sc,
+//             ConsultationFacade facade, String username) {
+//         List<Prescription> prescriptions = new ArrayList<>();
+//         try {
+//             Consultation consultation = new Consultation();
+//             consultation.setStaff(facade.findStaffByUsername(username));
+//             consultation.setPatient(
+//                     facade.findPatientByName(ask(sc, "Patient name")));
+//             consultation.setRecordType(RecordType.CHECK_UP);
+//             consultation.setConsultationDate(askDate(sc));
+//             consultation.setDiagnosis(ask(sc, "Diagnosis"));
+//             consultation.setTreatment(ask(sc, "Treatment plan"));
+//             while ("y".equalsIgnoreCase(
+//                     ask(sc, "Add a prescription? (y/n)"))) {
+//                 Prescription prescription = new Prescription();
+//                 prescription.setMedicineStock(facade.findMedicineStockByName(
+//                         ask(sc, "Medicine name")));
+//                 prescription.setDose(ask(sc, "Dose"));
+//                 prescription.setFrequency(ask(sc, "Frequency"));
+//                 prescription.setQuantityToDispense(
+//                         Integer.parseInt(ask(sc, "Quantity to dispense")));
+//                 prescriptions.add(prescription);
+//             }
+//             if (facade.saveConsultation(consultation, prescriptions)
+//                     == null) {
+//                 System.out.println("Could not save the consultation.");
+//             } else {
+//                 System.out.println("Consultation saved.");
+//             }
+//         } catch (DateTimeParseException | IllegalArgumentException ex) {
+//             System.out.println("Invalid input: " + ex.getMessage());
+//         }
+//     }
+//
+//     private static LocalDateTime askDate(Scanner sc) {
+//         String text = ask(sc, "Date (yyyy-MM-dd HH:mm:ss, Enter = now)");
+//         if (text.isBlank()) {
+//             return LocalDateTime.now();
+//         }
+//         return LocalDateTime.parse(text.trim(), DateTimeFormatter
+//                 .ofPattern("yyyy-MM-dd HH:mm[:ss]"));
+//     }
+//
+//     private static String ask(Scanner sc, String label) {
+//         System.out.print(label + ": ");
+//         return sc.nextLine();
+//     }
 }
