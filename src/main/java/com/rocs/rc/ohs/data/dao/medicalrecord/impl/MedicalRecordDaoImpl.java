@@ -15,35 +15,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * JDBC implementation of MedicalRecordDAO.
+ * dao implementation for handling medical records in the database.
  */
 public class MedicalRecordDaoImpl implements MedicalRecordDao {
 
     /**
-     * The database connection.
+     * active database connection instance.
      */
     private final Connection connection;
 
     /**
-     *
-     * Creates a DAO that opens its own database connection.
+     * default constructor that fetches connection from helper.
      */
     public MedicalRecordDaoImpl() {
         this(openConnection());
     }
 
     /**
-     * Creates a DAO that uses the given database connection.
+     * overloaded constructor used for testing with mock connection.
      *
-     * @param conn the database connection to use
+     * @param conn database connection
      */
     public MedicalRecordDaoImpl(Connection conn) {
         this.connection = conn;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<MedicalRecordDTO> search(String keyword) {
         List<MedicalRecordDTO> records = new ArrayList<>();
@@ -52,22 +48,19 @@ public class MedicalRecordDaoImpl implements MedicalRecordDao {
             return records;
         }
 
-        String pattern = "%" + keyword.trim() + "%";
+        String queryPattern = "%" + keyword.trim() + "%";
 
         try (PreparedStatement ps = connection.prepareStatement(
                 QueryConstants.SEARCH_MEDICAL_RECORD)) {
 
-            ps.setString(1, pattern);
-            ps.setString(2, pattern);
-            ps.setString(3, pattern);
-            ps.setString(4, pattern);
-            ps.setString(5, pattern);
-            ps.setString(6, pattern);
+            final int totalParams = 6;
+            for (int i = 1; i <= totalParams; i++) {
+                ps.setString(i, queryPattern);
+            }
 
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    records.add(mapToDTO(rs));
-                }
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                records.add(mapToDTO(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException(
@@ -77,9 +70,6 @@ public class MedicalRecordDaoImpl implements MedicalRecordDao {
         return records;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean updateMedicalRecord(
             MedicalRecord medicalRecord) {
@@ -94,16 +84,14 @@ public class MedicalRecordDaoImpl implements MedicalRecordDao {
                     3, medicalRecord.getId());
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
-            String id = medicalRecord.getId();
+            String recordId = medicalRecord.getId();
             throw new RuntimeException(
-                    "Failed to update medical record: " + id, e);
+                    "Failed to update medical record: " + recordId, e);
         }
     }
 
     /**
-     * Opens a database connection through the shared helper.
-     *
-     * @return the opened database connection
+     * grabs a connection using the connection helper class.
      */
     private static Connection openConnection() {
         try {
@@ -115,11 +103,10 @@ public class MedicalRecordDaoImpl implements MedicalRecordDao {
     }
 
     /**
-     * Maps the current row of the ResultSet to a MedicalRecordDTO.
+     * maps the current resultset row into a medical record dto.
      *
-     * @param rs the ResultSet positioned at the current row
-     * @return the mapped MedicalRecordDTO
-     * @throws SQLException if a database access error occurs
+     * @param rs active result set
+     * @throws SQLException if column lookup fails
      */
     private MedicalRecordDTO mapToDTO(ResultSet rs)
             throws SQLException {
@@ -136,9 +123,9 @@ public class MedicalRecordDaoImpl implements MedicalRecordDao {
         dto.setDiagnosis(rs.getString("diagnosis"));
         dto.setTreatment(rs.getString("treatment"));
 
-        Timestamp date = rs.getTimestamp("consultation_date");
+        Timestamp consultationTimestamp = rs.getTimestamp("consultation_date");
         dto.setConsultationDate(
-                date != null ? date.toLocalDateTime() : null);
+                consultationTimestamp != null ? consultationTimestamp.toLocalDateTime() : null);
 
         return dto;
     }

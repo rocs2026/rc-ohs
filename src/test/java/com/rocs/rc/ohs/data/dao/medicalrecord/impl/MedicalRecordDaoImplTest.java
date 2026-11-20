@@ -1,3 +1,4 @@
+
 package com.rocs.rc.ohs.data.dao.medicalrecord.impl;
 
 import com.rocs.rc.ohs.app.dto.MedicalRecordDTO;
@@ -19,6 +20,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -27,29 +29,39 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Search behavior tests for {@link MedicalRecordDaoImpl}.
+ * Tests the database operations of MedicalRecordDaoImpl.
  */
 class MedicalRecordDaoImplTest {
 
-    /** Static connection factory mock. */
+    /**
+     * Mocks the static ConnectionHelper class.
+     */
     private MockedStatic<ConnectionHelper> helper;
 
-    /** Connection stubbed for the DAO. */
+    /**
+     * Mock database connection.
+     */
     private Connection connection;
 
-    /** Prepared statement stubbed for search queries. */
+    /**
+     * Mock SQL statement used to execute queries.
+     */
     private PreparedStatement statement;
 
-    /** Result set stubbed with mock patient rows. */
+    /**
+     * Mock result set containing database query results.
+     */
     private ResultSet resultSet;
 
-    /** DAO instance under test. */
+    /**
+     * DAO being tested.
+     */
     private MedicalRecordDao dao;
 
     /**
-     * Stubs JDBC objects and static connection lookup before each run.
+     * Creates the mock objects before each test.
      *
-     * @throws SQLException if stubbing fails
+     * @throws SQLException if setting up the mock database fails
      */
     @BeforeEach
     void setUp() throws SQLException {
@@ -67,7 +79,7 @@ class MedicalRecordDaoImplTest {
     }
 
     /**
-     * Releases the static connection mock after each run.
+     * Closes the static mock after each test.
      */
     @AfterEach
     void tearDown() {
@@ -75,12 +87,13 @@ class MedicalRecordDaoImplTest {
     }
 
     /**
-     * Maps a full patient row including medical record and consultation fields.
+     * Tests if the search method correctly retrieves and maps
+     * patient medical record information.
      *
-     * @throws SQLException if result set reading fails
+     * @throws SQLException if reading the mock result set fails
      */
     @Test
-    void searchReturnsMatchingRecord() throws SQLException {
+    void testSearchValidRecord() throws SQLException {
         LocalDateTime date = LocalDateTime.of(2026, 10, 20, 9, 30);
 
         when(resultSet.next()).thenReturn(true, false);
@@ -98,91 +111,99 @@ class MedicalRecordDaoImplTest {
         when(resultSet.getString("diagnosis")).thenReturn("Infection");
         when(resultSet.getString("treatment")).thenReturn("Antibiotics");
 
-        List<MedicalRecordDTO> records = dao.search("Jowan");
+        List<MedicalRecordDTO> results = dao.search("Jowan");
 
-        assertEquals(1, records.size());
-        assertEquals("p1", records.get(0).getPatientId());
-        assertEquals("Jowan", records.get(0).getFirstName());
-        assertEquals("Quirona", records.get(0).getLastName());
-        assertEquals("mr1", records.get(0).getMedicalRecordId());
-        assertEquals("Asthma", records.get(0).getMedicalConditions());
-        assertEquals("Peanut allergy", records.get(0).getAllergies());
-        assertEquals("Cough", records.get(0).getComplaint());
-        assertEquals("Infection", records.get(0).getDiagnosis());
-        assertEquals("Antibiotics", records.get(0).getTreatment());
-        assertEquals(date, records.get(0).getConsultationDate());
+        assertEquals(1, results.size());
+
+        MedicalRecordDTO dto = results.get(0);
+        assertEquals("p1", dto.getPatientId());
+        assertEquals("Jowan", dto.getFirstName());
+        assertEquals("Quirona", dto.getLastName());
+        assertEquals("mr1", dto.getMedicalRecordId());
+        assertEquals("Asthma", dto.getMedicalConditions());
+        assertEquals("Peanut allergy", dto.getAllergies());
+        assertEquals("Cough", dto.getComplaint());
+        assertEquals("Infection", dto.getDiagnosis());
+        assertEquals("Antibiotics", dto.getTreatment());
+        assertEquals(date, dto.getConsultationDate());
     }
 
     /**
-     * Leaves consultation date null when no consultation ID is present.
+     * Tests if the search method handles records without a consultation.
      *
-     * @throws SQLException if result set reading fails
+     * @throws SQLException if reading the mock result set fails
      */
     @Test
-    void searchHandlesMissingConsultation() throws SQLException {
+    void testSearchWithoutConsultation() throws SQLException {
         when(resultSet.next()).thenReturn(true, false);
         when(resultSet.getString("p_id")).thenReturn("p1");
         when(resultSet.getString("mr_id")).thenReturn("mr1");
         when(resultSet.getString("c_id")).thenReturn(null);
 
-        List<MedicalRecordDTO> records = dao.search("Jowan");
+        List<MedicalRecordDTO> results = dao.search("Jowan");
 
-        assertEquals(1, records.size());
-        assertNull(records.get(0).getConsultationDate());
+        assertEquals(1, results.size());
+        assertNull(results.get(0).getConsultationDate());
     }
 
     /**
-     * Strips leading and trailing spaces before binding wildcard parameters.
+     * Tests if extra spaces are removed from the search keyword.
      *
-     * @throws SQLException if parameter binding fails
+     * @throws SQLException if verifying the SQL parameters fails
      */
     @Test
-    void searchBindsTrimmedKeyword() throws SQLException {
+    void testSearchTrimsKeyword() throws SQLException {
         when(resultSet.next()).thenReturn(false);
 
         dao.search("  Quirona  ");
 
-        int parameterCount = 6;
-        for (int i = 1; i <= parameterCount; i++) {
+        for (int i = 1; i <= 6; i++) {
             verify(statement).setString(i, "%Quirona%");
         }
     }
 
     /**
-     * Returns an empty list when the query matches zero rows.
+     * Tests if the search method returns an empty list
+     * when no matching records are found.
      *
-     * @throws SQLException if query execution fails
+     * @throws SQLException if executing the mock query fails
      */
     @Test
-    void searchReturnsEmptyWhenNoMatch() throws SQLException {
+    void testSearchNoResults() throws SQLException {
         when(resultSet.next()).thenReturn(false);
 
-        assertEquals(0, dao.search("Unknown").size());
+        List<MedicalRecordDTO> results = dao.search("Unknown");
+
+        assertTrue(results.isEmpty());
     }
 
     /**
-     * Exits early without querying on null or whitespace input.
-     *
-     * @throws SQLException if verifying the connection fails
+     * Tests if null or blank keywords return an empty list
+     * without accessing the database.
      */
     @Test
-    void searchSkipsBlankKeyword() throws SQLException {
-        assertEquals(0, dao.search(null).size());
-        assertEquals(0, dao.search("   ").size());
+    void testSearchBlankInput() {
+        assertTrue(dao.search(null).isEmpty());
+        assertTrue(dao.search("   ").isEmpty());
 
-        verify(connection, never()).prepareStatement(anyString());
+        try {
+            verify(connection, never()).prepareStatement(anyString());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
-     * Propagates SQL failures as a RuntimeException.
+     * Tests if a database error is handled by throwing a runtime exception.
      *
-     * @throws SQLException when stubbing query execution failure
+     * @throws SQLException if configuring the mock query fails
      */
     @Test
-    void searchThrowsOnDatabaseError() throws SQLException {
+    void testSearchSqlException() throws SQLException {
         when(statement.executeQuery())
                 .thenThrow(new SQLException("Database error"));
 
-        assertThrows(RuntimeException.class, () -> dao.search("Jowan"));
+        assertThrows(RuntimeException.class,
+                () -> dao.search("Jowan"));
     }
 }

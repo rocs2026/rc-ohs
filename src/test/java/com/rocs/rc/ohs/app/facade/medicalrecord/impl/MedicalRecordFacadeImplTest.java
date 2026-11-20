@@ -1,121 +1,101 @@
+
 package com.rocs.rc.ohs.app.facade.medicalrecord.impl;
 
 import com.rocs.rc.ohs.app.dto.MedicalRecordDTO;
-import com.rocs.rc.ohs.data.dao.medicalrecord.impl.MedicalRecordDaoImpl;
+import com.rocs.rc.ohs.data.dao.medicalrecord.MedicalRecordDao;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedConstruction;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Tests the medical record facade operations.
+ * Tests the search operations of MedicalRecordFacadeImpl.
  */
 class MedicalRecordFacadeImplTest {
 
     /**
-     * Tests searching when matching medical records are found.
+     * Mock DAO used to simulate database operations.
+     */
+    private MedicalRecordDao dao;
+
+    /**
+     * Facade being tested.
+     */
+    private MedicalRecordFacadeImpl facade;
+
+    /**
+     * Creates the mock DAO and facade before each test.
+     */
+    @BeforeEach
+    void setUp() {
+        dao = mock(MedicalRecordDao.class);
+        facade = new MedicalRecordFacadeImpl(dao);
+    }
+
+    /**
+     * Tests if the facade returns the matching patient record.
      */
     @Test
-    void searchReturnsMatchingRecords() {
-        List<MedicalRecordDTO> expectedRecords = new ArrayList<>();
+    void testSearchFound() {
         MedicalRecordDTO record = new MedicalRecordDTO();
-
         record.setPatientId("p1");
         record.setFirstName("Jowan");
         record.setLastName("Quirona");
         record.setMedicalRecordId("mr1");
 
-        expectedRecords.add(record);
+        when(dao.search("Jowan")).thenReturn(List.of(record));
 
-        try (MockedConstruction<MedicalRecordDaoImpl> mockedDAO =
-                     mockConstruction(MedicalRecordDaoImpl.class,
-                             (mock, context) -> when(mock.search("Jowan"))
-                                     .thenReturn(expectedRecords))) {
+        List<MedicalRecordDTO> results = facade.search("Jowan");
 
-            MedicalRecordFacadeImpl facade =
-                    new MedicalRecordFacadeImpl();
+        assertEquals(1, results.size());
+        assertEquals("Jowan", results.get(0).getFirstName());
 
-            List<MedicalRecordDTO> actualRecords =
-                    facade.search("Jowan");
-
-            assertEquals(1, actualRecords.size());
-            assertEquals(expectedRecords, actualRecords);
-            assertEquals("p1", actualRecords.get(0).getPatientId());
-            assertEquals("Jowan", actualRecords.get(0).getFirstName());
-
-            verify(mockedDAO.constructed().get(0)).search("Jowan");
-        }
+        verify(dao).search("Jowan");
     }
 
     /**
-     * Tests searching when no matching medical records are found.
+     * Tests if the facade returns an empty list
+     * when no matching patient is found.
      */
     @Test
-    void searchReturnsEmptyListWhenNoRecordsFound() {
-        try (MockedConstruction<MedicalRecordDaoImpl> mockedDAO =
-                     mockConstruction(MedicalRecordDaoImpl.class,
-                             (mock, context) -> when(mock.search("Unknown"))
-                                     .thenReturn(new ArrayList<>()))) {
+    void testSearchEmpty() {
+        when(dao.search("Unknown")).thenReturn(List.of());
 
-            MedicalRecordFacadeImpl facade =
-                    new MedicalRecordFacadeImpl();
+        List<MedicalRecordDTO> results = facade.search("Unknown");
 
-            List<MedicalRecordDTO> actualRecords =
-                    facade.search("Unknown");
-
-            assertTrue(actualRecords.isEmpty());
-
-            verify(mockedDAO.constructed().get(0))
-                    .search("Unknown");
-        }
+        assertTrue(results.isEmpty());
+        verify(dao).search("Unknown");
     }
 
     /**
-     * Tests that a null keyword is passed on to the DAO.
+     * Tests if the facade passes a null keyword to the DAO.
      */
     @Test
-    void searchPassesNullKeywordToDao() {
-        try (MockedConstruction<MedicalRecordDaoImpl> mockedDAO =
-                     mockConstruction(MedicalRecordDaoImpl.class,
-                             (mock, context) -> when(mock.search(null))
-                                     .thenReturn(new ArrayList<>()))) {
+    void testSearchNull() {
+        when(dao.search(null)).thenReturn(List.of());
 
-            MedicalRecordFacadeImpl facade =
-                    new MedicalRecordFacadeImpl();
+        List<MedicalRecordDTO> results = facade.search(null);
 
-            List<MedicalRecordDTO> actualRecords =
-                    facade.search(null);
-
-            assertTrue(actualRecords.isEmpty());
-
-            verify(mockedDAO.constructed().get(0))
-                    .search(null);
-        }
+        assertTrue(results.isEmpty());
+        verify(dao).search(null);
     }
 
     /**
-     * Tests that a DAO failure reaches the caller.
+     * Tests if an exception from the DAO is passed through the facade.
      */
     @Test
-    void searchPropagatesDaoFailure() {
-        try (MockedConstruction<MedicalRecordDaoImpl> mockedDAO =
-                     mockConstruction(MedicalRecordDaoImpl.class,
-                             (mock, context) -> when(mock.search("Jowan"))
-                                     .thenThrow(new RuntimeException()))) {
+    void testSearchThrowsException() {
+        when(dao.search("Jowan"))
+                .thenThrow(new RuntimeException("Database error"));
 
-            MedicalRecordFacadeImpl facade =
-                    new MedicalRecordFacadeImpl();
-
-            assertThrows(RuntimeException.class,
-                    () -> facade.search("Jowan"));
-        }
+        assertThrows(RuntimeException.class,
+                () -> facade.search("Jowan"));
     }
 }
