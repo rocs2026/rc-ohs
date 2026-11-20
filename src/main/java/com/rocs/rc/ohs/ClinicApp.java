@@ -8,11 +8,11 @@ import com.rocs.rc.ohs.app.model.login.Login;
 import java.util.Scanner;
 
 
-import com.rocs.rc.ohs.app.facade.medicine.MedicineStockFacade;
-import com.rocs.rc.ohs.app.facade.medicine.impl.MedicineStockFacadeImpl;
-import com.rocs.rc.ohs.app.model.medicine.MedicineStock;
-import com.rocs.rc.ohs.data.dao.medicine.impl.MedicineStockDaoImpl;
-import java.util.List;
+//import com.rocs.rc.ohs.app.facade.medicine.MedicineStockFacade;
+//import com.rocs.rc.ohs.app.facade.medicine.impl.MedicineStockFacadeImpl;
+//import com.rocs.rc.ohs.app.model.medicine.MedicineStock;
+//import com.rocs.rc.ohs.data.dao.medicine.impl.MedicineStockDaoImpl;
+//import java.util.List;
 
 /**
  * It is the main application class for the clinic system.
@@ -135,8 +135,8 @@ public final class ClinicApp {
      * @param sc The scanner used to read input.
      * @param loginFacade The facade used for login operations.
      */
-    private static void forgotPassword (
-            Scanner sc, LoginFacade loginFacade){
+    private static void forgotPassword(
+            Scanner sc, LoginFacade loginFacade) {
 
         System.out.print("EMAIL: ");
         String email = sc.nextLine().trim();
