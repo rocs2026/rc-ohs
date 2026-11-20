@@ -1,4 +1,4 @@
-package com.rocs.rc.ohs.app.medicine;
+package com.rocs.rc.ohs.app.facade.medicine;
 
 import com.rocs.rc.ohs.app.facade.medicine.impl.MedicineFacadeImpl;
 import com.rocs.rc.ohs.app.model.medicine.Medicine;

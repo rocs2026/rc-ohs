@@ -1,4 +1,4 @@
-package com.rocs.rc.ohs.app.medicine;
+package com.rocs.rc.ohs.app.facade.medicine;
 
 import com.rocs.rc.ohs.app.facade.medicine.impl.MedicineStockFacadeImpl;
 import com.rocs.rc.ohs.app.model.medicine.MedicineStock;
@@ -109,6 +109,15 @@ public class MedicineStockFacadeImplTest {
         List<MedicineStock> all = facade.getAllStock();
         List<MedicineStock> byKeyword = facade.searchStock("  amox  ");
         List<MedicineStock> byBlank = facade.searchStock("   ");
+
+        System.out.println("ALL STOCK COUNT: " + all.size());
+        System.out.println("SEARCH RESULT COUNT: " + byKeyword.size());
+
+        for (MedicineStock stock : all) {
+            System.out.println(
+                    "Medicine: " + stock.getMedicine().getMedicineName()
+            );
+        }
 
         assertEquals(1, byKeyword.size());
         assertEquals("Amoxicillin 500mg",

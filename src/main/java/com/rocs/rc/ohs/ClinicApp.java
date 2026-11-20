@@ -8,11 +8,11 @@ import com.rocs.rc.ohs.app.model.login.Login;
 import java.util.Scanner;
 
 
-// import com.rocs.rc.ohs.app.facade.medicine.MedicineStockFacade;
-// import com.rocs.rc.ohs.app.facade.medicine.impl.MedicineStockFacadeImpl;
-// import com.rocs.rc.ohs.app.model.medicine.MedicineStock;
-// import com.rocs.rc.ohs.data.dao.medicine.impl.MedicineStockDaoImpl;
-// import java.util.List;
+ import com.rocs.rc.ohs.app.facade.medicine.MedicineStockFacade;
+ import com.rocs.rc.ohs.app.facade.medicine.impl.MedicineStockFacadeImpl;
+ import com.rocs.rc.ohs.app.model.medicine.MedicineStock;
+ import com.rocs.rc.ohs.data.dao.medicine.impl.MedicineStockDaoImpl;
+ import java.util.List;
 
 /**
  * It is the main application class for the clinic system.
@@ -91,148 +91,167 @@ public final class ClinicApp {
         }
 
         System.out.println("Login successful");
+//// Medicine Inventory section
+//
+//        MedicineStockFacade medicineStockFacade =
+//                new MedicineStockFacadeImpl(
+//                        new MedicineStockDaoImpl());
+//
+//        int choice;
+//
+//        do {
+//            System.out.println("\nMedicine Inventory");
+//            System.out.println("1. View inventory");
+//            System.out.println("2. Search medicine");
+//            System.out.println("0. Exit");
+//            System.out.print("Choose: ");
+//
+//            while (!sc.hasNextInt()) {
+//                System.out.print("Invalid input. Choose: ");
+//                sc.next();
+//            }
+//
+//            choice = sc.nextInt();
+//            sc.nextLine();
+//
+//            if (choice == 1) {
+//                viewInventory(medicineStockFacade);
+//            } else if (choice == 2) {
+//                searchMedicineStock(sc, medicineStockFacade);
+//            } else if (choice == 0) {
+//                System.out.println("Exiting application...");
+//            } else {
+//                System.out.println("Invalid choice. Try again.");
+//            }
+//
+//        } while (choice != 0);
+//    }
 
-        // Medicine Inventory section
+    /**
+     * Resets a forgotten password after
+     * verifying the email and username.
+     *
+     * @param sc The scanner used to read input.
+     * @param loginFacade The facade used for login operations.
+     */
+    private static void forgotPassword(
+            Scanner sc, LoginFacade loginFacade) {
 
-        // MedicineStockFacade medicineStockFacade =
-        //         new MedicineStockFacadeImpl(
-        //                 new MedicineStockDaoImpl());
-        //
-        // int choice;
-        //
-        // do {
-        //     System.out.println("\nMedicine Inventory");
-        //     System.out.println("1. View inventory");
-        //     System.out.println("2. Search medicine");
-        //     System.out.println("0. Exit");
-        //     System.out.print("Choose: ");
-        //
-        //     while (!sc.hasNextInt()) {
-        //         System.out.print("Invalid input. Choose: ");
-        //         sc.next();
-        //     }
-        //
-        //     choice = sc.nextInt();
-        //     sc.nextLine();
-        //
-        //     if (choice == 1) {
-        //         viewInventory(medicineStockFacade);
-        //     } else if (choice == 2) {
-        //         searchMedicineStock(sc, medicineStockFacade);
-        //     } else if (choice == 0) {
-        //         System.out.println("Exiting application...");
-        //     } else {
-        //         System.out.println("Invalid choice. Try again.");
-        //     }
-        //
-        // } while (choice != 0);
+        System.out.print("EMAIL: ");
+        String email = sc.nextLine().trim();
+
+        if (email.isEmpty()) {
+            System.out.println("Please enter email");
+            return;
+        }
+
+        System.out.print("USERNAME: ");
+        String username = sc.nextLine().trim();
+
+        if (username.isEmpty()) {
+            System.out.println("Please enter username");
+            return;
+        }
+
+        System.out.print("NEW PASSWORD: ");
+        String newPassword = sc.nextLine();
+
+        if (newPassword.isEmpty()) {
+            System.out.println("Please enter new password");
+            return;
+        }
+
+        System.out.print("CONFIRM PASSWORD: ");
+        String confirm = sc.nextLine();
+
+        if (!newPassword.equals(confirm)) {
+            System.out.println("Passwords do not match");
+            return;
+        }
+
+        if (loginFacade.forgotPassword(email, username, newPassword)) {
+            System.out.println("Password updated successfully");
+        } else {
+            System.out.println(
+                    "Email and username do not match any account");
+        }
     }
 
-    // /**
-    //  * Resets a forgotten password after
-    //  * verifying the email and username.
-    //  *
-    //  * @param sc The scanner used to read input.
-    //  * @param loginFacade The facade used for login operations.
-    //  */
-    // private static void forgotPassword(
-    //         Scanner sc, LoginFacade loginFacade) {
-    //
-    //     System.out.print("EMAIL: ");
-    //     String email = sc.nextLine().trim();
-    //
-    //     if (email.isEmpty()) {
-    //         System.out.println("Please enter email");
-    //         return;
-    //     }
-    //
-    //     System.out.print("USERNAME: ");
-    //     String username = sc.nextLine().trim();
-    //
-    //     if (username.isEmpty()) {
-    //         System.out.println("Please enter username");
-    //         return;
-    //     }
-    //
-    //     System.out.print("NEW PASSWORD: ");
-    //     String newPassword = sc.nextLine();
-    //
-    //     if (newPassword.isEmpty()) {
-    //         System.out.println("Please enter new password");
-    //         return;
-    //     }
-    //
-    //     System.out.print("CONFIRM PASSWORD: ");
-    //     String confirm = sc.nextLine();
-    //
-    //     if (!newPassword.equals(confirm)) {
-    //         System.out.println("Passwords do not match");
-    //         return;
-    //     }
-    //
-    //     if (loginFacade.forgotPassword(email, username, newPassword)) {
-    //         System.out.println("Password updated successfully");
-    //     } else {
-    //         System.out.println(
-    //                 "Email and username do not match any account");
-    //     }
-    // }
-
-
-
-    // public static void viewInventory(MedicineStockFacade facade) {
-    //
-    //     List<MedicineStock> stocks = facade.getAllStock();
-    //
-    //     if (stocks.isEmpty()) {
-    //         System.out.println("No stocks found.");
-    //         return;
-    //     }
-    //
-    //     for (MedicineStock stock : stocks) {
-    //         int remaining =
-    //                 facade.getRemainingStock(stock.getId());
-    //         displayStock(stock, remaining);
-    //     }
-    // }
-
-    // public static void searchMedicineStock(
-    //         Scanner scanner, MedicineStockFacade facade) {
-    //
-    //     System.out.print("Enter search keyword: ");
-    //     String keyword = scanner.nextLine();
-    //
-    //     List<MedicineStock> stocks = facade.searchStock(keyword);
-    //
-    //     if (stocks.isEmpty()) {
-    //         System.out.println("No matching stocks found.");
-    //         return;
-    //     }
-    //
-    //     for (MedicineStock stock : stocks) {
-    //         int remaining =
-    //                 facade.getRemainingStock(stock.getId());
-    //         displayStock(stock, remaining);
-    //     }
-    // }
-
-    // /**
-    //  * Displays the details of a medicine stock record.
-    //  *
-    //  * @param stock the medicine stock record
-    //  * @param remaining the remaining quantity
-    //  */
-    // private static void displayStock(
-    //         MedicineStock stock, int remaining) {
-    //
-    //     System.out.println("Medicine: "
-    //             + stock.getMedicine().getMedicineName()
-    //             + " | Batch: " + stock.getBatchNumber()
-    //             + " | Received: " + stock.getQuantityReceived()
-    //             + " | Remaining: " + remaining
-    //             + " | Status: " + stock.getStatus());
-    // }
-
+//    public static void viewInventory(MedicineStockFacade facade) {
+//
+//        List<MedicineStock> stocks = facade.getAllStock();
+//
+//        if (stocks.isEmpty()) {
+//            System.out.println("No stocks found.");
+//            return;
+//        }
+//
+//        for (MedicineStock stock : stocks) {
+//            int remaining =
+//                    facade.getRemainingStock(stock.getId());
+//            displayStock(stock, remaining);
+//        }
+//    }
+//
+//    public static void searchMedicineStock(
+//            Scanner scanner, MedicineStockFacade facade) {
+//
+//        System.out.print("Enter search keyword: ");
+//        String keyword = scanner.nextLine();
+//
+//        List<MedicineStock> stocks = facade.searchStock(keyword);
+//
+//        if (stocks.isEmpty()) {
+//            System.out.println("No matching stocks found.");
+//            return;
+//        }
+//
+//        for (MedicineStock stock : stocks) {
+//            int remaining =
+//                    facade.getRemainingStock(stock.getId());
+//            displayStock(stock, remaining);
+//        }
+//    }
+//    /**
+//     * Resolves the stock status label based on remaining quantity.
+//     *
+//     * @param remaining the remaining stock quantity
+//     * @param currentStatus the fallback status from the record
+//     * @return the computed status label
+//     */
+//    private static String resolveStockStatus(int remaining, String currentStatus) {
+//        if (remaining <= 0) {
+//            return "Out of Stock";
+//        }
+//
+//        if (remaining <= 10) {
+//            return "Low Stock";
+//        }
+//
+//        return "Enough";
+//    }
+//
+//    /**
+//     * Displays the details of a medicine stock record.
+//     *
+//     * @param stock the medicine stock record
+//     * @param remaining the remaining quantity
+//     */
+//    private static void displayStock(
+//            MedicineStock stock, int remaining) {
+//
+//        String medicineName = (stock.getMedicine() != null)
+//                ? stock.getMedicine().getMedicineName()
+//                : "Unknown Medicine";
+//        String status = resolveStockStatus(remaining, stock.getStatus());
+//
+//        System.out.println("Medicine: "
+//                + medicineName
+//                + " | Batch: " + stock.getBatchNumber()
+//                + " | Received: " + stock.getQuantityReceived()
+//                + " | Remaining: " + remaining
+//                + " | Status: " + status);
+//    }
 
 
     // private static void consultationMenu(Scanner sc) {

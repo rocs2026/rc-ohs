@@ -54,7 +54,7 @@ public final class QueryConstants {
                     + "FROM medicine "
                     + "LEFT JOIN medicine_category "
                     + "ON medicine.category_id = medicine_category.id "
-                    + "WHERE medicine.medicine_name LIKE ? "
+                    + "WHERE LOWER(medicine.medicine_name) LIKE LOWER(?) "
                     + "ORDER BY medicine.medicine_name";
 
     /**
@@ -86,10 +86,9 @@ public final class QueryConstants {
                     + "JOIN medicine m ON m.id = ms.medicine_id "
                     + "LEFT JOIN medicine_category mc "
                     + "ON mc.id = m.category_id "
-                    + "WHERE m.medicine_name LIKE ? "
-                    + "OR mc.category_name LIKE ? "
+                    + "WHERE LOWER(m.medicine_name) LIKE LOWER(?) "
+                    + "OR LOWER(mc.category_name) LIKE LOWER(?) "
                     + "ORDER BY m.medicine_name";
-
     /**
      * Retrieves the remaining quantity of a medicine stock.
      */

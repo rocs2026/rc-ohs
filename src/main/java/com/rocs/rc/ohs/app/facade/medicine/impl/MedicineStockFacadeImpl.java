@@ -41,7 +41,7 @@ public class MedicineStockFacadeImpl implements MedicineStockFacade {
         if (keyword == null || keyword.trim().isEmpty()) {
             return getAllStock();
         }
-        return medicineStockDao.searchStock(keyword);
+        return medicineStockDao.searchStock(keyword.trim());
     }
 
     /**
