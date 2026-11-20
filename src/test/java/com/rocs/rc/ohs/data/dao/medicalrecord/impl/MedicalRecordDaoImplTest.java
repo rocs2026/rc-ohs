@@ -30,6 +30,7 @@ import static org.mockito.Mockito.when;
 
 /**
  * Tests the database operations of MedicalRecordDaoImpl.
+ * Tests the {@link MedicalRecordDaoImpl}.
  */
 class MedicalRecordDaoImplTest {
 
@@ -57,6 +58,13 @@ class MedicalRecordDaoImplTest {
      * DAO being tested.
      */
     private MedicalRecordDao dao;
+    @Mock
+    private Connection connection;
+
+    @Mock
+    private PreparedStatement statement;
+
+    private MedicalRecordDaoImpl medicalRecordDao;
 
     /**
      * Creates the mock objects before each test.
@@ -89,6 +97,21 @@ class MedicalRecordDaoImplTest {
     /**
      * Tests if the search method correctly retrieves and maps
      * patient medical record information.
+     * Creates medical record with only its ID and medical condition sets.
+     *
+     * @param id the ID of the medical record.
+     * @param conditions the medical conditions of the patient.
+     * @return the medical record.
+     */
+    private MedicalRecord createMedicalRecord(String id, String conditions) {
+        MedicalRecord record = new MedicalRecord();
+        record.setId(id);
+        record.setMedicalConditions(conditions);
+        return record;
+    }
+
+    /**
+     * TC1: Should return false if no ID exists.
      *
      * @throws SQLException if reading the mock result set fails
      */
@@ -126,6 +149,12 @@ class MedicalRecordDaoImplTest {
         assertEquals("Infection", dto.getDiagnosis());
         assertEquals("Antibiotics", dto.getTreatment());
         assertEquals(date, dto.getConsultationDate());
+    void testUpdateNoId() throws SQLException {
+        String allisonId = "ea67a306-d343-4847-b204-c92f2d4cc90";
+        String jowanConditions = "Hypertension";
+        when(statement.executeUpdate()).thenReturn(0);
+        boolean result = medicalRecordDao.updateMedicalRecord(createMedicalRecord(allisonId, jowanConditions));
+        assertFalse(result);
     }
 
     /**
@@ -141,6 +170,12 @@ class MedicalRecordDaoImplTest {
         when(resultSet.getString("c_id")).thenReturn(null);
 
         List<MedicalRecordDTO> results = dao.search("Jowan");
+    void testUpdateWithNullName() throws SQLException {
+        String allisonId = "ea67a306-d343-4847-b204-c92f2d4cc9e0";
+        String jowanConditions = "Hypertension";
+        when(statement.executeUpdate()).thenReturn(0);
+
+        boolean result = medicalRecordDao.updateMedicalRecord(createMedicalRecord(allisonId, jowanConditions));
 
         assertEquals(1, results.size());
         assertNull(results.get(0).getConsultationDate());
@@ -156,6 +191,12 @@ class MedicalRecordDaoImplTest {
         when(resultSet.next()).thenReturn(false);
 
         dao.search("  Quirona  ");
+    void testUpdateWithSingleResult() throws SQLException {
+        String jowanId = "4e49eb71-3481-476b-b6ba-5662a48df1e5";
+        String jowanConditions = "Hypertension";
+        when(statement.executeUpdate()).thenReturn(1);
+
+        boolean result = medicalRecordDao.updateMedicalRecord(createMedicalRecord(jowanId, jowanConditions));
 
         for (int i = 1; i <= 6; i++) {
             verify(statement).setString(i, "%Quirona%");
@@ -173,6 +214,12 @@ class MedicalRecordDaoImplTest {
         when(resultSet.next()).thenReturn(false);
 
         List<MedicalRecordDTO> results = dao.search("Unknown");
+    void testUpdateUsingName() throws SQLException {
+        String antonioId = "669ce09d-4086-4497-a76e-8cb9afe2b635";
+        String antonioConditions = "Asthma";
+        when(statement.executeUpdate()).thenReturn(1);
+
+        boolean result = medicalRecordDao.updateMedicalRecord(createMedicalRecord(antonioId, antonioConditions));
 
         assertTrue(results.isEmpty());
     }
@@ -206,4 +253,14 @@ class MedicalRecordDaoImplTest {
         assertThrows(RuntimeException.class,
                 () -> dao.search("Jowan"));
     }
+    void testUpdateMultipleResults() throws SQLException {
+        String jowanId = "4e49b71-3481-476b-b6ba-5662a48df1e5";
+        String jowanConditions = "Hypertension";
+        when(statement.executeUpdate()).thenReturn(1);
+
+        boolean result = medicalRecordDao.updateMedicalRecord(createMedicalRecord(jowanId, jowanConditions));
+
+        assertTrue(result);
+    }
+
 }

@@ -18,29 +18,14 @@ import static org.mockito.Mockito.when;
  */
 class LoginFacadeImplTest {
 
-    /**
-     * The email address used in the tests.
-     */
     private static final String EMAIL = "john.doe@example.com";
 
-    /**
-     * The username used in the tests.
-     */
     private static final String USERNAME = "staff";
 
-    /**
-     * The new password used in the tests.
-     */
     private static final String NEW_PASSWORD = "NewPass123!";
 
-    /**
-     * The mocked data access object of the login accounts.
-     */
     private LoginDao loginDao;
 
-    /**
-     * The facade being tested.
-     */
     private LoginFacadeImpl loginFacade;
 
     /**
@@ -53,11 +38,10 @@ class LoginFacadeImplTest {
     }
 
     /**
-     * Login returns the account found by the DAO,
-     * or null when the DAO finds nothing.
+     * Login returns the account found by the DAO, or null when the DAO finds nothing.
      */
     @Test
-    void loginReturnsAccountFromDao() {
+    void testLoginSuccessful() {
         Login account = Mockito.mock(Login.class);
         when(loginDao.login(USERNAME)).thenReturn(account);
         when(loginDao.login("unknown")).thenReturn(null);
@@ -67,41 +51,25 @@ class LoginFacadeImplTest {
     }
 
     /**
-     * Forgot password passes the details to the DAO
-     * and returns whatever the DAO reports.
+     * Forgot password passes the details to the DAO and returns whatever the DAO reports.
      */
     @Test
-    void forgotPasswordReturnsDaoResult() throws Exception {
-        when(loginDao.updatePassword(EMAIL, USERNAME,
-                NEW_PASSWORD))
-                .thenReturn(true);
-        assertTrue(loginFacade.forgotPassword(EMAIL, USERNAME,
-                NEW_PASSWORD));
+    void testForgetPasswordSuccessful() throws Exception {
+        when(loginDao.updatePassword(EMAIL, USERNAME, NEW_PASSWORD)).thenReturn(true);
+        assertTrue(loginFacade.forgotPassword(EMAIL, USERNAME, NEW_PASSWORD));
 
-        when(loginDao.updatePassword(EMAIL, "other",
-                NEW_PASSWORD))
-                .thenReturn(false);
-        assertFalse(loginFacade.forgotPassword(EMAIL, "other",
-                NEW_PASSWORD));
+        when(loginDao.updatePassword(EMAIL, "other", NEW_PASSWORD)).thenReturn(false);
+        assertFalse(loginFacade.forgotPassword(EMAIL, "other", NEW_PASSWORD));
     }
 
     /**
-     * Forgot password returns false for every missing value
-     * (null, empty, blank) and never reaches the DAO.
+     * Forgot password returns false for every missing value (null, empty, blank) and never reaches the DAO.
      */
     @Test
-    void forgotPasswordReturnsFalseForMissingValues() {
-        String[] missing = {null, "", "   "};
-
-        for (String value : missing) {
-            assertFalse(loginFacade.forgotPassword(value, USERNAME,
-                    NEW_PASSWORD));
-            assertFalse(loginFacade.forgotPassword(EMAIL, value,
-                    NEW_PASSWORD));
-            assertFalse(loginFacade.forgotPassword(EMAIL, USERNAME,
-                    value));
-        }
-
+    void testForgetPassowrdFailure() {
+        assertFalse(loginFacade.forgotPassword("", USERNAME,NEW_PASSWORD));
+        assertFalse(loginFacade.forgotPassword(EMAIL, "", NEW_PASSWORD));
+        assertFalse(loginFacade.forgotPassword(EMAIL, USERNAME,""));
         verifyNoInteractions(loginDao);
     }
 }

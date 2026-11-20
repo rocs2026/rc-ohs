@@ -1,8 +1,8 @@
 -- use oraclepdb container
--- alter session set container = oraclepdb;
+-- alter session set container = orclpdb;
 
 -- drop user
-drop user rcis;
+drop user rcis cascade;
 
 -- create user
 create user rcis identified by Changeme0;
