@@ -21,12 +21,6 @@ import java.util.List;
  */
 public class ConsultationDaoImpl implements ConsultationDao {
 
-    /**
-     * Saves a new consultation.
-     *
-     * @param consultation The consultation to save. Its ID must be set.
-     * @return The saved {@link Consultation}.
-     */
     @Override
     public Consultation add(Consultation consultation) {
         try (Connection connection = ConnectionHelper.getConnection();
@@ -55,12 +49,6 @@ public class ConsultationDaoImpl implements ConsultationDao {
         return consultation;
     }
 
-    /**
-     * Retrieves the consultations of a patient, latest first.
-     *
-     * @param patientId The UUID of the patient.
-     * @return A list of consultations of the patient.
-     */
     @Override
     public List<Consultation> findByPatientId(String patientId) {
         List<Consultation> consultations = new ArrayList<>();
@@ -127,15 +115,6 @@ public class ConsultationDaoImpl implements ConsultationDao {
         return staff;
     }
 
-    /**
-     * Maps one consultation row to a {@link Consultation}.
-     *
-     * @param resultSet The query result holding the consultation.
-     * @param patientId The UUID of the patient.
-     * @return The {@link Consultation} built from the row.
-     * @throws SQLException If a column cannot be read.
-     * @throws IllegalStateException If the record type is unknown.
-     */
     private Consultation toConsultation(ResultSet resultSet, String patientId)
             throws SQLException, IllegalStateException {
         Person patient = new Person();
@@ -158,13 +137,6 @@ public class ConsultationDaoImpl implements ConsultationDao {
         return consultation;
     }
 
-    /**
-     * Converts a database value to its record type.
-     *
-     * @param value The database value of the record type.
-     * @return The matching {@link RecordType}.
-     * @throws IllegalStateException If the record type is unknown.
-     */
     private RecordType toRecordType(String value)
             throws IllegalStateException {
         for (RecordType type : RecordType.values()) {

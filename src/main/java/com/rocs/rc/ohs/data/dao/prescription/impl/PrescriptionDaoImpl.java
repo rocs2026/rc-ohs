@@ -21,12 +21,6 @@ import java.util.List;
  */
 public class PrescriptionDaoImpl implements PrescriptionDao {
 
-    /**
-     * Saves a new prescription.
-     *
-     * @param prescription The prescription to save. Its ID must be set.
-     * @return The saved {@link Prescription}.
-     */
     @Override
     public Prescription add(Prescription prescription) {
         try (Connection connection = ConnectionHelper.getConnection();
@@ -51,13 +45,6 @@ public class PrescriptionDaoImpl implements PrescriptionDao {
         return prescription;
     }
 
-    /**
-     * Retrieves all prescriptions issued in a consultation, with the name
-     * and unit of each medicine.
-     *
-     * @param consultationId The UUID of the consultation.
-     * @return A list of prescriptions of the consultation.
-     */
     @Override
     public List<Prescription> findByConsultationId(String consultationId) {
         List<Prescription> prescriptions = new ArrayList<>();
@@ -79,12 +66,6 @@ public class PrescriptionDaoImpl implements PrescriptionDao {
         return prescriptions;
     }
 
-    /**
-     * Finds the stocks of the medicine with the given name.
-     *
-     * @param medicineName The name of the medicine.
-     * @return A list of the stocks of the medicine.
-     */
     @Override
     public List<MedicineStock> findStocksByMedicineName(String medicineName) {
         List<MedicineStock> stocks = new ArrayList<>();
@@ -105,13 +86,6 @@ public class PrescriptionDaoImpl implements PrescriptionDao {
         return stocks;
     }
 
-    /**
-     * Maps one stock row to a {@link MedicineStock}.
-     *
-     * @param resultSet The query result holding the stock.
-     * @return The {@link MedicineStock} built from the row.
-     * @throws SQLException If a column cannot be read.
-     */
     private MedicineStock toMedicineStock(ResultSet resultSet)
             throws SQLException {
         Medicine medicine = new Medicine();
@@ -124,14 +98,6 @@ public class PrescriptionDaoImpl implements PrescriptionDao {
         return medicineStock;
     }
 
-    /**
-     * Maps one prescription row to a {@link Prescription}.
-     *
-     * @param resultSet The query result holding the prescription.
-     * @param consultationId The UUID of the consultation.
-     * @return The {@link Prescription} built from the row.
-     * @throws SQLException If a column cannot be read.
-     */
     private Prescription toPrescription(ResultSet resultSet,
                                         String consultationId)
             throws SQLException {
