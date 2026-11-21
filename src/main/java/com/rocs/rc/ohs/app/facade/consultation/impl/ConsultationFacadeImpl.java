@@ -2,6 +2,9 @@ package com.rocs.rc.ohs.app.facade.consultation.impl;
 
 import com.rocs.rc.ohs.app.facade.consultation.ConsultationFacade;
 import com.rocs.rc.ohs.app.model.consultation.Consultation;
+import com.rocs.rc.ohs.app.model.medicine.MedicineStock;
+import com.rocs.rc.ohs.app.model.person.Person;
+import com.rocs.rc.ohs.app.model.personnel.Personnel;
 import com.rocs.rc.ohs.app.model.prescription.Prescription;
 import com.rocs.rc.ohs.data.dao.consultation.ConsultationDao;
 import com.rocs.rc.ohs.data.dao.consultation.impl.ConsultationDaoImpl;
@@ -9,6 +12,7 @@ import com.rocs.rc.ohs.data.dao.prescription.PrescriptionDao;
 import com.rocs.rc.ohs.data.dao.prescription.impl.PrescriptionDaoImpl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,10 +21,8 @@ import java.util.UUID;
  */
 public class ConsultationFacadeImpl implements ConsultationFacade {
 
-    /** The data access object of the consultations. */
     private final ConsultationDao consultationDao;
 
-    /** The data access object of the prescriptions. */
     private final PrescriptionDao prescriptionDao;
 
     /**
@@ -42,16 +44,6 @@ public class ConsultationFacadeImpl implements ConsultationFacade {
         this.prescriptionDao = newPrescriptionDao;
     }
 
-    /**
-     * Saves a consultation together with its prescriptions. Everything is
-     * checked first, so nothing is saved when a required value is missing.
-     *
-     * @param consultation The consultation to save.
-     * @param prescriptions The prescriptions of the consultation.
-     * @return The saved {@link Consultation} with its generated ID, or
-     *         null if a required value is missing, or it could not be
-     *         saved.
-     */
     @Override
     public Consultation saveConsultation(Consultation consultation,
                                          List<Prescription> prescriptions) {
@@ -79,38 +71,15 @@ public class ConsultationFacadeImpl implements ConsultationFacade {
         return saved;
     }
 
-    /**
-     * Retrieves the saved consultations of a patient, latest first.
-     *
-     * @param patientId The UUID of the patient.
-     * @return A list of consultations of the patient, or an empty list
-     *         if they could not be read.
-     * @throws IllegalArgumentException If the patient ID is missing.
-     */
     @Override
     public List<Consultation> getConsultationsByPatient(String patientId)
             throws IllegalArgumentException {
         if (patientId == null || patientId.isBlank()) {
             throw new IllegalArgumentException("The patient ID is required.");
         }
-        List<Consultation> consultations = new ArrayList<>();
-        try {
-            consultations = consultationDao.findByPatientId(patientId);
-        } catch (IllegalArgumentException ex) {
-            System.out.println(
-                    "Read consultations failed: " + ex.getMessage());
-        }
-        return consultations;
+        return consultationDao.findByPatientId(patientId);
     }
 
-    /**
-     * Retrieves the prescriptions of a saved consultation.
-     *
-     * @param consultationId The UUID of the consultation.
-     * @return A list of prescriptions of the consultation, or an empty
-     *         list if they could not be read.
-     * @throws IllegalArgumentException If the consultation ID is missing.
-     */
     @Override
     public List<Prescription> getPrescriptionsByConsultation(
             String consultationId) throws IllegalArgumentException {
@@ -118,23 +87,72 @@ public class ConsultationFacadeImpl implements ConsultationFacade {
             throw new IllegalArgumentException(
                     "The consultation ID is required.");
         }
-        List<Prescription> prescriptions = new ArrayList<>();
-        try {
-            prescriptions =
-                    prescriptionDao.findByConsultationId(consultationId);
-        } catch (IllegalArgumentException ex) {
-            System.out.println(
-                    "Read prescriptions failed: " + ex.getMessage());
-        }
-        return prescriptions;
+        return prescriptionDao.findByConsultationId(consultationId);
     }
 
-    /**
-     * Checks that a consultation has every value the database requires.
-     *
-     * @param consultation The consultation to check.
-     * @throws IllegalArgumentException If the consultation is incomplete.
-     */
+    @Override
+    public Person findPatientByName(String fullName)
+            throws IllegalArgumentException {
+        if (isBlank(fullName)) {
+            throw new IllegalArgumentException("Patient name is required.");
+        }
+        String[] words = fullName.trim().split("\\s+");
+        if (words.length < 2) {
+            throw new IllegalArgumentException(
+                    "Type the first and last name of the patient.");
+        }
+        String middleName = null;
+        if (words.length > 2) {
+            middleName = String.join(" ",
+                    Arrays.copyOfRange(words, 1, words.length - 1));
+        }
+        List<Person> matches = new ArrayList<>();
+        for (Person person : consultationDao.findPatientsByName(
+                words[0], words[words.length - 1])) {
+            if (middleName == null
+                    || middleName.equalsIgnoreCase(person.getMiddleName())) {
+                matches.add(person);
+            }
+        }
+        if (matches.isEmpty()) {
+            throw new IllegalArgumentException("No patient has that name.");
+        }
+        if (matches.size() > 1) {
+            throw new IllegalArgumentException(
+                    "More than one patient has that name.");
+        }
+        return matches.get(0);
+    }
+
+    @Override
+    public Personnel findStaffByUsername(String username)
+            throws IllegalArgumentException {
+        if (isBlank(username)) {
+            throw new IllegalArgumentException("Username is required.");
+        }
+        List<Personnel> staff =
+                consultationDao.findStaffByUsername(username.trim());
+        if (staff.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "This account is not a clinic staff.");
+        }
+        return staff.get(0);
+    }
+
+    @Override
+    public MedicineStock findMedicineStockByName(String medicineName)
+            throws IllegalArgumentException {
+        if (isBlank(medicineName)) {
+            throw new IllegalArgumentException("Medicine name is required.");
+        }
+        List<MedicineStock> stocks = prescriptionDao
+                .findStocksByMedicineName(medicineName.trim());
+        if (stocks.isEmpty()) {
+            throw new IllegalArgumentException("No medicine has that name.");
+        }
+        return stocks.get(0);
+    }
+
     private void validateConsultation(Consultation consultation)
             throws IllegalArgumentException {
         if (consultation == null) {
@@ -172,12 +190,6 @@ public class ConsultationFacadeImpl implements ConsultationFacade {
         }
     }
 
-    /**
-     * Checks that a prescription has every value the database requires.
-     *
-     * @param prescription The prescription to check.
-     * @throws IllegalArgumentException If the prescription is incomplete.
-     */
     private void validatePrescription(Prescription prescription)
             throws IllegalArgumentException {
         if (prescription == null) {
@@ -203,21 +215,10 @@ public class ConsultationFacadeImpl implements ConsultationFacade {
         }
     }
 
-    /**
-     * Tells whether a text is missing or empty.
-     *
-     * @param text The text to check.
-     * @return True if the text is null or blank.
-     */
     private boolean isBlank(String text) {
         return text == null || text.isBlank();
     }
 
-    /**
-     * Generates a new UUID for a record.
-     *
-     * @return The new UUID as text.
-     */
     private String newId() {
         return UUID.randomUUID().toString();
     }

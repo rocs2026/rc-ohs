@@ -1,5 +1,6 @@
 package com.rocs.rc.ohs.data.dao.prescription;
 
+import com.rocs.rc.ohs.app.model.medicine.MedicineStock;
 import com.rocs.rc.ohs.app.model.prescription.Prescription;
 
 import java.util.List;
@@ -14,10 +15,8 @@ public interface PrescriptionDao {
      *
      * @param prescription The prescription to save. Its ID must be set.
      * @return The saved {@link Prescription}.
-     * @throws IllegalArgumentException If a required value is null.
      */
-    Prescription add(Prescription prescription)
-            throws IllegalArgumentException;
+    Prescription add(Prescription prescription);
 
     /**
      * Retrieves all prescriptions issued in a consultation, with the name
@@ -26,8 +25,15 @@ public interface PrescriptionDao {
      *
      * @param consultationId The UUID of the consultation.
      * @return A list of prescriptions of the consultation.
-     * @throws IllegalArgumentException If the consultation ID is null.
      */
-    List<Prescription> findByConsultationId(String consultationId)
-            throws IllegalArgumentException;
+    List<Prescription> findByConsultationId(String consultationId);
+
+    /**
+     * Finds the stocks of the medicine with the given name, the one that
+     * expires first coming first, so it can be prescribed by name.
+     *
+     * @param medicineName The name of the medicine.
+     * @return A list of the stocks of the medicine.
+     */
+    List<MedicineStock> findStocksByMedicineName(String medicineName);
 }

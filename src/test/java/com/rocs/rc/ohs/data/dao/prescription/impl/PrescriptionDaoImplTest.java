@@ -17,7 +17,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -73,8 +72,7 @@ class PrescriptionDaoImplTest {
      * @throws SQLException
      */
     @Test
-    void testSavePrescription()
-            throws SQLException {
+    void testSavePrescription() throws SQLException {
         Prescription saved = dao.add(newPrescription());
 
         assertEquals(NEW_ID, saved.getId());
@@ -89,14 +87,45 @@ class PrescriptionDaoImplTest {
     }
 
     /**
-     * Test save prescription failure.
+     * Test find prescriptions of a consultation.
+     * @throws SQLException
      */
     @Test
-    void testSavePrescriptionFailed() {
-        Prescription prescription = newPrescription();
-        prescription.setConsultation(null);
+    void testFindPrescriptions() throws SQLException {
+        when(resultSet.next()).thenReturn(true, false);
+        when(resultSet.getString("medicine_stock_id")).thenReturn(STOCK_ID);
+        when(resultSet.getString("personnel_id")).thenReturn(PERSONNEL_ID);
+        when(resultSet.getInt("quantity_to_dispense")).thenReturn(2);
+        when(resultSet.getString("dose")).thenReturn("500mg");
+        when(resultSet.getString("frequency")).thenReturn("3 times a day");
+        when(resultSet.getString("medicine_name"))
+                .thenReturn("Amoxicillin 500mg");
 
-        assertThrows(IllegalArgumentException.class, () -> dao.add(prescription));
+        List<Prescription> result =
+                dao.findByConsultationId(CONSULTATION_ID);
+
+        verify(statement).setString(1, CONSULTATION_ID);
+        assertEquals(1, result.size());
+        assertEquals("500mg", result.get(0).getDose());
+        assertEquals(2, result.get(0).getQuantityToDispense());
+    }
+
+    /**
+     * Test find medicine stock by name.
+     * @throws SQLException
+     */
+    @Test
+    void testFindStockByMedicineName() throws SQLException {
+        when(resultSet.next()).thenReturn(true, false);
+        when(resultSet.getString("id")).thenReturn(STOCK_ID);
+        when(resultSet.getString("medicine_name"))
+                .thenReturn("Amoxicillin 500mg");
+
+        List<MedicineStock> result =
+                dao.findStocksByMedicineName("Amoxicillin 500mg");
+
+        verify(statement).setString(1, "Amoxicillin 500mg");
+        assertEquals(STOCK_ID, result.get(0).getId());
     }
 
     private Prescription newPrescription() {

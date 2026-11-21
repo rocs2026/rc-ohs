@@ -21,23 +21,8 @@ import java.util.List;
  */
 public class PrescriptionDaoImpl implements PrescriptionDao {
 
-    /**
-     * Saves a new prescription.
-     *
-     * @param prescription The prescription to save. Its ID must be set.
-     * @return The saved {@link Prescription}.
-     * @throws IllegalArgumentException If a required value is null.
-     */
     @Override
-    public Prescription add(Prescription prescription)
-            throws IllegalArgumentException {
-        if (prescription == null
-                || prescription.getConsultation() == null
-                || prescription.getMedicineStock() == null
-                || prescription.getPersonnel() == null) {
-            throw new IllegalArgumentException(
-                    "Consultation, medicine stock and staff are required.");
-        }
+    public Prescription add(Prescription prescription) {
         try (Connection connection = ConnectionHelper.getConnection();
              PreparedStatement statement = connection.prepareStatement(
                      QueryConstants.ADD_PRESCRIPTION_STATEMENT)) {
@@ -50,7 +35,7 @@ public class PrescriptionDaoImpl implements PrescriptionDao {
             statement.setString(7, prescription.getFrequency());
             statement.setString(8, prescription.getInstructions());
             int rows = statement.executeUpdate();
-            if (rows != 1) {
+            if (rows < 1) {
                 System.out.println("No prescription row was saved.");
             }
         } catch (SQLException ex) {
@@ -60,21 +45,8 @@ public class PrescriptionDaoImpl implements PrescriptionDao {
         return prescription;
     }
 
-    /**
-     * Retrieves all prescriptions issued in a consultation, with the name
-     * and unit of each medicine.
-     *
-     * @param consultationId The UUID of the consultation.
-     * @return A list of prescriptions of the consultation.
-     * @throws IllegalArgumentException If the consultation ID is null.
-     */
     @Override
-    public List<Prescription> findByConsultationId(String consultationId)
-            throws IllegalArgumentException {
-        if (consultationId == null) {
-            throw new IllegalArgumentException(
-                    "Consultation ID is required.");
-        }
+    public List<Prescription> findByConsultationId(String consultationId) {
         List<Prescription> prescriptions = new ArrayList<>();
         try (Connection connection = ConnectionHelper.getConnection();
              PreparedStatement statement = connection.prepareStatement(
@@ -94,14 +66,38 @@ public class PrescriptionDaoImpl implements PrescriptionDao {
         return prescriptions;
     }
 
-    /**
-     * Maps one prescription row to a {@link Prescription}.
-     *
-     * @param resultSet The query result holding the prescription.
-     * @param consultationId The UUID of the consultation.
-     * @return The {@link Prescription} built from the row.
-     * @throws SQLException If a column cannot be read.
-     */
+    @Override
+    public List<MedicineStock> findStocksByMedicineName(String medicineName) {
+        List<MedicineStock> stocks = new ArrayList<>();
+        try (Connection connection = ConnectionHelper.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     QueryConstants
+                             .FIND_STOCK_BY_MEDICINE_NAME_STATEMENT)) {
+            statement.setString(1, medicineName);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    stocks.add(toMedicineStock(resultSet));
+                }
+            }
+        } catch (SQLException ex) {
+            System.out.println(
+                    "Could not find the medicine: " + ex.getMessage());
+        }
+        return stocks;
+    }
+
+    private MedicineStock toMedicineStock(ResultSet resultSet)
+            throws SQLException {
+        Medicine medicine = new Medicine();
+        medicine.setMedicineName(resultSet.getString("medicine_name"));
+        medicine.setUnit(resultSet.getString("unit"));
+        MedicineStock medicineStock = new MedicineStock();
+        medicineStock.setId(resultSet.getString("id"));
+        medicineStock.setBatchNumber(resultSet.getString("batch_number"));
+        medicineStock.setMedicine(medicine);
+        return medicineStock;
+    }
+
     private Prescription toPrescription(ResultSet resultSet,
                                         String consultationId)
             throws SQLException {
